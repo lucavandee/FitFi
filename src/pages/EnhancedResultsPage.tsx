@@ -36,6 +36,7 @@ import { analyzeProfileConsistency, type ConsistencyAnalysis } from "@/engine/pr
 import { ProfileConsistencyBanner } from "@/components/results/ProfileConsistencyBanner";
 import { generateOutfitDescription } from "@/engine/outfitContext";
 import { kaartGegevens } from "@/components/results/kaartGegevens";
+import { archetypeKeyUitKeuze, stijlNaamUitKeuze } from "@/components/results/stijlNaam";
 import { PersonalizedAdviceSection } from "@/components/results/PersonalizedAdviceSection";
 import { QuizInputSummary } from "@/components/results/QuizInputSummary";
 import { OutfitDetailModal } from "@/components/results/OutfitDetailModal";
@@ -301,10 +302,16 @@ export default function EnhancedResultsPage() {
     }
   }, [answers]);
 
+  // Wat de bezoeker zelf koos, gaat voor op het opgeslagen archetype (zie
+  // src/components/results/stijlNaam.ts).
+  const gekozenStijlNaam = React.useMemo(() => stijlNaamUitKeuze(answers?.stylePreferences), [answers?.stylePreferences]);
+
   /** Dutch-friendly display name for the archetype */
   const archetypeDisplayNL = React.useMemo(() => getArchetypeDisplayNL(archetypeName), [archetypeName]);
 
   const archetypeKey = React.useMemo((): ArchetypeKey => {
+    const uitKeuze = archetypeKeyUitKeuze(answers?.stylePreferences);
+    if (uitKeuze) return uitKeuze;
     const nameToKey: Record<string, ArchetypeKey> = {
       'minimalist': 'MINIMALIST',
       'clean minimal': 'MINIMALIST',
@@ -327,7 +334,7 @@ export default function EnhancedResultsPage() {
     }
 
     return nameToKey[raw] || 'SMART_CASUAL';
-  }, [archetypeName]);
+  }, [archetypeName, answers?.stylePreferences]);
 
   const [generatedProfile, setGeneratedProfile] = React.useState<ColorProfile | null>(null);
   const [profileDataSource, setProfileDataSource] = React.useState<'photo_analysis' | 'quiz+swipes' | 'quiz_only' | 'swipes_only' | 'fallback'>('fallback');
@@ -693,7 +700,7 @@ export default function EnhancedResultsPage() {
                     textAlign: "center",
                   }}
                 >
-                  {archetypeName}
+                  {gekozenStijlNaam ?? archetypeName}
                 </h1>
 
                 {/* Outfit count */}
