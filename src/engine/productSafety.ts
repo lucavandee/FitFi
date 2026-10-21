@@ -82,11 +82,16 @@ const ONDERGOED = new RegExp(
  *
  * maternity, nursing en positiekleding staan er nu op nul, maar zijn de juiste
  * woorden zodra een andere aanbieder binnenkomt.
+ *
+ * Sinds 21 oktober 2026 ook luiertassen en luieretuis: ze stonden als
+ * accessoire in de kandidatenpool voor dames ("Luiertas van bouclé"). In 3.520
+ * productnamen (pool van 21 oktober plus de catalogussnapshot van juni) raakt
+ * \bluier alleen die drie.
  */
 const DOELGROEP = new RegExp(
   [
     '\\bmama\\b', 'zwangerschap', 'voedings', '\\bmaternity\\b',
-    '\\bnursing\\b', 'positiekleding',
+    '\\bnursing\\b', 'positiekleding', '\\bluier',
   ].join('|'),
   'i'
 );
@@ -343,9 +348,10 @@ export function pastInSeizoen(naam: string | null | undefined, seizoen: JaarSeiz
  * Een portemonnee, manchetknopen of een brilmontuur maakt een outfit niet af:
  * je ziet ze niet. Op 13 oktober 2026 vulden ze het accessoireslot ("Wallet
  * BOSS", "Cufflinks PAUL SMITH", "Optical Frames RAY-BAN"). Een zonnebril,
- * tas, riem, sjaal of hoed zie je wel.
+ * tas, riem, sjaal of hoed zie je wel. Een make-uptas of toilettas gaat in een
+ * tas, niet aan een outfit (21 oktober 2026: "Ovale make-uptas" in de pool).
  */
-const ONZICHTBAAR_ACCESSOIRE = /\b(wallets?|portemonnee|pasjeshouder|card[\s-]?holders?|cardholders?|kaarthouder|cufflinks?|manchetknop\w*|optical[\s-]?frames?|eyeglasses|brilmontuur|key[\s-]?rings?|keychains?|sleutelhanger|paraplu|umbrella|sokken|socks|tie[\s-]?clip|dasspeld|money[\s-]?clip|geldclip)\b/i;
+const ONZICHTBAAR_ACCESSOIRE = /\b(wallets?|portemonnee|pasjeshouder|card[\s-]?holders?|cardholders?|kaarthouder|cufflinks?|manchetknop\w*|optical[\s-]?frames?|eyeglasses|brilmontuur|key[\s-]?rings?|keychains?|sleutelhanger|paraplu|umbrella|sokken|socks|tie[\s-]?clip|dasspeld|money[\s-]?clip|geldclip|make-?up[\s-]?tas(?:je)?|toilettas(?:je)?|cosmetic[\s-]?bags?|beauty[\s-]?case)\b/i;
 
 export function isZichtbaarAccessoire(naam: string | null | undefined): boolean {
   return !ONZICHTBAAR_ACCESSOIRE.test(String(naam ?? ''));

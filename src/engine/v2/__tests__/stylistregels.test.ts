@@ -130,6 +130,8 @@ describe("pastInSeizoen en isZichtbaarAccessoire", () => {
     expect(isZichtbaarAccessoire("Cufflinks PAUL SMITH Men color Red")).toBe(false);
     expect(isZichtbaarAccessoire("Optical Frames RAY-BAN Men color Fa01")).toBe(false);
     expect(isZichtbaarAccessoire("H & M - Leren pasjeshouder - Zwart")).toBe(false);
+    expect(isZichtbaarAccessoire("H & M - Ovale make-uptas - Donkerbruin/Transparant")).toBe(false);
+    expect(isZichtbaarAccessoire("H & M - Toilettas van nylon - Zwart")).toBe(false);
     expect(isZichtbaarAccessoire("Sunglasses BOSS Men color Black")).toBe(true);
     expect(isZichtbaarAccessoire("H & M - Leren handtas - Rood")).toBe(true);
     expect(isZichtbaarAccessoire("Belt VALENTINO GARAVANI Men color Black")).toBe(true);
