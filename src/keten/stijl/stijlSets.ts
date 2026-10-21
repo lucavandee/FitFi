@@ -228,6 +228,12 @@ export interface OordeelRegel {
   /** 1 of 2: een outfit zonder oordeel gaat een keer opnieuw mee. */
   poging: number;
   aanroep: number;
+  /**
+   * Of de aanroep als geheel lukte. Zo niet (time-out, limiet, geen JSON, te
+   * weinig oordelen, ander model), dan zegt de regel niets over de outfit: hij
+   * staat in het logboek voor de diagnose en telt niet mee.
+   */
+  aanroep_gelukt: boolean;
   kort_id: string;
   /** Het oordeel zoals de agent het gaf, of null. */
   ruw: KeurOordeel | null;
@@ -288,7 +294,7 @@ function nieuweCel(cel: string): CelStaat {
 export function herstelStaat(regels: OordeelRegel[], keurder: string): Staat {
   const perCel = new Map<string, CelStaat>();
   for (const r of regels) {
-    if (r.keurder !== keurder) continue;
+    if (r.keurder !== keurder || !r.aanroep_gelukt) continue;
     const c = perCel.get(r.cel) ?? nieuweCel(r.cel);
     perCel.set(r.cel, c);
     const k = r.outfit_key;
@@ -367,8 +373,10 @@ export function kandidaatUitRegel(r: OordeelRegel, ronde: 1 | 2, poging: number)
 
 /**
  * Stelt een portie samen: eerst hooguit maxRonde2 tweede keuringen, dan de
- * herkansingen, dan nieuwe outfits beurtelings uit de combinaties. Een outfit
- * komt hooguit een keer in een portie.
+ * herkansingen, dan nieuwe outfits beurtelings uit de combinaties. Is er dan
+ * nog plaats, dan vullen de overige tweede keuringen aan: een halflege portie
+ * kost bijna even veel als een volle. Een outfit komt hooguit een keer in een
+ * portie.
  */
 export function kiesPortie(o: { ronde2: Kandidaat[]; herkansing: Kandidaat[]; nieuw: Kandidaat[][]; grootte: number; maxRonde2: number }): Kandidaat[] {
   const uit: Kandidaat[] = [];
@@ -384,6 +392,15 @@ export function kiesPortie(o: { ronde2: Kandidaat[]; herkansing: Kandidaat[]; ni
   for (let i = 0; i < langste && uit.length < o.grootte; i++) {
     for (const lijst of o.nieuw) if (lijst[i]) neem(lijst[i]);
   }
+  for (const k of o.ronde2.slice(o.maxRonde2)) neem(k);
+  return uit;
+}
+
+/** Beurtelings uit elke lijst: de eerste van elk, dan de tweede van elk, enzovoort. */
+export function omEnOm<T>(lijsten: T[][]): T[] {
+  const uit: T[] = [];
+  const langste = Math.max(0, ...lijsten.map((l) => l.length));
+  for (let i = 0; i < langste; i++) for (const l of lijsten) if (i < l.length) uit.push(l[i]);
   return uit;
 }
 
@@ -533,7 +550,7 @@ export function bouwNachtrapport(o: {
   aanroepen: AanroepRegel[];
   keurder: string;
   run: string;
-  meta: { start: string; stop: string; git: string; via: string };
+  meta: { start: string; stop: string; git: string; via: string; stopreden?: Stopreden | null };
 }): { md: string; json: NachtrapportJson } {
   const staat = herstelStaat(o.regels, o.keurder);
   const cellen = [...staat.perCel.values()].map(celRapport).sort((a, b) => a.cel.localeCompare(b.cel));
@@ -556,7 +573,7 @@ export function bouwNachtrapport(o: {
     run: o.run,
     start: o.meta.start,
     stop: o.meta.stop,
-    stopreden: laatste?.stopreden ?? null,
+    stopreden: o.meta.stopreden ?? laatste?.stopreden ?? null,
     reset: laatste?.reset ?? null,
     via: o.meta.via,
     git: o.meta.git,

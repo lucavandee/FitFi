@@ -17,6 +17,7 @@ import {
   leesPortieAntwoord,
   minimumOordelen,
   naarKeurOutfit,
+  omEnOm,
   naarLogStukken,
   resetTekst,
   schud,
@@ -74,6 +75,7 @@ function regel(cel: string, key: string, ronde: 1 | 2, telling: Telling, over: P
     ronde,
     poging: 1,
     aanroep: teller,
+    aanroep_gelukt: true,
     kort_id: "k1",
     ruw: null,
     telling,
@@ -180,6 +182,11 @@ describe("oordeel tellen", () => {
 describe("staat uit het logboek", () => {
   const C = "female|casual|casual";
 
+  it("telt regels uit een mislukte aanroep niet mee", () => {
+    const staat = herstelStaat([regel(C, "x", 1, "geen oordeel", { aanroep_gelukt: false })], KEURDER);
+    expect(staat.perCel.get(C)).toBeUndefined();
+  });
+
   it("negeert regels van een andere keurder", () => {
     const staat = herstelStaat([regel(C, "x", 1, "goed", { keurder: "ander" })], KEURDER);
     expect(staat.perCel.get(C)).toBeUndefined();
@@ -245,6 +252,16 @@ describe("portie kiezen", () => {
     ];
     const p = kiesPortie({ ronde2, herkansing, nieuw, grootte: 9, maxRonde2: 3 });
     expect(p.map((k) => k.outfit_key)).toEqual(["r1", "r2", "r3", "h1", "a1", "b1", "a2", "b2", "a3"]);
+  });
+
+  it("vult een portie aan met tweede keuringen als de nieuwe op zijn", () => {
+    const ronde2 = ["r1", "r2", "r3", "r4", "r5"].map((k) => kandidaat("A", k, { ronde: 2 }));
+    const p = kiesPortie({ ronde2, herkansing: [], nieuw: [[kandidaat("A", "a1")]], grootte: 9, maxRonde2: 3 });
+    expect(p.map((k) => k.outfit_key)).toEqual(["r1", "r2", "r3", "a1", "r4", "r5"]);
+  });
+
+  it("zet lijsten om en om achter elkaar", () => {
+    expect(omEnOm([["a1", "a2", "a3"], ["b1"], ["c1", "c2"]])).toEqual(["a1", "b1", "c1", "a2", "c2", "a3"]);
   });
 
   it("neemt een outfit nooit twee keer in dezelfde portie", () => {
