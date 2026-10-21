@@ -46,7 +46,7 @@ describe("CookieBannerKaart", () => {
     const laag = html.match(/^<div\b[^>]*class="([^"]*)"/)?.[1] ?? "";
     expect(laag.split(" ")).toEqual(expect.arrayContaining(["fixed", "pointer-events-none"]));
     const kaart = html.match(/<section\b[^>]*class="([^"]*)"/)?.[1] ?? "";
-    expect(kaart.split(" ")).toEqual(expect.arrayContaining(["pointer-events-auto", "max-w-sm"]));
+    expect(kaart.split(" ")).toContain("pointer-events-auto");
   });
 
   it("is geen modale dialoog maar een regio met een naam", () => {
@@ -111,8 +111,16 @@ describe("CookieBannerKaart bij grote tekst en kleine vensters", () => {
     expect(kaart(simpel)).not.toContain("overscroll-contain");
   });
 
-  it("320 px breed tot 1280 px, daarboven 384, mobiel de volle strook", () => {
-    expect(kaart(simpel)).toEqual(expect.arrayContaining(["w-full", "max-w-sm", "md:max-w-xs", "xl:max-w-sm"]));
+  // 21 oktober 2026: de eerste weergave is een dunne balk over de volle
+  // breedte; de kaart rechtsonder lag op elke pagina over de inhoud.
+  it("de eerste weergave is een balk over de volle breedte, zonder kaartvorm", () => {
+    expect(kaart(simpel)).toEqual(expect.arrayContaining(["w-full", "border-t"]));
+    expect(kaart(simpel).some((c) => /^(md:|xl:)?max-w-/.test(c))).toBe(false);
+    expect(kaart(simpel)).not.toContain("rounded-2xl");
+  });
+
+  it("'Aanpassen' opent een kaart: 320 px breed tot 1280 px, daarboven 384, mobiel de volle strook", () => {
+    expect(kaart(detail)).toEqual(expect.arrayContaining(["w-full", "max-w-sm", "md:max-w-xs", "xl:max-w-sm"]));
   });
 
   it("in een heel laag venster staat de banner in de pagina, met dezelfde grens als KORT", () => {

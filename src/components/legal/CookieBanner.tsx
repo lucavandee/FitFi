@@ -33,11 +33,14 @@ type View = "simple" | "detail";
  * Wat het nu is:
  * - De vaste laag laat klikken door (pointer-events-none); alleen de kaart
  *   vangt ze (pointer-events-auto).
- * - Desktop: een compacte kaart rechtsonder, 320 px breed tot 1280 px en
- *   daarboven 384. Op 1024 breed begon een kaart van 384 px op x 616 en lag
- *   hij over de namen in de lijst van de kleurpiek (die eindigen op x 652).
- *   Mobiel: een strook onderin, boven de onderbalk (--onderbalk-h, gezet door
- *   MobileBottomNav).
+ * - Sinds 21 oktober 2026 is de eerste weergave een dunne balk over de volle
+ *   breedte, vlak tegen de onderkant (mobiel boven de onderbalk,
+ *   --onderbalk-h, gezet door MobileBottomNav). Vanaf md staan tekst en
+ *   keuzes op een regel. De kaart rechtsonder lag op elke pagina als een blok
+ *   over de inhoud (zie de screenshots van 21 oktober in
+ *   claude-artifacts/fitfi-beeld/2026-10-21-website). "Aanpassen" opent nog
+ *   wel een kaart, 320 px breed tot 1280 px en daarboven 384: drie
+ *   schakelaars met uitleg passen niet in een balk.
  * - Op / pas zodra de hero voor minstens de helft uit beeld is; elders direct,
  *   behalve tijdens de quiz. Vanaf 1024 px blijft hij daarna staan tot er een
  *   keuze is; daaronder wijkt hij op / zolang de hero weer voor meer dan de
@@ -197,6 +200,17 @@ const KEUZEKNOP =
 const KEUZERIJ =
   "sticky bottom-0 [@media(max-height:300px)]:static grid grid-cols-[repeat(auto-fit,minmax(min(100%,9.5rem),1fr))] gap-2 bg-white pb-4 md:pb-5";
 
+/** De keuzerij in de balk: vanaf md naast de tekst, zonder ruimte eronder. */
+const KEUZERIJ_BALK =
+  "sticky bottom-0 [@media(max-height:300px)]:static grid grid-cols-[repeat(auto-fit,minmax(min(100%,9.5rem),1fr))] gap-2 bg-white pb-3 md:static md:w-[20rem] md:shrink-0 md:pb-0";
+
+/** De vaste laag: laat klikken door, staat boven de onderbalk. */
+const LAAG = "pointer-events-none fixed [@media(max-height:300px)]:static inset-x-0 z-[54]";
+
+/** Gedeeld door balk en kaart: nooit hoger dan het venster, zelf scrollen, in een laag venster in de pagina. */
+const HOOGTEGRENS =
+  "max-h-[calc(100svh-var(--onderbalk-h,0px)-1.5rem)] overflow-y-auto scroll-pb-32 [@media(max-height:300px)]:max-h-none [@media(max-height:300px)]:overflow-visible";
+
 interface KaartProps {
   view: View;
   analytics: boolean;
@@ -214,104 +228,110 @@ export const CookieBannerKaart = React.forwardRef<HTMLDivElement, KaartProps>(fu
   { view, analytics, marketing, onView, onAnalytics, onMarketing, onAcceptAll, onRejectAll, onSaveCustom },
   ref,
 ) {
-  return (
-    <div
-      ref={ref}
-      data-cookiebanner=""
-      className="pointer-events-none fixed [@media(max-height:300px)]:static inset-x-0 z-[54] flex justify-center p-3 md:justify-end md:p-6"
-      style={{ bottom: "var(--onderbalk-h, 0px)" }}
-    >
-      <section
-        aria-label="Cookievoorkeuren"
-        className="pointer-events-auto w-full max-w-sm md:max-w-xs xl:max-w-sm max-h-[calc(100svh-var(--onderbalk-h,0px)-1.5rem)] md:max-h-[calc(100svh-3rem)] overflow-y-auto scroll-pb-32 [@media(max-height:300px)]:max-h-none [@media(max-height:300px)]:overflow-visible rounded-2xl border border-[#E5E5E5] bg-white shadow-xl"
-      >
-        {view === "simple" ? (
-          <div className="px-4 pt-4 md:px-5 md:pt-5">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-              <p className="text-sm md:text-base font-semibold text-[#1A1A1A]">
-                Wij gebruiken cookies
-              </p>
-              <button
-                type="button"
-                onClick={() => onView("detail")}
-                className="-mx-2 -my-2.5 inline-flex h-11 items-center rounded-xl px-2 text-sm font-medium text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
-              >
-                Aanpassen
-              </button>
-            </div>
-            <p className="mt-1 text-sm leading-relaxed text-[#4A4A4A]">
+  if (view === "simple") {
+    return (
+      <div ref={ref} data-cookiebanner="" className={LAAG} style={{ bottom: "var(--onderbalk-h, 0px)" }}>
+        <section
+          aria-label="Cookievoorkeuren"
+          className={`pointer-events-auto w-full ${HOOGTEGRENS} border-t border-[#E5E5E5] bg-white`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 md:py-3 md:flex md:items-center md:gap-6">
+            <p className="text-sm leading-relaxed text-[#4A4A4A] md:flex-1">
               {/* Twee optionele keuzes, net als in "Aanpassen": "Alles
                   accepteren" zet analytics en partnermeting allebei aan. */}
-              Noodzakelijke cookies zorgen dat de site werkt. Optioneel zijn
-              analytics (Google Analytics) en partnermeting (Awin). Je kunt je
-              keuze altijd wijzigen via{" "}
+              <span className="font-semibold text-[#1A1A1A]">Cookies.</span>{" "}
+              Noodzakelijke cookies zorgen dat de site werkt. Analytics (Google
+              Analytics) en partnermeting (Awin) zijn optioneel; je keuze wijzig
+              je altijd via{" "}
               <a href="/cookies" className="text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200">
                 Cookie-instellingen
               </a>.
             </p>
-
-            <div className={`${KEUZERIJ} pt-3`}>
-              <button type="button" onClick={onAcceptAll} className={KEUZEKNOP}>
-                Alles accepteren
-              </button>
-              <button type="button" onClick={onRejectAll} className={KEUZEKNOP}>
-                Alleen noodzakelijk
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="px-4 pt-4 md:px-5 md:pt-5">
-            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 mb-3">
-              <p className="text-sm md:text-base text-[#1A1A1A] font-semibold">
-                Cookievoorkeuren
-              </p>
+            <div className="mt-2 flex flex-col gap-1 md:mt-0 md:flex-row md:items-center md:gap-4 md:shrink-0">
               <button
                 type="button"
-                onClick={() => onView("simple")}
-                aria-label="Terug naar overzicht"
-                className="-my-2.5 -mr-2.5 inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
+                onClick={() => onView("detail")}
+                className="self-start inline-flex h-11 items-center rounded-xl px-2 -mx-2 text-sm font-medium text-[#1A1A1A] underline underline-offset-2 hover:text-[#4A4A4A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] md:self-auto md:order-first"
               >
-                <X className="w-5 h-5" aria-hidden="true" />
+                Aanpassen
               </button>
-            </div>
-
-            <div className="space-y-3">
-              <ConsentRow
-                id="cookie-necessary"
-                label="Noodzakelijk"
-                description="Sessie, inlogstatus en veiligheid. Kan niet uitgeschakeld worden."
-                checked={true}
-                disabled={true}
-                onChange={() => {}}
-              />
-              <ConsentRow
-                id="cookie-analytics"
-                label="Analytics"
-                description="Paginaweergaven en interacties om de site te verbeteren (Google Analytics 4). Geen persoonlijk profiel."
-                checked={analytics}
-                disabled={false}
-                onChange={onAnalytics}
-              />
-              <ConsentRow
-                id="cookie-marketing"
-                label="Partnermeting"
-                description="Awin, een netwerk voor partnerlinks, mag een script laden op je rapport en je dashboard."
-                checked={marketing}
-                disabled={false}
-                onChange={onMarketing}
-              />
-            </div>
-
-            <div className={`${KEUZERIJ} pt-4`}>
-              <button type="button" onClick={onSaveCustom} className={KEUZEKNOP}>
-                Voorkeuren opslaan
-              </button>
-              <button type="button" onClick={onRejectAll} className={KEUZEKNOP}>
-                Alleen noodzakelijk
-              </button>
+              <div className={KEUZERIJ_BALK}>
+                <button type="button" onClick={onAcceptAll} className={KEUZEKNOP}>
+                  Alles accepteren
+                </button>
+                <button type="button" onClick={onRejectAll} className={KEUZEKNOP}>
+                  Alleen noodzakelijk
+                </button>
+              </div>
             </div>
           </div>
-        )}
+        </section>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={ref}
+      data-cookiebanner=""
+      className={`${LAAG} flex justify-center p-3 md:justify-end md:p-6`}
+      style={{ bottom: "var(--onderbalk-h, 0px)" }}
+    >
+      <section
+        aria-label="Cookievoorkeuren"
+        className={`pointer-events-auto w-full max-w-sm md:max-w-xs xl:max-w-sm md:max-h-[calc(100svh-3rem)] ${HOOGTEGRENS} rounded-2xl border border-[#E5E5E5] bg-white shadow-xl`}
+      >
+        <div className="px-4 pt-4 md:px-5 md:pt-5">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 mb-3">
+            <p className="text-sm md:text-base text-[#1A1A1A] font-semibold">
+              Cookievoorkeuren
+            </p>
+            <button
+              type="button"
+              onClick={() => onView("simple")}
+              aria-label="Terug naar overzicht"
+              className="-my-2.5 -mr-2.5 inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#6E6E6E] hover:text-[#1A1A1A] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A]"
+            >
+              <X className="w-5 h-5" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            <ConsentRow
+              id="cookie-necessary"
+              label="Noodzakelijk"
+              description="Sessie, inlogstatus en veiligheid. Kan niet uitgeschakeld worden."
+              checked={true}
+              disabled={true}
+              onChange={() => {}}
+            />
+            <ConsentRow
+              id="cookie-analytics"
+              label="Analytics"
+              description="Paginaweergaven en interacties om de site te verbeteren (Google Analytics 4). Geen persoonlijk profiel."
+              checked={analytics}
+              disabled={false}
+              onChange={onAnalytics}
+            />
+            <ConsentRow
+              id="cookie-marketing"
+              label="Partnermeting"
+              description="Awin, een netwerk voor partnerlinks, mag een script laden op je rapport en je dashboard."
+              checked={marketing}
+              disabled={false}
+              onChange={onMarketing}
+            />
+          </div>
+
+          <div className={`${KEUZERIJ} pt-4`}>
+            <button type="button" onClick={onSaveCustom} className={KEUZEKNOP}>
+              Voorkeuren opslaan
+            </button>
+            <button type="button" onClick={onRejectAll} className={KEUZEKNOP}>
+              Alleen noodzakelijk
+            </button>
+          </div>
+        </div>
       </section>
     </div>
   );
