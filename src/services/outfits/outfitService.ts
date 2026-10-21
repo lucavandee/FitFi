@@ -3,7 +3,13 @@ import { generateRecommendationsFromAnswers } from "@/engine/recommendationEngin
 import { runEngineV2 } from "@/engine/v2";
 import { stableStringify } from "@/utils/stableJson";
 import { seedFromAnswers } from "./answersSeed";
-import { bereidKandidatenVoorMetDiagnose, naarKandidatenParams, type KandidaatRij } from "./kandidaten";
+import {
+  bereidKandidatenVoorMetDiagnose,
+  naarKandidatenParams,
+  naarStijlParams,
+  voegKandidatenSamen,
+  type KandidaatRij,
+} from "./kandidaten";
 import type { Product } from "@/engine/types";
 import type { Outfit } from "@/engine/types";
 import { KANDIDATEN_TIJDSLIMIET_MS, metTijdslimiet } from '@/utils/tijdslimiet';
@@ -84,7 +90,8 @@ class OutfitService {
     const answers =
       typeof answersOfGender === 'string' ? { gender: answersOfGender } : (answersOfGender ?? {});
     const params = naarKandidatenParams(answers);
-    const cacheKey = stableStringify(params);
+    const stijlParams = naarStijlParams(answers);
+    const cacheKey = stableStringify({ params, stijlParams });
     const cached = this.productsCache.get(cacheKey);
     const cachedAt = this.cacheTimestamps.get(cacheKey) ?? 0;
 
@@ -106,6 +113,28 @@ class OutfitService {
           KANDIDATEN_TIJDSLIMIET_MS,
           () => new CatalogusOnbereikbaar(`geen antwoord binnen ${KANDIDATEN_TIJDSLIMIET_MS / 1000} s`)
         );
+      // Kandidaten per gekozen stijl (get_stijl_kandidaten, stijllabels van de
+      // stijl-agent) tegelijk ophalen. Faalt dat of komt er niets, dan werkt
+      // de uitslag zoals voorheen op get_kandidaten alleen.
+      const stijlVraag: Promise<KandidaatRij[]> = stijlParams
+        ? metTijdslimiet(
+            client.rpc('get_stijl_kandidaten', stijlParams),
+            KANDIDATEN_TIJDSLIMIET_MS,
+            () => new Error('get_stijl_kandidaten: geen antwoord binnen de tijdslimiet')
+          ).then(
+            (r) => {
+              if (r.error) {
+                console.warn('[OutfitService] get_stijl_kandidaten faalde, verder zonder stijlkandidaten:', r.error.message);
+                return [];
+              }
+              return (r.data ?? []) as KandidaatRij[];
+            },
+            (e) => {
+              console.warn('[OutfitService] get_stijl_kandidaten faalde, verder zonder stijlkandidaten:', e);
+              return [];
+            }
+          )
+        : Promise.resolve([]);
       let { data, error } = await vraag();
       if (error && TIJDELIJKE_FOUTCODES.has(String(error.code))) {
         await new Promise((klaar) => setTimeout(klaar, HERKANSING_NA_MS));
@@ -116,7 +145,7 @@ class OutfitService {
         throw new CatalogusOnbereikbaar(error.message || 'rpc get_kandidaten faalde');
       }
 
-      const rijen = (data ?? []) as KandidaatRij[];
+      const rijen = voegKandidatenSamen(await stijlVraag, (data ?? []) as KandidaatRij[]);
 
       if (rijen.length === 0) {
         // Nul rijen is nu dubbelzinnig: filters te strak, of de tabel is

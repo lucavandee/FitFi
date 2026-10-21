@@ -55,11 +55,21 @@ function isSneaker(p: Product): boolean {
   return String(p.shoeType ?? "").toLowerCase() === "sneaker" || SNEAKER_RE.test(p.name ?? "");
 }
 
+/** Categorieen die het beeld van een outfit bepalen. Een accessoire doet dat niet. */
+const BEELDBEPALEND = new Set(["top", "bottom", "dress", "jumpsuit", "outerwear", "footwear"]);
+
 /** De reden waarom dit stuk niet bij de keuze van de bezoeker past, of null. */
 export function productBreuk(p: Product, a: PoortAntwoorden): string | null {
   const stijlen = gekozenStijlen(a);
   const naam = p.name ?? "";
   const cat = categorie(p);
+
+  // Stijllabels van de stijl-agent (keten_stijl_labels). Een beeldbepalend
+  // stuk met labels moet een van de gekozen stijlen hebben.
+  const labels = Array.isArray(p.stijlen) ? (p.stijlen as string[]) : null;
+  if (labels && stijlen.length > 0 && BEELDBEPALEND.has(cat) && !labels.some((s) => stijlen.includes(s))) {
+    return `geen ${stijlen.join(" of ")} volgens de stijl-agent`;
+  }
 
   if (alleenZonderHak(stijlen)) {
     // Een sneaker-ballerina (PUMA Speedcat ballerina's) is een sneaker.
@@ -72,6 +82,34 @@ export function productBreuk(p: Product, a: PoortAntwoorden): string | null {
     if (cat === "footwear" && !isSneaker(p)) return "geen sneaker bij sportief";
   }
   return null;
+}
+
+/** Vanaf zoveel gelabelde stukken in de gekozen stijl vallen de ongelabelde in die categorie weg. */
+export const MIN_GELABELD = 6;
+
+/**
+ * Geef gelabelde stukken voorrang. Heeft een beeldbepalende categorie genoeg
+ * stukken die de stijl-agent bij de gekozen stijl plaatst, dan doen de
+ * ongelabelde stukken in die categorie niet mee: die komen uit de pool zonder
+ * stijl (get_kandidaten) en zijn de reden dat een streetwear-profiel blouses
+ * en pantalons kreeg. Zijn er te weinig, dan blijven ze als terugval.
+ */
+export function voorkeurVoorGelabeld(products: Product[], a: PoortAntwoorden): Product[] {
+  const stijlen = gekozenStijlen(a);
+  if (stijlen.length === 0) return products;
+  const genoeg = new Map<string, number>();
+  for (const p of products) {
+    const cat = categorie(p);
+    const labels = Array.isArray(p.stijlen) ? (p.stijlen as string[]) : null;
+    if (labels && BEELDBEPALEND.has(cat) && labels.some((s) => stijlen.includes(s))) {
+      genoeg.set(cat, (genoeg.get(cat) ?? 0) + 1);
+    }
+  }
+  return products.filter((p) => {
+    const cat = categorie(p);
+    if (!BEELDBEPALEND.has(cat) || Array.isArray(p.stijlen)) return true;
+    return (genoeg.get(cat) ?? 0) < MIN_GELABELD;
+  });
 }
 
 /** Donker volgens de tags, of anders volgens de eerste kleur ("zwart/wit" telt als zwart). */

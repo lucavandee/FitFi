@@ -14,7 +14,7 @@ import { composeOutfits } from './composer';
 import { diversifyOutfits } from './diversify';
 import { applyVisualCoherence } from './scoring/visualCoherence';
 import { getCurrentSeason } from './scoring/season';
-import { outfitBreuken, productBreuk } from './stijlPoort';
+import { outfitBreuken, productBreuk, voorkeurVoorGelabeld } from './stijlPoort';
 import { outfitTitel, outfitUitleg } from './outfitTekst';
 
 const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }> = {
@@ -165,7 +165,10 @@ export function runEngineV2(
   // Stijlpoort, deel 1: wat de bezoeker zelf koos, haalt stukken uit de pool
   // voordat er gecomponeerd wordt (geen pump bij alleen streetwear). Zie
   // stijlPoort.ts voor waarom dit niet op het afgeleide archetype kan.
-  const toegestaan = products.filter((p) => productBreuk(p, answers) === null);
+  const toegestaan = voorkeurVoorGelabeld(
+    products.filter((p) => productBreuk(p, answers) === null),
+    answers
+  );
   const filter = filterAndPrepare(toegestaan, profile);
 
   if (options.debug) {

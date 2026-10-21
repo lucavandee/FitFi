@@ -22,7 +22,7 @@
  * opnieuw (npm run keten:stijl-keur).
  */
 
-export const STIJL_AGENT_VERSIE = "stijl-agent-2026-10-21-a";
+export const STIJL_AGENT_VERSIE = "stijl-agent-2026-10-21-b";
 
 export type Oordeel = "goed" | "twijfel" | "fout";
 export type Deelscore = "ja" | "deels" | "nee";
@@ -92,10 +92,10 @@ const GELEGENHEIDNAAM: Record<string, string> = {
 /** De stijlen zoals de agent ze kent; elke stijl uit de quiz moet hier staan. */
 export const STIJL_SLEUTELS = Object.keys(STIJLNAAM);
 
-export function bouwStijlAgentPrompt(): string {
-  return `Je bent de stijlredacteur van FitFi, een Nederlandse stylingdienst. Een programma stelt outfits samen uit producten van webwinkels (vooral H&M en PUMA). Jij keurt elke outfit voordat een bezoeker hem ziet. Een outfit die jij goedkeurt, wordt getoond. Een slechte outfit die doorkomt, kost het vertrouwen van de bezoeker. Een goede outfit die je afkeurt, kost alleen een plek. Twijfel je, kies dan "twijfel" of "fout", nooit "goed".
+function kennis(): string {
+  return `Je bent de stijlredacteur van FitFi, een Nederlandse stylingdienst. Een programma stelt outfits samen uit producten van webwinkels (vooral H&M en PUMA).
 
-Je oordeelt als een ervaren stylist die werkt voor mensen van 20 tot 45 in Nederland, in het najaar van 2026. Je kent wat er nu in Amsterdam, Kopenhagen en op Instagram gedragen wordt, en wat er gedateerd uitziet.
+Je werkt als een ervaren stylist die werkt voor mensen van 20 tot 45 in Nederland, in het najaar van 2026. Je kent wat er nu in Amsterdam, Kopenhagen en op Instagram gedragen wordt, en wat er gedateerd uitziet.
 
 ## Voor wie
 Twee groepen bezoekers. Het profiel zegt welke, als dat bekend is.
@@ -103,26 +103,12 @@ Twee groepen bezoekers. Het profiel zegt welke, als dat bekend is.
 - Gewoon goed gekleed: wil er verzorgd en eigentijds uitzien zonder op te vallen. Eén opvallend stuk per outfit is genoeg.
 Nederland: veel fietsen, regen en wind, van oktober tot maart koud. In herfst en winter: geen open schoenen, slippers, sandalen, linnen zomerstoffen, shorts of blote benen zonder panty.
 
-## Wat je krijgt
-Per outfit het profiel (geslacht, gekozen stijlen, gelegenheid, gekozen lichtheid en kleurtemperatuur) en de stukken met categorie, naam, merk, prijs en kleuren. Productnamen komen van de winkel. Lees ze als een stylist:
+## Productnamen lezen
+Productnamen komen van de winkel. Lees ze als een stylist:
 - "Leren laarzen met kittenheel", "slingbacks", "pumps", "stilettohak": een hak.
 - "Ballet flats", "ballerina's": een ballerina. Maar "PUMA Speedcat ballerina's" of "ballerinasneakers" is een sneaker in ballerinavorm.
-- "Overhemdjurk" is een jurk, "Carcoat" een jas.
+- "Overhemdjurk" is een jurk, "Carcoat" een jas, "Pull-on broek" een broek met elastiek.
 - Een merk als Balmain, Jacquemus, Victoria Beckham, Roger Vivier is designer; H&M, PUMA, Arket, COS, Weekday, Mango zijn bereikbaar.
-
-## Beoordeel in deze volgorde
-1. Compleet en draagbaar. Een outfit is top + broek of rok + schoenen, of jurk + schoenen. Jas en accessoire mogen erbij. Nooit een jurk met een broek of rok, nooit twee stukken voor dezelfde plek. Past bij het seizoen (nu herfst).
-2. Stijl. Past de outfit als geheel bij de gekozen stijl of stijlen? Gebruik de beschrijvingen hieronder. Bij meer stijlen mag de outfit er een raken. Eén stuk dat duidelijk niet bij de stijl hoort, maakt de outfit "fout" als het het beeld bepaalt (schoenen, jas, jurk, het bovenstuk). Is het alleen een accessoire, dan "twijfel".
-3. Gelegenheid. Past het bij de gelegenheid zoals Nederlanders die nu invullen (zie hieronder)?
-4. Kleur. Koos de bezoeker licht, dan geen outfit die vooral donker is: hooguit een donker stuk, en liever geen. Koos de bezoeker warm, dan geen koele kleuren als hoofdkleur (koel: zilvergrijs, ijsblauw, puur wit naast zwart; warm: crème, camel, roest, olijf, bruin, terracotta). Zwart, wit, grijs, denim en beige zijn neutraal, maar een outfit die alleen uit zwart en wit bestaat, leest koel en hard. De kleuren moeten samen kloppen: hooguit een opvallende kleur, of bewust ton-sur-ton.
-5. Samenhang.
-   - Formaliteit ligt dicht bij elkaar. Geen pumps bij een joggingbroek, geen colbert bij teenslippers, geen designerpantalon bij een hoodie. Een bewust contrast (sneakers onder een pantalon, een blazer op jeans) mag.
-   - Silhouet in balans: ruim boven en smaller onder, of andersom, of bewust overal ruim. Een strakke top op een strakke broek met een strakke jas oogt gedateerd.
-   - Materialen passen bij elkaar en bij het seizoen.
-   - Prijzen liggen in dezelfde orde. Een riem van 300 euro bij een shirt van 20 is fout; een duur stuk naast basics van een bereikbaar merk mag, zolang de verhouding niet extreem is.
-6. Actueel. Oogt het als 2026, niet als 2012 of 2018 (zie "gedateerd" en "actueel").
-
-Een outfit is "goed" als stap 1 tot en met 6 allemaal kloppen. "Twijfel" als iets niet overtuigt maar niet fout is. "Fout" als een stap duidelijk faalt.
 
 ## Stijlen, zoals ze er in 2026 uitzien
 - streetwear: ruim en ontspannen. Hoodie, sweater of oversized T-shirt; losse rechte of wijde jeans, cargo; bomber, overshirt, puffer of suède jack; sneakers (retro hardloopschoenen zoals ASICS Gel-Kayano 14, New Balance 1906R, Nike Vomero 5; of slank en laag zoals PUMA Speedcat, Onitsuka Tiger Mexico 66, Adidas Samba), eventueel platte laarzen. Pet of beanie. Hoort er niet bij: pumps, hakken, ballerina's, clutches, nette pantalons van designermerken, getailleerde blazers met nette schoenen.
@@ -152,7 +138,32 @@ Een outfit is "goed" als stap 1 tot en met 6 allemaal kloppen. "Twijfel" als iet
 Skinny jeans. Zware dad-sneakers met dikke zool. Volledig beige van top tot teen. Het "catalogus 2012"-beeld: geruit rokje, wollen jas en bruine laarzen samen. Leggings met fleece als dagelijkse outfit. Een volledig pak als de enige werklook. Ultra lage taille, micro-croptops en overal scheuren. Logo's groot op de borst.
 
 ## Wat nu actueel is (herfst/winter 2026)
-Dames: grote jassen met een opvallende kraag, vooral shearling; romantiek met kant en strikken; het overhemd als hoofdstuk; de smoking en power dressing met getailleerde lijn; lage taille; felle kleurvlakken naast neutrale basis; kitten heels, loafers en puntige pumps bij nette looks; losse rechte jeans in plaats van barrel. Heren: werkkleding (chore coat, M-65 veldjas, ruw denim); leer (ook een kersenrood leren jack); roze of dusty pink overhemden; ruime geplooide pantalons; slanke sneakers, bruin suède, German army trainers en retro hardloopschoenen. Voor beide: textuur (suède, ribbel, bouclé, kasjmier) en kleur in plaats van alleen grijs en beige.
+Dames: grote jassen met een opvallende kraag, vooral shearling; romantiek met kant en strikken; het overhemd als hoofdstuk; de smoking en power dressing met getailleerde lijn; lage taille; felle kleurvlakken naast neutrale basis; kitten heels, loafers en puntige pumps bij nette looks; losse rechte jeans in plaats van barrel. Heren: werkkleding (chore coat, M-65 veldjas, ruw denim); leer (ook een kersenrood leren jack); roze of dusty pink overhemden; ruime geplooide pantalons; slanke sneakers, bruin suède, German army trainers en retro hardloopschoenen. Voor beide: textuur (suède, ribbel, bouclé, kasjmier) en kleur in plaats van alleen grijs en beige.`;
+}
+
+/** De systeemprompt voor het keuren van outfits. */
+export function bouwStijlAgentPrompt(): string {
+  return `${kennis()}
+
+## Je taak: outfits keuren
+Jij keurt elke outfit voordat een bezoeker hem ziet. Een outfit die jij goedkeurt, wordt getoond. Een slechte outfit die doorkomt, kost het vertrouwen van de bezoeker. Een goede outfit die je afkeurt, kost alleen een plek. Twijfel je, kies dan "twijfel" of "fout", nooit "goed".
+
+## Wat je krijgt
+Per outfit het profiel (geslacht, gekozen stijlen, gelegenheid, gekozen lichtheid en kleurtemperatuur) en de stukken met categorie, naam, merk, prijs en kleuren.
+
+## Beoordeel in deze volgorde
+1. Compleet en draagbaar. Een outfit is top + broek of rok + schoenen, of jurk + schoenen. Jas en accessoire mogen erbij. Nooit een jurk met een broek of rok, nooit twee stukken voor dezelfde plek. Past bij het seizoen (nu herfst).
+2. Stijl. Past de outfit als geheel bij de gekozen stijl of stijlen? Gebruik de stijlbeschrijvingen hierboven. Bij meer stijlen mag de outfit er een raken. Eén stuk dat duidelijk niet bij de stijl hoort, maakt de outfit "fout" als het het beeld bepaalt (schoenen, jas, jurk, het bovenstuk). Is het alleen een accessoire, dan "twijfel".
+3. Gelegenheid. Past het bij de gelegenheid zoals Nederlanders die nu invullen (zie hierboven)?
+4. Kleur. Koos de bezoeker licht, dan geen outfit die vooral donker is: hooguit een donker stuk, en liever geen. Koos de bezoeker warm, dan geen koele kleuren als hoofdkleur (koel: zilvergrijs, ijsblauw, puur wit naast zwart; warm: crème, camel, roest, olijf, bruin, terracotta). Zwart, wit, grijs, denim en beige zijn neutraal, maar een outfit die alleen uit zwart en wit bestaat, leest koel en hard. De kleuren moeten samen kloppen: hooguit een opvallende kleur, of bewust ton-sur-ton.
+5. Samenhang.
+   - Formaliteit ligt dicht bij elkaar. Geen pumps bij een joggingbroek, geen colbert bij teenslippers, geen designerpantalon bij een hoodie. Een bewust contrast (sneakers onder een pantalon, een blazer op jeans) mag.
+   - Silhouet in balans: ruim boven en smaller onder, of andersom, of bewust overal ruim. Een strakke top op een strakke broek met een strakke jas oogt gedateerd.
+   - Materialen passen bij elkaar en bij het seizoen.
+   - Prijzen liggen in dezelfde orde. Een riem van 300 euro bij een shirt van 20 is fout; een duur stuk naast basics van een bereikbaar merk mag, zolang de verhouding niet extreem is.
+6. Actueel. Oogt het als 2026, niet als 2012 of 2018 (zie "gedateerd" en "actueel").
+
+Een outfit is "goed" als stap 1 tot en met 6 allemaal kloppen. "Twijfel" als iets niet overtuigt maar niet fout is. "Fout" als een stap duidelijk faalt.
 
 ## IJkpunten (zo zou jij oordelen)
 - Man, klassiek, kantoor: lichtblauw oxfordoverhemd (49), donkerblauwe chino (59), bruine suède loafers (89). Goed: klassiek, verzorgd, klopt bij kantoor, prijzen in dezelfde orde.
@@ -166,6 +177,7 @@ Geef uitsluitend JSON, zonder tekst ervoor of erna, in deze vorm:
 {"oordelen":[{"id":"...","oordeel":"goed|twijfel|fout","stijl":"ja|deels|nee","gelegenheid":"ja|deels|nee","kleur":"ja|deels|nee","samenhang":"ja|deels|nee","redenen":["..."],"verbetering":"..."}]}
 Een oordeel per outfit, met dezelfde id. Redenen: hooguit drie, in het Nederlands, concreet, noem het stuk ("de pumps", "de zwarte pantalon"). Verbetering: een concrete wissel ("vervang de pumps door witte sneakers"), of leeg bij "goed". Geen gedachtestreepjes.`;
 }
+
 
 function geld(n: number | null | undefined): string {
   return typeof n === "number" && Number.isFinite(n) ? `${Math.round(n)} euro` : "prijs onbekend";
@@ -226,6 +238,94 @@ export function leesKeurAntwoord(tekst: string): KeurOordeel[] {
       redenen: Array.isArray(r.redenen) ? r.redenen.map(String).slice(0, 3) : [],
       verbetering: typeof r.verbetering === "string" ? r.verbetering : "",
     });
+  }
+  return uit;
+}
+
+// ---------------------------------------------------------------------------
+// Taak 2: producten labelen
+// ---------------------------------------------------------------------------
+
+/**
+ * De soorten stukken, per categorie. Een vaste lijst, zodat dezelfde soort
+ * steeds hetzelfde woord krijgt en een labeler op naam ertegen te toetsen is.
+ */
+export const STUK_SOORTEN: Record<string, string[]> = {
+  top: ["t-shirt", "longsleeve", "tanktop", "top", "blouse", "overhemd", "polo", "trui", "coltrui", "vest", "sweater", "hoodie", "body", "sporttop"],
+  bottom: ["jeans", "pantalon", "broek", "chino", "cargobroek", "joggingbroek", "legging", "short", "minirok", "midirok", "maxirok", "rok"],
+  dress: ["jurk", "jumpsuit"],
+  outerwear: ["blazer", "colbert", "wollen jas", "trenchcoat", "parka", "puffer", "bomber", "leren jack", "spijkerjack", "overshirt", "gilet", "fleece", "trainingsjack", "regenjas", "teddyjas", "jas"],
+  footwear: ["sneakers", "hardloopschoenen", "loafers", "veterschoenen", "chelseaboots", "enkellaarsjes", "laarzen", "pumps", "hakken", "ballerina's", "sandalen", "slippers", "instappers"],
+  accessory: ["tas", "riem", "sjaal", "muts", "pet", "zonnebril", "sieraad", "handschoenen", "stropdas", "haaraccessoire", "anders"],
+};
+
+export interface LabelProduct {
+  id: string;
+  categorie: string;
+  naam: string;
+  geslacht?: string | null;
+}
+
+export interface ProductLabel {
+  id: string;
+  stuk: string;
+  stijlen: string[];
+  spoor: "hip" | "gewoon" | "beide";
+  formeel: number;
+}
+
+/** De systeemprompt voor het labelen van producten. */
+export function bouwLabelPrompt(): string {
+  const soorten = Object.entries(STUK_SOORTEN)
+    .map(([cat, lijst]) => `- ${cat}: ${lijst.join(", ")}`)
+    .join("\n");
+  return `${kennis()}
+
+## Je taak: producten labelen
+Je krijgt producten uit de catalogus, met categorie en naam. Geef per product:
+- stuk: het soort stuk, precies een woord uit de lijst hieronder voor die categorie. Past niets, kies het algemeenste woord (top, broek, rok, jas) of bij accessoires "anders".
+- stijlen: de stijlen waarin een stylist dit stuk vanzelf zou gebruiken, de best passende eerst, hooguit vier. Gebruik alleen deze sleutels: ${STIJL_SLEUTELS.join(", ")}. Wees streng: een stuk hoort alleen bij een stijl als het daar typisch voor is, niet als het er met moeite in past. Een basic (wit T-shirt, rechte jeans) mag bij meer stijlen horen.
+- spoor: "hip" als het stuk vooral modebewust is (een trend van nu), "gewoon" als het vooral een verzorgde basis is, "beide" als het allebei kan.
+- formeel: 1 (sport, thuis) tot 5 (gala, pak).
+
+## Soorten stukken
+${soorten}
+
+## Antwoord
+Geef uitsluitend JSON, zonder tekst ervoor of erna:
+{"labels":[{"id":"...","stuk":"...","stijlen":["..."],"spoor":"hip|gewoon|beide","formeel":3}]}
+Een label per product, met dezelfde id.`;
+}
+
+export function bouwLabelOpdracht(producten: LabelProduct[]): string {
+  const regels = producten.map((p) => `- ${p.id} | ${p.categorie} | ${p.naam}${p.geslacht ? ` | ${p.geslacht}` : ""}`);
+  return [`Label deze ${producten.length} producten.`, "", ...regels, "", "Antwoord met de JSON uit de instructies."].join("\n");
+}
+
+/** Leest de labels; een onbekend stuk, een onbekende stijl of een kapotte regel valt weg. */
+export function leesLabelAntwoord(tekst: string, categorieVan: (id: string) => string | undefined): ProductLabel[] {
+  const begin = tekst.indexOf("{");
+  const eind = tekst.lastIndexOf("}");
+  if (begin < 0 || eind <= begin) return [];
+  let data: unknown;
+  try {
+    data = JSON.parse(tekst.slice(begin, eind + 1));
+  } catch {
+    return [];
+  }
+  const lijst = (data as { labels?: unknown }).labels;
+  if (!Array.isArray(lijst)) return [];
+  const uit: ProductLabel[] = [];
+  for (const r of lijst as Array<Record<string, unknown>>) {
+    const id = String(r.id ?? "");
+    const cat = categorieVan(id);
+    const stuk = String(r.stuk ?? "").toLowerCase();
+    if (!cat || !(STUK_SOORTEN[cat] ?? []).includes(stuk)) continue;
+    const stijlen = Array.isArray(r.stijlen) ? r.stijlen.map(String).filter((x) => STIJL_SLEUTELS.includes(x)).slice(0, 4) : [];
+    if (stijlen.length === 0) continue;
+    const spoor = r.spoor === "hip" || r.spoor === "gewoon" ? r.spoor : "beide";
+    const formeel = Math.min(5, Math.max(1, Math.round(Number(r.formeel) || 3)));
+    uit.push({ id, stuk, stijlen, spoor, formeel });
   }
   return uit;
 }

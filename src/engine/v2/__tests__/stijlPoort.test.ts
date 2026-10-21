@@ -20,7 +20,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { runEngineV2 } from "../engine";
-import { outfitBreuken, productBreuk } from "../stijlPoort";
+import { MIN_GELABELD, outfitBreuken, productBreuk, voorkeurVoorGelabeld } from "../stijlPoort";
 import { seedFromAnswers } from "@/services/outfits/answersSeed";
 import { bereidKandidatenVoor, type KandidaatRij } from "@/services/outfits/kandidaten";
 import type { Product } from "@/engine/types";
@@ -93,6 +93,49 @@ describe("productBreuk", () => {
 
   it("raakt geen kleding: een top met 'heel' in de naam is geen schoen", () => {
     expect(productBreuk(stuk("top", "Top met heel korte mouw"), { stylePreferences: ["streetwear"] })).toBeNull();
+  });
+});
+
+describe("productBreuk met stijllabels van de stijl-agent", () => {
+  const street = { stylePreferences: ["streetwear"] };
+
+  it("houdt een gelabeld beeldbepalend stuk weg dat niet bij de gekozen stijl hoort", () => {
+    const blouse = stuk("top", "Caroline Tensen Carberry Blouse Wit", { stijlen: ["classic", "smart-casual"] });
+    expect(productBreuk(blouse, street)).not.toBeNull();
+  });
+
+  it("laat een gelabeld stuk met de gekozen stijl door", () => {
+    const hoodie = stuk("top", "H & M - Hoodie - Grijs", { stijlen: ["streetwear", "casual"] });
+    expect(productBreuk(hoodie, street)).toBeNull();
+  });
+
+  it("laat accessoires en ongelabelde stukken met rust", () => {
+    expect(productBreuk(stuk("accessory", "H & M - Riem - Zwart", { stijlen: ["classic"] }), street)).toBeNull();
+    expect(productBreuk(stuk("top", "H & M - Blouse - Wit"), street)).toBeNull();
+  });
+});
+
+describe("voorkeurVoorGelabeld", () => {
+  const street = { stylePreferences: ["streetwear"] };
+  const gelabeld = (i: number) => stuk("top", `hoodie ${i}`, { stijlen: ["streetwear"] });
+  const los = stuk("top", "H & M - Blouse - Wit");
+  const schoen = stuk("footwear", "H & M - Sneakers - Wit");
+
+  it("laat ongelabelde stukken vallen in een categorie met genoeg gelabelde", () => {
+    const pool = [...Array.from({ length: MIN_GELABELD }, (_, i) => gelabeld(i)), los, schoen];
+    const uit = voorkeurVoorGelabeld(pool, street);
+    expect(uit).not.toContain(los);
+    expect(uit).toContain(schoen);
+  });
+
+  it("houdt ongelabelde stukken als terugval als er te weinig gelabelde zijn", () => {
+    const pool = [gelabeld(1), los];
+    expect(voorkeurVoorGelabeld(pool, street)).toContain(los);
+  });
+
+  it("doet niets zonder gekozen stijl", () => {
+    const pool = [...Array.from({ length: MIN_GELABELD }, (_, i) => gelabeld(i)), los];
+    expect(voorkeurVoorGelabeld(pool, {})).toHaveLength(pool.length);
   });
 });
 

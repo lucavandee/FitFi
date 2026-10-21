@@ -114,6 +114,33 @@ describe("outfitService.getProducts", () => {
     expect(producten.map((p) => p.id).sort()).toEqual(["p1", "p2"]);
   });
 
+  it("vraagt bij een gekozen stijl ook get_stijl_kandidaten en zet die kandidaten vooraan", async () => {
+    const stijlRij = { ...rij("s1", "top", 40), attrs: { category: "top", stijlen: ["streetwear"] } };
+    rpc.mockImplementation((naam: string) =>
+      Promise.resolve(
+        naam === "get_stijl_kandidaten"
+          ? { data: [stijlRij], error: null }
+          : { data: [rij("p1", "top", 60), rij("s1", "top", 40)], error: null }
+      )
+    );
+    const producten = await outfitService.getProducts({ ...answers, stylePreferences: ["streetwear"] });
+    expect(rpc.mock.calls.map((c) => c[0]).sort()).toEqual(["get_kandidaten", "get_stijl_kandidaten"]);
+    expect(producten.map((p) => p.id)).toEqual(["s1", "p1"]);
+    expect(producten[0].stijlen).toEqual(["streetwear"]);
+  });
+
+  it("werkt door zonder stijlkandidaten als get_stijl_kandidaten faalt", async () => {
+    rpc.mockImplementation((naam: string) =>
+      Promise.resolve(
+        naam === "get_stijl_kandidaten"
+          ? { data: null, error: { message: "function get_stijl_kandidaten does not exist" } }
+          : { data: [rij("p1", "top", 60)], error: null }
+      )
+    );
+    const producten = await outfitService.getProducts({ ...answers, stylePreferences: ["streetwear"] });
+    expect(producten.map((p) => p.id)).toEqual(["p1"]);
+  });
+
   it("leest een string als gender, voor de kalibratie-aanroepers", async () => {
     rpc.mockResolvedValue({ data: [rij("p1", "top", 60)], error: null });
     await outfitService.getProducts("female");

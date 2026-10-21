@@ -1,6 +1,7 @@
 import { reclassifyProducts } from "@/engine/productClassifier";
 import { filterVeiligeProducten } from "@/engine/productSafety";
 import type { Product } from "@/engine/types";
+import { seedFromAnswers } from "./answersSeed";
 
 export type KandidatenGender = "male" | "female" | "unisex";
 
@@ -238,6 +239,49 @@ export function mapKandidaatProduct(dbProduct: Record<string, any>): Product {
   };
 }
 
+/** Parameters van get_stijl_kandidaten (migratie 20261021120000). */
+export interface StijlKandidatenParams {
+  p_gender: KandidatenGender;
+  p_stijlen: string[];
+  p_budget_min: number;
+  p_budget_max: number;
+  p_per_category: number;
+  p_zaad: number;
+}
+
+/**
+ * De vraag naar kandidaten per gekozen stijl, of null als er geen stijl
+ * gekozen is. Het zaad komt uit de antwoorden, zodat hetzelfde profiel
+ * dezelfde lijst krijgt.
+ */
+export function naarStijlParams(answers: Record<string, any>): StijlKandidatenParams | null {
+  const a = answers ?? {};
+  const ruw = Array.isArray(a.stylePreferences) ? a.stylePreferences : typeof a.stylePreferences === "string" ? [a.stylePreferences] : [];
+  const stijlen = ruw.map((x: unknown) => String(x).trim().toLowerCase()).filter(Boolean);
+  if (stijlen.length === 0) return null;
+  const budget = naarBudget(a);
+  return {
+    p_gender: naarGender(a.gender),
+    p_stijlen: stijlen,
+    p_budget_min: budget.min,
+    p_budget_max: budget.max,
+    p_per_category: 30,
+    p_zaad: seedFromAnswers(a) % 2147483647,
+  };
+}
+
+/** Stijlkandidaten eerst, dan de gewone; een product komt een keer voor. */
+export function voegKandidatenSamen(stijlRijen: KandidaatRij[], rijen: KandidaatRij[]): KandidaatRij[] {
+  const gezien = new Set<string>();
+  const uit: KandidaatRij[] = [];
+  for (const r of [...stijlRijen, ...rijen]) {
+    if (gezien.has(r.product_id)) continue;
+    gezien.add(r.product_id);
+    uit.push(r);
+  }
+  return uit;
+}
+
 /** Rijke uitkomst van de poolopbouw, voor wie de afgevallen aantallen nodig heeft. */
 export interface KandidatenPoolMetDiagnose {
   pool: Product[];
@@ -265,6 +309,8 @@ function bouwKandidatenPool(rijen: KandidaatRij[]): KandidatenPoolMetDiagnose {
     category: rij.category,
     lightness: rij.attrs?.lightness ?? undefined,
     shoeType: rij.attrs?.shoe_type ?? undefined,
+    // Alleen kandidaten uit get_stijl_kandidaten hebben stijllabels.
+    stijlen: Array.isArray(rij.attrs?.stijlen) ? (rij.attrs.stijlen as string[]) : undefined,
   }));
   const { classified, rejected } = reclassifyProducts(ruw);
   const { veilig, geweigerd } = filterVeiligeProducten(classified);

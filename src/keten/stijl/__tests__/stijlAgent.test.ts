@@ -47,3 +47,33 @@ describe("stijl-agent", () => {
     expect(leesKeurAntwoord("geen json")).toEqual([]);
   });
 });
+
+import { STUK_SOORTEN, bouwLabelOpdracht, bouwLabelPrompt, leesLabelAntwoord } from "../stijlAgent";
+
+describe("stijl-agent, labelen", () => {
+  it("noemt de soorten per categorie en de stijlsleutels, zonder gedachtestreepjes", () => {
+    const p = bouwLabelPrompt();
+    expect(p).not.toMatch(/[–—]/);
+    expect(p).toContain("## Je taak: producten labelen");
+    expect(p).toContain(`- footwear: ${STUK_SOORTEN.footwear.join(", ")}`);
+    expect(p).toContain("minimalist, classic, business, streetwear");
+  });
+
+  it("zet de producten per regel in de opdracht", () => {
+    expect(bouwLabelOpdracht([{ id: "p1", categorie: "top", naam: "H & M - Hoodie - Zwart", geslacht: "male" }])).toContain(
+      "- p1 | top | H & M - Hoodie - Zwart | male"
+    );
+  });
+
+  it("laat een stuk buiten de lijst van zijn categorie en onbekende stijlen vallen", () => {
+    const cat = (id: string) => ({ p1: "top", p2: "footwear", p3: "top" } as Record<string, string>)[id];
+    const tekst = JSON.stringify({
+      labels: [
+        { id: "p1", stuk: "Hoodie", stijlen: ["streetwear", "casual", "punk"], spoor: "hip", formeel: 1 },
+        { id: "p2", stuk: "hoodie", stijlen: ["casual"], spoor: "gewoon", formeel: 2 },
+        { id: "p3", stuk: "trui", stijlen: ["punk"], spoor: "gewoon", formeel: 2 },
+      ],
+    });
+    expect(leesLabelAntwoord(tekst, cat)).toEqual([{ id: "p1", stuk: "hoodie", stijlen: ["streetwear", "casual"], spoor: "hip", formeel: 1 }]);
+  });
+});
