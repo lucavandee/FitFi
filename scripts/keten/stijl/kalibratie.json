@@ -1,0 +1,1447 @@
+{
+ "versie": "kalibratie-2026-10-21",
+ "toelichting": "verwacht = het oordeel dat de stijl-agent moet geven; null = geen vast antwoord, alleen ter informatie",
+ "outfits": [
+  {
+   "id": "luc-oud-1",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Shirt VICTORIA VICTORIA BECKHAM Woman color White",
+     "merk": "Victoria Victoria Beckham",
+     "prijs": 357.5,
+     "kleuren": [
+      "white"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Pants ELISABETTA FRANCHI Woman color Black",
+     "merk": "Elisabetta Franchi",
+     "prijs": 320,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Leren laarzen met kittenheel - Zwart",
+     "merk": "H&M",
+     "prijs": 179,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-oud-2",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Top JACQUEMUS Woman color White",
+     "merk": "Jacquemus",
+     "prijs": 367.5,
+     "kleuren": [
+      "white"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Pants PEUTEREY Woman color White",
+     "merk": "Peuterey",
+     "prijs": 132.3,
+     "kleuren": [
+      "white"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "Ballet Flat BY FAR Woman color Black",
+     "merk": "By Far",
+     "prijs": 330,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Leren jack - Zwart",
+     "merk": "H&M",
+     "prijs": 379,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "accessory",
+     "naam": "Mini Bag MCQUEEN Woman color Black",
+     "merk": "Mcqueen",
+     "prijs": 345,
+     "kleuren": [
+      "black"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-oud-3",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "work"
+   },
+   "stukken": [
+    {
+     "categorie": "dress",
+     "naam": "Dress MEIMEIJ Woman color White",
+     "merk": "Meimeij",
+     "prijs": 123.9,
+     "kleuren": [
+      "white"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "Pump BOSS Woman color Burgundy",
+     "merk": "Boss",
+     "prijs": 105,
+     "kleuren": [
+      "burgundy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-oud-4",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Top PINKO Woman color Black",
+     "merk": "Pinko",
+     "prijs": 146.25,
+     "kleuren": [
+      "black",
+      "pink"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Pants INCOTEX Woman color Black",
+     "merk": "Incotex",
+     "prijs": 361,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "Ballet Flat RENE CAOVILLA Woman color Black",
+     "merk": "Rene Caovilla",
+     "prijs": 437.39,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Leren jack - Zwart",
+     "merk": "H & M",
+     "prijs": 399,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "accessory",
+     "naam": "Clutch THEMOIRÈ Woman color Black",
+     "merk": "Themoirè",
+     "prijs": 331.5,
+     "kleuren": [
+      "black"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-oud-5",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Top ELISABETTA FRANCHI Woman color Black",
+     "merk": "Elisabetta Franchi",
+     "prijs": 180,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Skirt TWINSET Woman color Yellow Cream",
+     "merk": "Twinset",
+     "prijs": 120,
+     "kleuren": [
+      "yellow cream",
+      "cream",
+      "yellow"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Leren laarsjes met hak - Zwart",
+     "merk": "H & M",
+     "prijs": 99,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-oud-6",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Top BALMAIN Woman color White",
+     "merk": "Balmain",
+     "prijs": 496,
+     "kleuren": [
+      "white"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Skirt FABIANA FILIPPI Woman color White",
+     "merk": "Fabiana Filippi",
+     "prijs": 486,
+     "kleuren": [
+      "white"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "Boots SEE BY CHLOÉ Woman color Black",
+     "merk": "See By Chloé",
+     "prijs": 311.5,
+     "kleuren": [
+      "black"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-oud-7",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Shirt ALBERTO BIANI Woman color Black",
+     "merk": "Alberto Biani",
+     "prijs": 409.51,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Pants MM6 MAISON MARGIELA Woman color Grey",
+     "merk": "Mm6 Maison Margiela",
+     "prijs": 434,
+     "kleuren": [
+      "grey"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "Ballet Flat ROGER VIVIER Woman color Black",
+     "merk": "Roger Vivier",
+     "prijs": 375,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Suède jack - Beige",
+     "merk": "H&M",
+     "prijs": 449,
+     "kleuren": [
+      "beige"
+     ]
+    },
+    {
+     "categorie": "accessory",
+     "naam": "Mini Bag COCCINELLE Woman color Grey",
+     "merk": "Coccinelle",
+     "prijs": 379,
+     "kleuren": [
+      "grey"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-oud-8",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Shirt TOTEME Woman color Black",
+     "merk": "Toteme",
+     "prijs": 300,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Pants ALESSANDRA RICH Woman color White",
+     "merk": "Alessandra Rich",
+     "prijs": 448.5,
+     "kleuren": [
+      "white"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "Pump TWINSET Woman color Black",
+     "merk": "Twinset",
+     "prijs": 190,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Leren jack - Bruin",
+     "merk": "H&M",
+     "prijs": 449,
+     "kleuren": [
+      "bruin"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-oud-9",
+   "verwacht": "fout",
+   "bron": "Lucs uitslag van 16 okt 2026 (engine voor PR 141-146)",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Shirt ALEXANDER WANG Woman color White",
+     "merk": "Alexander Wang",
+     "prijs": 216,
+     "kleuren": [
+      "white"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Pants ALBERTA FERRETTI Woman color Black",
+     "merk": "Alberta Ferretti",
+     "prijs": 357.5,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "Boots TWINSET Woman color Black",
+     "merk": "Twinset",
+     "prijs": 195,
+     "kleuren": [
+      "black"
+     ]
+    },
+    {
+     "categorie": "accessory",
+     "naam": "Belt MCQUEEN Woman color Black",
+     "merk": "Mcqueen",
+     "prijs": 318.51,
+     "kleuren": [
+      "black"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "goed-1",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: ruim, sneakers, streetwear",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Hoodie - Lichtgrijs gemêleerd",
+     "prijs": 24.99,
+     "kleuren": [
+      "lichtgrijs"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Cargobroek - Beige",
+     "prijs": 34.99,
+     "kleuren": [
+      "beige"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Palermo sneakers - Wit/Groen",
+     "prijs": 100,
+     "kleuren": [
+      "wit/groen"
+     ],
+     "merk": "PUMA"
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Bomberjack - Kakigroen",
+     "prijs": 49.99,
+     "kleuren": [
+      "kakigroen"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "goed-2",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: streetwear met iets extra voor een date",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "gelegenheid": "date"
+   },
+   "stukken": [
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Korte bomber van imitatieleer - Bruin",
+     "prijs": 59.99,
+     "kleuren": [
+      "bruin"
+     ]
+    },
+    {
+     "categorie": "top",
+     "naam": "H & M - Topje van geribd tricot - Wit",
+     "prijs": 12.99,
+     "kleuren": [
+      "wit"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Straight High Jeans - Donkerblauw",
+     "prijs": 34.99,
+     "kleuren": [
+      "donkerblauw"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Suede Classic sneakers - Bruin",
+     "prijs": 85,
+     "kleuren": [
+      "bruin"
+     ],
+     "merk": "PUMA"
+    }
+   ]
+  },
+  {
+   "id": "goed-3",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: klassieke streetwear heren",
+   "profiel": {
+    "geslacht": "male",
+    "stijlen": [
+     "streetwear"
+    ],
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Hoodie in loose fit - Zwart",
+     "prijs": 29.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Cargobroek in relaxed fit - Grijs",
+     "prijs": 39.99,
+     "kleuren": [
+      "grijs"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Suede XL sneakers - Zwart/Wit",
+     "prijs": 90,
+     "kleuren": [
+      "zwart/wit"
+     ],
+     "merk": "PUMA"
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Puffer jacket - Zwart",
+     "prijs": 79.99,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "goed-4",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: pak voor een bruiloft",
+   "profiel": {
+    "geslacht": "male",
+    "stijlen": [
+     "classic"
+    ],
+    "gelegenheid": "formal"
+   },
+   "stukken": [
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Colbert in slim fit - Donkerblauw",
+     "prijs": 99,
+     "kleuren": [
+      "donkerblauw"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Pantalon in slim fit - Donkerblauw",
+     "prijs": 49.99,
+     "kleuren": [
+      "donkerblauw"
+     ]
+    },
+    {
+     "categorie": "top",
+     "naam": "H & M - Overhemd van popeline - Wit",
+     "prijs": 29.99,
+     "kleuren": [
+      "wit"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Leren derby's - Bruin",
+     "prijs": 79.99,
+     "kleuren": [
+      "bruin"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "goed-5",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: rustig en verzorgd kantoor",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "minimalist"
+    ],
+    "gelegenheid": "work"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Fijngebreide coltrui - Crème",
+     "prijs": 34.99,
+     "kleuren": [
+      "crème"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Pantalon met wijde pijpen - Zwart",
+     "prijs": 39.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Leren loafers - Zwart",
+     "prijs": 59.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Wollen jas - Camel",
+     "prijs": 129,
+     "kleuren": [
+      "camel"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "goed-6",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: gewoon goed gekleed",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "casual"
+    ],
+    "gelegenheid": "casual",
+    "spoor": "gewoon"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Kabelgebreide trui - Lichtbeige",
+     "prijs": 39.99,
+     "kleuren": [
+      "lichtbeige"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Straight Jeans - Blauw",
+     "prijs": 34.99,
+     "kleuren": [
+      "blauw"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Club 5v5 sneakers - Wit",
+     "prijs": 70,
+     "kleuren": [
+      "wit"
+     ],
+     "merk": "PUMA"
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Trenchcoat - Beige",
+     "prijs": 79.99,
+     "kleuren": [
+      "beige"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "goed-7",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: smart casual kantoor",
+   "profiel": {
+    "geslacht": "male",
+    "stijlen": [
+     "smart-casual"
+    ],
+    "gelegenheid": "work"
+   },
+   "stukken": [
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Overshirt van wolmix - Bruin",
+     "prijs": 59.99,
+     "kleuren": [
+      "bruin"
+     ]
+    },
+    {
+     "categorie": "top",
+     "naam": "H & M - Fijngebreide trui - Crème",
+     "prijs": 34.99,
+     "kleuren": [
+      "crème"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Chino in regular fit - Beige",
+     "prijs": 34.99,
+     "kleuren": [
+      "beige"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Suède chelseaboots - Donkerbruin",
+     "prijs": 79.99,
+     "kleuren": [
+      "donkerbruin"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "goed-8",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: romantisch met kant en satijn",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "romantic"
+    ],
+    "gelegenheid": "date"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Blouse met kanten kraag - Roomwit",
+     "prijs": 39.99,
+     "kleuren": [
+      "roomwit"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Midirok van satijn - Bordeauxrood",
+     "prijs": 34.99,
+     "kleuren": [
+      "bordeauxrood"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Leren Mary Janes - Zwart",
+     "prijs": 39.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Lange wollen jas - Zwart",
+     "prijs": 119,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "goed-9",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: sportief buiten de gym",
+   "profiel": {
+    "geslacht": "male",
+    "stijlen": [
+     "athletic"
+    ],
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "outerwear",
+     "naam": "PUMA T7 trainingsjack - Navy",
+     "prijs": 80,
+     "kleuren": [
+      "navy"
+     ],
+     "merk": "PUMA"
+    },
+    {
+     "categorie": "top",
+     "naam": "PUMA Essentials T-shirt - Wit",
+     "prijs": 25,
+     "kleuren": [
+      "wit"
+     ],
+     "merk": "PUMA"
+    },
+    {
+     "categorie": "bottom",
+     "naam": "PUMA Joggingbroek - Grijs gemêleerd",
+     "prijs": 60,
+     "kleuren": [
+      "grijs"
+     ],
+     "merk": "PUMA"
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Velocity Nitro hardloopschoenen - Zwart",
+     "prijs": 130,
+     "kleuren": [
+      "zwart"
+     ],
+     "merk": "PUMA"
+    }
+   ]
+  },
+  {
+   "id": "goed-10",
+   "verwacht": "goed",
+   "bron": "opgesteld 21 okt 2026: stoer om uit te gaan",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "edgy"
+    ],
+    "gelegenheid": "party"
+   },
+   "stukken": [
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Bikerjack van imitatieleer - Zwart",
+     "prijs": 59.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "top",
+     "naam": "H & M - Topje met kant - Zwart",
+     "prijs": 17.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Broek van imitatieleer - Zwart",
+     "prijs": 39.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Leren boots met grove zool - Zwart",
+     "prijs": 69.99,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fout-1",
+   "verwacht": "fout",
+   "bron": "opgesteld 21 okt 2026: zomer in oktober",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "casual"
+    ],
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Linnen blouse - Wit",
+     "prijs": 24.99,
+     "kleuren": [
+      "wit"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Linnen short - Beige",
+     "prijs": 19.99,
+     "kleuren": [
+      "beige"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Teenslippers - Zwart",
+     "prijs": 9.99,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fout-2",
+   "verwacht": "fout",
+   "bron": "opgesteld 21 okt 2026: nette schoen bij sportief",
+   "profiel": {
+    "geslacht": "male",
+    "stijlen": [
+     "athletic"
+    ],
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "PUMA Hoodie - Zwart",
+     "prijs": 55,
+     "kleuren": [
+      "zwart"
+     ],
+     "merk": "PUMA"
+    },
+    {
+     "categorie": "bottom",
+     "naam": "PUMA Joggingbroek - Zwart",
+     "prijs": 50,
+     "kleuren": [
+      "zwart"
+     ],
+     "merk": "PUMA"
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Leren derby's - Zwart",
+     "prijs": 79.99,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fout-3",
+   "verwacht": "fout",
+   "bron": "opgesteld 21 okt 2026: print en glitter: niet minimalistisch en niet voor kantoor",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "minimalist"
+    ],
+    "gelegenheid": "work"
+   },
+   "stukken": [
+    {
+     "categorie": "dress",
+     "naam": "H & M - Jurk met luipaardprint - Bruin",
+     "prijs": 39.99,
+     "kleuren": [
+      "bruin"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Pumps met glitters - Goudkleurig",
+     "prijs": 39.99,
+     "kleuren": [
+      "goudkleurig"
+     ]
+    },
+    {
+     "categorie": "accessory",
+     "naam": "H & M - Clutch met pailletten - Zilverkleurig",
+     "prijs": 24.99,
+     "kleuren": [
+      "zilverkleurig"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fout-4",
+   "verwacht": "fout",
+   "bron": "opgesteld 21 okt 2026: joggingbroek en badslippers bij formeel",
+   "profiel": {
+    "geslacht": "male",
+    "stijlen": [
+     "classic"
+    ],
+    "gelegenheid": "formal"
+   },
+   "stukken": [
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Colbert in slim fit - Donkerblauw",
+     "prijs": 99,
+     "kleuren": [
+      "donkerblauw"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Joggingbroek - Grijs",
+     "prijs": 24.99,
+     "kleuren": [
+      "grijs"
+     ]
+    },
+    {
+     "categorie": "top",
+     "naam": "H & M - Overhemd van popeline - Wit",
+     "prijs": 29.99,
+     "kleuren": [
+      "wit"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Badslippers - Zwart",
+     "prijs": 12.99,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fout-5",
+   "verwacht": "fout",
+   "bron": "opgesteld 21 okt 2026: alles zwart terwijl licht gekozen is",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "gelegenheid": "casual",
+    "lichtheid": "licht"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Hoodie - Zwart",
+     "prijs": 24.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Wide Jeans - Zwart",
+     "prijs": 34.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Leren boots - Zwart",
+     "prijs": 69.99,
+     "kleuren": [
+      "zwart"
+     ]
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Puffer jacket - Zwart",
+     "prijs": 79.99,
+     "kleuren": [
+      "zwart"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fout-6",
+   "verwacht": "fout",
+   "bron": "opgesteld 21 okt 2026: jurk met een broek, twee stukken voor dezelfde plek",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "casual"
+    ],
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "dress",
+     "naam": "H & M - Tricot jurk - Blauw",
+     "prijs": 29.99,
+     "kleuren": [
+      "blauw"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Straight Jeans - Blauw",
+     "prijs": 34.99,
+     "kleuren": [
+      "blauw"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Club 5v5 sneakers - Wit",
+     "prijs": 70,
+     "kleuren": [
+      "wit"
+     ],
+     "merk": "PUMA"
+    }
+   ]
+  },
+  {
+   "id": "fout-7",
+   "verwacht": "fout",
+   "bron": "opgesteld 21 okt 2026: prijzen die niet bij elkaar passen",
+   "profiel": {
+    "geslacht": "male",
+    "stijlen": [
+     "smart-casual"
+    ],
+    "gelegenheid": "work"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - T-shirt in regular fit - Wit",
+     "prijs": 9.99,
+     "kleuren": [
+      "wit"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Chino INCOTEX Man color Beige",
+     "prijs": 380,
+     "kleuren": [
+      "beige"
+     ],
+     "merk": "Incotex"
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Sneakers - Wit",
+     "prijs": 29.99,
+     "kleuren": [
+      "wit"
+     ]
+    },
+    {
+     "categorie": "accessory",
+     "naam": "Riem GUCCI Man color Black",
+     "prijs": 450,
+     "kleuren": [
+      "zwart"
+     ],
+     "merk": "Gucci"
+    }
+   ]
+  },
+  {
+   "id": "fout-8",
+   "verwacht": "fout",
+   "bron": "opgesteld 21 okt 2026: gedateerd: skinny, dad-sneakers, fleece, groot logo",
+   "profiel": {
+    "geslacht": "male",
+    "stijlen": [
+     "casual"
+    ],
+    "gelegenheid": "casual",
+    "spoor": "hip"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - T-shirt met groot logo - Wit",
+     "prijs": 14.99,
+     "kleuren": [
+      "wit"
+     ]
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Skinny Jeans - Lichtblauw",
+     "prijs": 29.99,
+     "kleuren": [
+      "lichtblauw"
+     ]
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Chunky sneakers met dikke zool - Wit/Grijs",
+     "prijs": 49.99,
+     "kleuren": [
+      "wit/grijs"
+     ]
+    },
+    {
+     "categorie": "outerwear",
+     "naam": "H & M - Fleecevest - Grijs",
+     "prijs": 24.99,
+     "kleuren": [
+      "grijs"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "luc-nu-1",
+   "verwacht": null,
+   "bron": "live uitslag 16 okt na PR 146: Ivoorwitte jurk met sneakers",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "date"
+   },
+   "stukken": [
+    {
+     "categorie": "dress",
+     "naam": "H & M - Popeline jurk met flared rok - Ivoorwit",
+     "prijs": 19.99
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Court Classic Vulcanised Formstrip uniseks sneakers, Zwart/Wit, Maat 40",
+     "prijs": 59.95
+    }
+   ]
+  },
+  {
+   "id": "luc-nu-2",
+   "verwacht": null,
+   "bron": "live uitslag 16 okt na PR 146: Witte jurk met sneakers",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "work"
+   },
+   "stukken": [
+    {
+     "categorie": "dress",
+     "naam": "H & M - Maxi-jurk - Wit",
+     "prijs": 59.99
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Club II Suede unisex sneakers, Zwart/Wit/Goud, Maat 36",
+     "prijs": 59.95
+    }
+   ]
+  },
+  {
+   "id": "luc-nu-3",
+   "verwacht": null,
+   "bron": "live uitslag 16 okt na PR 146: Blouse, broek en sneakers",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "Caroline Tensen Carberry Blouse Wit",
+     "prijs": 149.95
+    },
+    {
+     "categorie": "bottom",
+     "naam": "Felice Broek Off White",
+     "prijs": 89.0
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Fade sneakers uniseks, Groen/Zwart, Maat 41",
+     "prijs": 139.95
+    }
+   ]
+  },
+  {
+   "id": "luc-nu-4",
+   "verwacht": null,
+   "bron": "live uitslag 16 okt na PR 146: Donkerbruine jurk met sneakers",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "formal"
+   },
+   "stukken": [
+    {
+     "categorie": "dress",
+     "naam": "H & M - Gedrapeerde jurk met schoudervullingen - Donkerbruin",
+     "prijs": 69.99
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Majesty uniseks sneakers, Zwart/Wit, Maat 42,5",
+     "prijs": 89.95
+    }
+   ]
+  },
+  {
+   "id": "luc-nu-5",
+   "verwacht": null,
+   "bron": "live uitslag 16 okt na PR 146: Witte trui, grijze broek en laarzen",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Trui van kasjmiermix - Wit",
+     "prijs": 179.0
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Bootcut-broek van wolmix - Grijs",
+     "prijs": 149.0
+    },
+    {
+     "categorie": "footwear",
+     "naam": "H & M - Kniehoge leren laarzen - Zwart",
+     "prijs": 179.0
+    }
+   ]
+  },
+  {
+   "id": "luc-nu-6",
+   "verwacht": null,
+   "bron": "live uitslag 16 okt na PR 146: Witte trui, beige pantalon en sneakers",
+   "profiel": {
+    "geslacht": "female",
+    "stijlen": [
+     "streetwear"
+    ],
+    "lichtheid": "licht",
+    "kleurtemperatuur": "warm",
+    "gelegenheid": "casual"
+   },
+   "stukken": [
+    {
+     "categorie": "top",
+     "naam": "H & M - Trui van mohairmix - Wit",
+     "prijs": 129.0
+    },
+    {
+     "categorie": "bottom",
+     "naam": "H & M - Pantalon met overslag - Beige",
+     "prijs": 59.99
+    },
+    {
+     "categorie": "footwear",
+     "naam": "PUMA Bella Lea sneakers voor Dames, Zilver, Maat 38,5",
+     "prijs": 89.95
+    },
+    {
+     "categorie": "accessory",
+     "naam": "H & M - Suède crossbody-tas - Beige",
+     "prijs": 99.0
+    }
+   ]
+  }
+ ]
+}
