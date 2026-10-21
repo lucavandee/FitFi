@@ -8,7 +8,7 @@
  * uitkomt voor de gevallen die in de echte H&M-feed voorkomen.
  */
 import { describe, expect, it } from "vitest";
-import { mapFeedProduct, type FeedProduct } from "../../../supabase/functions/_shared/daisyconRows";
+import { extractColors, mapFeedProduct, type FeedProduct } from "../../../supabase/functions/_shared/daisyconRows";
 
 const NU = "2026-10-08T12:00:00.000Z";
 const OPTIES = { programName: "H&M (NL)", nu: NU };
@@ -147,5 +147,22 @@ describe("mapFeedProduct: randgevallen", () => {
 
   it("valt terug op de programmanaam als het merk ontbreekt", () => {
     expect(rijVan(feedProduct({ brand: "" })).brand).toBe("H&M (NL)");
+  });
+});
+
+describe("extractColors: kleurwoorden alleen als los woord", () => {
+  // Review van 21 oktober 2026: "red" zat in "Flared", "brede" en "embroidered",
+  // dus een blauwe jeans kreeg rood als tweede kleur.
+  it("haalt geen kleur uit een deel van een woord", () => {
+    expect(extractColors("H & M - Flared High Jeans - Blauw", "blauw", "Jeans met brede pijpen en geborduurde (embroidered) details, tailored fit")).toEqual(["blauw"]);
+  });
+
+  it("neemt een kleurwoord dat er los staat nog wel mee", () => {
+    expect(extractColors("Shirt", "", "Classic shirt in red and navy")).toEqual(["navy blue", "red"]);
+    expect(extractColors("Trui", "grijs", "A grey knit")).toEqual(["grijs", "grey"]);
+  });
+
+  it("geeft unknown als er niets is", () => {
+    expect(extractColors("Tas", "", "Leren tas")).toEqual(["unknown"]);
   });
 });
