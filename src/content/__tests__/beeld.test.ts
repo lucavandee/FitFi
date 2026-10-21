@@ -166,10 +166,11 @@ describe("labels (plan 3.6)", () => {
     }
   });
 
-  it("het slot heeft het verloop van de hero, plus een band bovenin voor het label", () => {
-    const landing = readFileSync(fileURLToPath(new URL("../../pages/LandingPage.tsx", import.meta.url)), "utf-8");
-    const [rechts, onder, boven] = W3.verloop.basis.split(/,\s*(?=linear-gradient)/);
-    expect(landing).toContain(`${rechts}, ${onder}`);
+  // Tot 21 oktober 2026 toetste dit ook dat het slot het verloop van de hero
+  // van de homepage had. Hero en slot zijn toen vervangen (designsysteem v2,
+  // CLAUDE.md deel 18); W3 blijft voor wie het slot nog gebruikt.
+  it("het slot heeft een band bovenin voor het label", () => {
+    const [, , boven] = W3.verloop.basis.split(/,\s*(?=linear-gradient)/);
     expect(boven).toBe("linear-gradient(to bottom, rgba(20,18,15,0.5) 0%, transparent 25%)");
   });
 });

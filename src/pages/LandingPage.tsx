@@ -1,41 +1,35 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { useTestimonials } from "@/hooks/useTestimonials";
-import Gedragen from "@/components/landing/sections/Gedragen";
-import KleurPiek from "@/components/landing/sections/KleurPiek";
-import Voorbeeldoutfit from "@/components/landing/sections/Voorbeeldoutfit";
+import HeroProduct from "@/components/landing/v2/HeroProduct";
+import RapportAlsBlad from "@/components/landing/v2/RapportAlsBlad";
+import KleurMoment from "@/components/landing/v2/KleurMoment";
+import Afsluiter from "@/components/landing/v2/Afsluiter";
 import ZoWerktHet from "@/components/landing/sections/ZoWerktHet";
-import Slot from "@/components/landing/sections/Slot";
-import { VOORBEELDOUTFIT } from "@/content/voorbeeldoutfit";
-import { LANDING_COPY } from "@/content/landingCopy";
-import HeroClip from "@/components/landing/HeroClip";
-import { useMediaquery } from "@/components/landing/beeld/useMediaquery";
 import { track as trackFunnel } from "@/utils/analytics";
 import { tel } from "@/utils/teller";
 import { LANDING_BESCHRIJVING, LANDING_TITEL, OG_BEELD } from "@/content/landingHead";
 
 const PAGE = "landing";
 
-/** De twee hero-stills; het breekpunt is dat van de <picture> en van HERO_CLIP. */
-const HERO_STILL_MOBIEL = "/hero/hf_20260221_211319_a32928c5-35c0-46c6-be6e-cfa9d8747078.webp";
-const HERO_STILL_DESKTOP = "/images/hf_20260221_210750_e12efd50-544c-4e35-986d-bfff9999542b.webp";
-
-/* ─── Scrolldiepte ─── */
-/*
- * Meet 25/50/75/100 procent, elk hoogstens een keer per paginabezoek.
- * De hook staat bewust in dit bestand en niet in een gedeelde module die de
- * andere pagina's importeren: pagina's worden lazy geladen, en een import over
- * paginabestanden heen trekt de hele pagina mee in de chunk van de ander.
+/**
+ * Homepage, designsysteem v2 (CLAUDE.md deel 18; plan van 21 oktober 2026,
+ * ~/claude-artifacts/fitfi-beeld/2026-10-21-website/plan.md).
+ *
+ * Volgorde: het product (hero met een voorbeeldrapport), wat je krijgt (het
+ * rapport als tijdschrift), wat kleur doet (kleurmoment), hoe het werkt (met
+ * de echte quiz en wat er met je gegevens gebeurt), ervaringen zodra er drie
+ * echte zijn, en de afsluiter.
+ *
+ * Wat eruit ging: de hero met het stel (verhuist naar Over ons), Gedragen,
+ * de kleurpiek, de live voorbeeldoutfit en het slot met het schemerbeeld. De
+ * bestanden blijven staan voor Over ons en de opruim-PR. Het quizscherm
+ * "Deze of deze?" uit het prototype staat hier bewust niet: die vraagvorm
+ * bestaat in de echte quiz nog niet.
  */
+
 function useScrollDepth(page: string) {
-  // LET OP: dit meet scrollafstand, niet gelezen content. Een vastgezette
-  // scene van 200vh telt als twee schermen scrollen terwijl er een sectie
-  // voorbijkomt. De drempels zijn dus alleen vergelijkbaar tussen versies
-  // met dezelfde pagina-opbouw, niet met een pagina zonder pins.
   useEffect(() => {
     const drempels = [25, 50, 75, 100];
     let hoogstGemeld = 0;
@@ -43,14 +37,10 @@ function useScrollDepth(page: string) {
 
     const meet = () => {
       frame = 0;
-      const scrollbaar =
-        document.documentElement.scrollHeight - window.innerHeight;
+      const scrollbaar = document.documentElement.scrollHeight - window.innerHeight;
       if (scrollbaar <= 0) return;
-
       const pct = (window.scrollY / scrollbaar) * 100;
       for (const drempel of drempels) {
-        // Marge van 0,5 procent: op 100 procent komt scrollY door afronding
-        // en zoom zelden exact op de maximale waarde uit.
         if (drempel > hoogstGemeld && pct >= drempel - 0.5) {
           hoogstGemeld = drempel;
           trackFunnel("scroll_depth", { page, depth: drempel });
@@ -71,148 +61,44 @@ function useScrollDepth(page: string) {
   }, [page]);
 }
 
-/* ─── Scroll-reveal wrapper ─── */
-function Reveal({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}) {
+/** Verschijnt bij het inscrollen; bij reduced motion meteen (CLAUDE.md deel 8: hooguit 500 ms). */
+function Reveal({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
   const beperkteBeweging = useReducedMotion();
-
-  // Bij reduced motion staat scroll-behavior: smooth uit, dus een ankerlink,
-  // Ctrl+F of terugnavigatie springt echt. De observer vuurt dan niet voor wat
-  // je overslaat en het blok blijft permanent op opacity 0. Daarom niet op
-  // zichtbaarheid wachten maar meteen tonen.
   const tonen = beperkteBeweging || isInView;
-
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={beperkteBeweging ? false : { opacity: 0, y: 40 }}
-      animate={tonen ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={
-        beperkteBeweging
-          ? { duration: 0 }
-          : { duration: 0.9, ease: [0.22, 1, 0.36, 1], delay }
-      }
+      initial={beperkteBeweging ? false : { opacity: 0, y: 24 }}
+      animate={tonen ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={beperkteBeweging ? { duration: 0 } : { duration: 0.45, ease: "easeOut", delay }}
     >
       {children}
     </motion.div>
   );
 }
 
-/* ─── Marquee CSS ─── */
-
-
 export default function LandingPage() {
-  const heroMobiel = useMediaquery("(max-width: 1023px)");
-  const heroStill = useRef<HTMLImageElement>(null);
-  const navigate = useNavigate();
-
   // Anonieme dagtelling, zonder cookie (src/utils/teller.ts).
   useEffect(() => tel("home"), []);
-
-  /*
-   * Hier stond een useQuery die het aantal style_profiles van vandaag telde.
-   * Die uitkomst werd nergens gerenderd: een Supabase-request bij elk bezoek
-   * aan de drukste pagina, waarvan het antwoord werd weggegooid. Bovendien gaf
-   * hij voor uitgelogde bezoekers altijd 0 terug, want RLS staat anon geen
-   * telling op style_profiles toe.
-   */
-
-  const { testimonials } = useTestimonials();
-
   useScrollDepth(PAGE);
 
-  const handleStartClick = (position: string) => {
-    trackFunnel("cta_click", { page: PAGE, position });
-    trackFunnel("quiz_start", { page: PAGE, position });
-    navigate("/onboarding");
-  };
-
-  /*
-   * "Bekijk voorbeeld" is een anker naar de voorbeeldoutfit verderop, of naar
-   * de kleurpiek zolang er geen outfit is (plan "Onder de hero", 4.0). Vloeiend
-   * scrollen, behalve bij reduced motion; dan springen. "instant" en niet
-   * "auto": op mobiel zet mobile-touch.css scroll-behavior op smooth, ook bij
-   * reduced motion, en "auto" volgt die CSS. De kopruimte komt uit
-   * scroll-padding-top op html. Daarna de focus op de sectie, zodat Tab daar
-   * verder gaat.
-   */
-  const [outfitZichtbaar, setOutfitZichtbaar] = useState(VOORBEELDOUTFIT !== null);
-  const outfitOnbeschikbaar = useCallback(() => setOutfitZichtbaar(false), []);
-  const voorbeeldDoel = outfitZichtbaar ? "outfit" : "kleur";
-  const beperkteBeweging = useReducedMotion();
-
-  const handleExampleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const doel = document.getElementById(voorbeeldDoel);
-    if (!doel) return;
-    e.preventDefault();
-    doel.scrollIntoView({ behavior: beperkteBeweging ? "instant" : "smooth", block: "start" });
-    doel.focus({ preventScroll: true });
-  };
-
-  /*
-   * Alleen echte reviews uit de database.
-   *
-   * Hier stond tot 2026-08-07 een FALLBACK_REVIEWS met drie verzonnen
-   * ervaringen: "Sophie V., 28 jaar, Amsterdam", "Marieke D., 34 jaar,
-   * Utrecht" en "Tom B., 41 jaar, Rotterdam", inclusief citaten. Die werden
-   * getoond zodra de database minder dan drie rijen had, en de tabel is leeg.
-   * Elke bezoeker van fitfi.ai kreeg dus drie verzonnen klantreviews te zien,
-   * onder een kop die letterlijk zei: "Dit zijn echte ervaringen van
-   * FitFi-gebruikers."
-   *
-   * Los van dat het niet waar is: verzonnen consumentenreviews zijn in de EU
-   * verboden (richtlijn 2005/29/EG, bijlage I punt 23b en 23c, sinds de
-   * Omnibus-richtlijn). Een lege sectie is hier de enige juiste uitkomst.
-   *
-   * De sectie verdwijnt nu volledig zolang er minder dan drie echte reviews
-   * zijn. Geen halve variant met een of twee kaarten: dan is de sectie
-   * visueel scheef en verleidt hij alsnog tot aanvullen met verzinsels.
-   */
+  const { testimonials } = useTestimonials();
   const reviews = testimonials.slice(0, 3).map((t) => ({
     name: t.author_name,
     meta: t.author_age ? `${t.author_age} jaar` : "",
     quote: t.quote,
     initial: t.author_name?.[0]?.toUpperCase() || "?",
   }));
-
+  // Alleen bij drie of meer echte reviews uit de database.
   const toonReviews = reviews.length >= 3;
-
-  /* Marquee items */
-  /*
-   * Twee claims hier weggehaald op 2026-08-07:
-   *
-   * "4.9/5 waardering" stond boven een reviewsectie waarvan de tabel leeg is.
-   * Een gemiddelde beoordeling zonder een enkele beoordeling is geen afronding
-   * maar een verzinsel, en valt onder dezelfde regels als de nepreviews die
-   * hieronder zijn verwijderd.
-   *
-   * "50+ outfitcombinaties" was eerder al uit de rest van de site gehaald
-   * (commits 7b1479f4 en a29a2595) omdat het getal nergens op steunt. Deze
-   * ene stond nog.
-   *
-   * "2.400+ gebruikers" is er op 2026-08-07 ook afgehaald. Niet omdat het
-   * aantoonbaar onwaar is, maar omdat het niet te controleren viel: RLS staat
-   * anon geen telling op style_profiles toe. Naast twee claims die wel
-   * aantoonbaar onwaar bleken, is een oncontroleerbaar getal geen houdbare
-   * positie. Klopt het wel, zet het dan terug met de bron erbij.
-   */
-
 
   return (
     <>
       {/* Titel, beschrijving en deelbeeld staan in content/landingHead.ts,
-          samen met index.html en de Seo-regel in App.tsx. Het oude og-beeld
-          was een gegenereerd stel zonder label, met een relatief pad. */}
+          samen met index.html en de Seo-regel in App.tsx. */}
       <Helmet>
         <title>{LANDING_TITEL}</title>
         <meta name="description" content={LANDING_BESCHRIJVING} />
@@ -229,280 +115,47 @@ export default function LandingPage() {
             url: "https://fitfi.ai",
             applicationCategory: "LifestyleApplication",
             operatingSystem: "Web",
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "EUR",
-            },
+            offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
           })}
         </script>
       </Helmet>
 
-      {/* Geen eigen skip-link: de shell in App.tsx levert er al een. */}
+      <div className="bg-[#FAFAF8]">
+        <HeroProduct />
+        <RapportAlsBlad />
+        <KleurMoment />
+        <ZoWerktHet grond="wit" />
 
-
-      {/* Geen <main> hier: de shell in App.tsx heeft er al een, en genest is
-          ongeldig. overflow-x-clip in plaats van -hidden, want hidden maakt een
-          scroll-container en dan plakt een sticky kind aan deze div in plaats
-          van aan het scherm. Clip beschermt net zo goed tegen horizontaal
-          scrollen zonder die bijwerking. */}
-      <div id="main-content" className="overflow-x-clip w-full">
-        {/* ════════════════════════════════════════════════════
-            HERO — Full-screen image, text bottom-left
-        ════════════════════════════════════════════════════ */}
-        {/* min-h-svh na min-h-screen: 100vh rekent op mobiel met een
-            ingeklapte adresbalk, waardoor de onderkant van de hero bij het
-            laden onder de balk viel. Zonder svh-ondersteuning blijft
-            min-h-screen gelden. */}
-        <section
-          className="relative min-h-screen min-h-svh flex items-end overflow-hidden"
-          aria-labelledby="hero-heading"
-        >
-          {/* Background image */}
-          <picture>
-            <source
-              media="(max-width: 1023px)"
-              srcSet={HERO_STILL_MOBIEL}
-              width={1152}
-              height={2048}
-            />
-            {/* src volgt hetzelfde breekpunt als de <source>: React zet src al
-                voordat de <img> in de <picture> hangt, en WebKit begint dan meteen
-                met dat bestand. Met het desktopbeeld als src haalde een iPhone
-                beide herobeelden op (193 KB extra, gemeten op 8 oktober). */}
-            <img
-              ref={heroStill}
-              src={heroMobiel ? HERO_STILL_MOBIEL : HERO_STILL_DESKTOP}
-              alt="Stijlvol stel op een Amsterdams kanaal"
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ objectPosition: "center 20%" }}
-              width={2048}
-              height={1152}
-              loading="eager"
-              fetchPriority="high"
-            />
-          </picture>
-
-          {/* Levende hero: begint precies op de still, laadt pas na de still. */}
-          <HeroClip still={heroStill} />
-
-          {/* Gradient overlays */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to right, rgba(20,18,15,0.72) 0%, rgba(20,18,15,0.35) 45%, transparent 70%), linear-gradient(to top, rgba(20,18,15,0.6) 0%, transparent 40%)",
-            }}
-            aria-hidden="true"
-          />
-
-          {/* Op mobiel loopt de onderste tekst over de lichte broek in beeld.
-              Zonder deze extra laag haalt het AI-label daar 3,1:1 in plaats
-              van 4,5:1 (gemeten van 360x640 tot 412x844, op de still en op
-              het eindbeeld van de clip). */}
-          <div
-            className="absolute inset-0 md:hidden"
-            style={{
-              background:
-                "linear-gradient(to top, rgba(20,18,15,0.55) 0%, rgba(20,18,15,0.4) 20%, transparent 40%)",
-            }}
-            aria-hidden="true"
-          />
-
-          {/* Content. Op mobiel ligt de vaste MobileBottomNav (58px) over de
-              onderkant; pb-24 houdt de tekst daar 38px boven. Komt er ooit
-              viewport-fit=cover bij, dan groeit de nav met de safe area en
-              moet dit mee. */}
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 pt-20 min-h-screen min-h-svh flex items-end">
-            <div className="max-w-[560px]">
-              {/* Eyebrow */}
-              <div className="flex items-center gap-[10px] mb-6">
-                <div className="w-8 h-px bg-[#A85740]" aria-hidden="true" />
-                <span className="text-xs font-semibold tracking-[2.5px] uppercase text-[#F4E8E3]">
-                  Persoonlijk stijladvies
-                </span>
-              </div>
-
-              {/* Headline — serif/sans contrast */}
-              <h1
-                id="hero-heading"
-                className="text-4xl md:text-[68px] md:leading-[1.02] md:tracking-[-1px] leading-[1.08] mb-6"
-              >
-                <span className="font-serif italic text-white">
-                  Ontdek welke{" "}
-                </span>
-                <span className="font-jakarta font-bold not-italic tracking-[-2px] text-white">
-                  stijl
-                </span>
-                <br className="hidden md:block" />
-                <span className="font-serif italic text-white">
-                  {" "}
-                  bij jou past
-                </span>
-              </h1>
-
-              {/* Subtext */}
-              <p className="text-base md:text-[17px] leading-[1.7] text-white/75 max-w-[420px] mb-8 md:mb-11">
-                Beantwoord een paar vragen en ontvang een persoonlijk rapport met
-                je kleurpalet, outfits en directe shoplinks.
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                <button
-                  onClick={() => handleStartClick("hero")}
-                  className="group inline-flex items-center gap-3 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-[15px] py-[18px] px-10 rounded-full transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  style={{
-                    boxShadow: "0 12px 40px rgba(194,101,74,0.3)",
-                  }}
-                  aria-label="Begin gratis met je stijladvies"
-                >
-                  Begin gratis
-                  <ArrowRight
-                    className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </button>
-
-                <a
-                  href={`#${voorbeeldDoel}`}
-                  onClick={handleExampleClick}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors duration-200 min-h-[44px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  aria-label={LANDING_COPY.anker[voorbeeldDoel].tekst}
-                >
-                  Bekijk voorbeeld
-                  <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-                </a>
-              </div>
-
-              {/* AI Act art. 50(4): realistische gegenereerde mensen krijgen bij
-                  de eerste blootstelling een zichtbaar label. Op mobiel onder de
-                  knoppen; vanaf md als creditregel linksonder in de content-
-                  container, in het donkerste deel van de gradient. Rechtsonder
-                  haalde hij op 1024x768 maar 2,8:1. */}
-              <p className="mt-8 text-sm font-medium text-white/75 md:absolute md:bottom-8 md:left-6 md:mt-0 lg:left-8">
-                Beeld gemaakt met AI. De personen zijn modellen.
-              </p>
-            </div>
-          </div>
-
-          {/*
-           * Hier zweefde een glaskaart over de foto met vier swatches en de
-           * tekst "Jouw kleurpalet — Warm · Herfst · Diep". Verwijderd om twee
-           * redenen die dezelfde kant op wijzen.
-           *
-           * Het was een claim: "jouw" palet, terwijl er op de landingspagina
-           * geen profiel en dus geen uitkomst bestaat. Een bezoeker die dit
-           * leest als haar eigen resultaat is misleid, en het is dezelfde soort
-           * bewering als de cijfers die op 2026-08-07 uit de copy zijn gehaald.
-           *
-           * En het is het patroon dat Luc als "heel AI" leest: zwevende
-           * glass-cards met blur en badge-tags over een foto. De hero werkt
-           * sterker zonder: de foto blijft schoon en de belofte staat een keer
-           * stil in beeld, wat het plan voor deze sectie ook vraagt.
-           */}
-
-          {/* Scroll indicator — desktop only */}
-          <div
-            className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex-col items-center gap-3"
-            aria-hidden="true"
-          >
-            <span className="text-[10px] font-semibold tracking-[2px] uppercase text-white/40">
-              Scroll
-            </span>
-            <motion.div
-              className="w-px h-8 bg-white/40 origin-top"
-              animate={{ scaleY: [0, 1, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            />
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════════════════
-            ONDER DE HERO (plan "Onder de hero", fase 2)
-            Gedragen, Kleur, Outfit, Zo werkt het, Slot. Hier stonden
-            TrustStrip, StepsScene, ColorWipe, OutfitFlatlay en de drie
-            vertrouwenskaarten; die bestanden blijven staan tot de opruim-PR
-            (plan 5.5). De kaarten zeiden twee dingen die niet klopten (account
-            verwijderen, nooit delen met derden) en een te ruim (alles binnen
-            30 dagen gewist).
-            Grond wisselt per sectie: zonder outfit volgt "Zo werkt het" op
-            wit in plaats van op hetzelfde zand als de kleurpiek.
-        ════════════════════════════════════════════════════ */}
-        <Gedragen />
-        <KleurPiek />
-        <Voorbeeldoutfit onOnbeschikbaar={outfitOnbeschikbaar} />
-        <ZoWerktHet grond={outfitZichtbaar ? "zand" : "wit"} />
-
-        {/* ════════════════════════════════════════════════════
-            TESTIMONIALS — Ervaringen
-            Alleen zichtbaar bij drie of meer ECHTE reviews uit de database.
-        ════════════════════════════════════════════════════ */}
         {toonReviews && (
-        <section className="py-16 md:py-24 bg-[#F5F0EB]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <Reveal>
-              <div className="text-center max-w-[680px] mx-auto mb-16 md:mb-20">
-                <span className="text-xs font-semibold tracking-[2px] uppercase text-[#A85740]">
-                  Ervaringen
-                </span>
-                <h2 className="font-serif italic text-[32px] md:text-[56px] text-[#1A1A1A] leading-[1.05] mt-4">
-                  Wat anderen zeggen
-                </h2>
-                <p className="text-base md:text-[17px] text-[#4A4A4A] leading-[1.8] max-w-[520px] mx-auto mt-4">
-                  Van sceptisch tot overtuigd. Dit zijn echte ervaringen van
-                  FitFi-gebruikers.
-                </p>
+          <section className="py-16 md:py-24 bg-[#F5F0EB]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <Reveal>
+                <p className="text-sm font-medium text-[#A85740]">Ervaringen</p>
+                <h2 className="mt-3 text-2xl md:text-3xl font-bold leading-snug text-[#1A1A1A]">Wat anderen zeggen</h2>
+              </Reveal>
+              <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                {reviews.map((review, i) => (
+                  <Reveal key={i} delay={i * 0.1} className="h-full">
+                    <article className="bg-white border border-[#E5E5E5] rounded-2xl p-6 md:p-8 h-full flex flex-col">
+                      <blockquote className="text-base text-[#4A4A4A] leading-relaxed flex-1">{review.quote}</blockquote>
+                      <div className="flex items-center gap-3.5 pt-5 mt-6 border-t border-[#E5E5E5]">
+                        <div className="w-11 h-11 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
+                          <span className="text-sm font-bold text-[#A85740]">{review.initial}</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-[#1A1A1A]">{review.name}</p>
+                          {review.meta && <p className="text-sm text-[#6E6E6E]">{review.meta}</p>}
+                        </div>
+                      </div>
+                    </article>
+                  </Reveal>
+                ))}
               </div>
-            </Reveal>
-
-            {/* Cards — same height */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {reviews.map((review, i) => (
-                <Reveal key={i} delay={i * 0.12}>
-                  <article className="bg-white rounded-2xl p-8 md:p-10 pt-8 md:pt-10 h-full flex flex-col">
-                    {/* Quote mark */}
-                    <span
-                      className="font-serif text-[72px] text-[#F4E8E3] leading-[0.6] mb-4 select-none"
-                      aria-hidden="true"
-                    >
-                      &ldquo;
-                    </span>
-
-                    {/* Quote */}
-                    <blockquote className="text-base text-[#4A4A4A] leading-[1.7] italic mb-7 flex-1">
-                      {review.quote}
-                    </blockquote>
-
-                    {/* Author */}
-                    <div className="flex items-center gap-3.5 pt-5 border-t border-[#E5E5E5]">
-                      <div className="w-11 h-11 rounded-full bg-[#F4E8E3] flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-bold text-[#A85740]">
-                          {review.initial}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-[#1A1A1A]">
-                          {review.name}
-                        </p>
-                        <p className="text-xs text-[#6E6E6E]">{review.meta}</p>
-                      </div>
-                    </div>
-                  </article>
-                </Reveal>
-              ))}
             </div>
-          </div>
-        </section>
+          </section>
         )}
 
-        {/* ════════════════════════════════════════════════════
-            SLOT: de eerste vraag van de quiz, een knop
-            Verving "Klaar om te beginnen?" met "Geen account nodig": het
-            rapport vraagt wel een account.
-        ════════════════════════════════════════════════════ */}
-        <Slot />
+        <Afsluiter />
       </div>
     </>
   );

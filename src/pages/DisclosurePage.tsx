@@ -149,7 +149,7 @@ const SECTIONS: Section[] = [
         {[
           'Een deel van onze beelden is met AI gemaakt: sfeerbeelden met mensen, plekken, stoffen en voorwerpen. Dat zijn geen foto\'s.',
           'Het label "Beeld gemaakt met AI." betekent dat het hele beeld met AI is gemaakt, ook als het beweegt.',
-          'Staat er "De persoon is een model." of "De personen zijn modellen." bij, dan is ook die persoon met AI gemaakt. Het is geen klant of gebruiker van FitFi.',
+          'Staat er "De persoon is een model." bij, dan is ook die persoon met AI gemaakt. Het is geen klant of gebruiker van FitFi.',
           'Productfoto\'s komen van de winkels zelf. Die maken we niet.',
           'Schermbeelden en opnames van de quiz en het rapport komen uit de app zelf.',
           'Beelden kunnen indicatief zijn; vertrouw voor maten/kleuren op de productpagina van de winkel.',
