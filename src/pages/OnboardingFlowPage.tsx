@@ -9,7 +9,8 @@ import { computeResult, fotoAnalyseUitAntwoorden, pasFotoAnalyseToe } from "@/li
 import { StyleProfileGenerator } from "@/services/styleProfile/styleProfileGenerator";
 import { LS_KEYS } from "@/lib/quiz/types";
 import PhotoUpload from "@/components/quiz/PhotoUpload";
-import { VisualPreferenceStepClean as VisualPreferenceStep } from "@/components/quiz/VisualPreferenceStepClean";
+import { DezeOfDeze } from "@/components/quiz/v2/DezeOfDeze";
+import type { QuizGeslacht } from "@/services/visualPreferences/dezeOfDeze";
 import { CalibrationStep } from "@/components/quiz/CalibrationStep";
 import { EmbeddingService } from "@/services/visualPreferences/embeddingService";
 import { VisualPreferenceService } from "@/services/visualPreferences/visualPreferenceService";
@@ -767,53 +768,21 @@ export default function OnboardingFlowPage() {
   if (phase === 'swipes') {
     return (
       <>
-        <motion.main
-          key="swipes-phase"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
-          transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-          className="min-h-screen bg-[#FAFAF8] text-[#1A1A1A]"
-        >
+        <main key="swipes-phase">
           <Helmet>
-            <title>Visuele voorkeuren | FitFi</title>
-            <meta name="description" content="Kies welke outfits je aanspreken." />
+            <title>Deze of deze? | FitFi</title>
+            <meta name="description" content="Kies steeds de look die je zelf zou dragen." />
           </Helmet>
 
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="sticky top-0 z-50 bg-white border-b border-[#E5E5E5] backdrop-blur-sm"
-          >
-            <div className="max-w-[720px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs sm:text-sm font-medium">Visuele voorkeuren</span>
-                <motion.span
-                  key={progress}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-xs sm:text-sm text-[#6E6E6E]"
-                >
-                  {Math.round(progress)}% compleet
-                </motion.span>
-              </div>
-              <div className="h-2 sm:h-2 bg-[#FAFAF8] rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-[#A85740]"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                />
-              </div>
-            </div>
-          </motion.div>
-
-          <VisualPreferenceStep
-            onComplete={handleSwipesComplete}
-            userGender={answers.gender as 'male' | 'female' | 'non-binary' | 'prefer-not-to-say'}
+          {/* Hier stonden tot 21 oktober 2026 de swipes met moodfoto's
+              (VisualPreferenceStepClean). De uitkomst gaat naar dezelfde
+              sleutels in localStorage, dus de engine leest hem zoals eerst. */}
+          <DezeOfDeze
+            geslacht={answers.gender as QuizGeslacht}
+            onKlaar={handleSwipesComplete}
+            onTerugNaarVragen={handleBack}
           />
-        </motion.main>
+        </main>
 
         {/* Phase Transition for swipes */}
         {showTransition && transitionTo && (

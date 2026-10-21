@@ -349,14 +349,18 @@ badges, radii, schaduwen, iconen en vaste CTA-teksten blijven zoals hierboven.
   winkel (`?imwidth=` bij H&M).
 - **Gegenereerde mensen.** Alleen de goedgekeurde cast uit
   `~/claude-artifacts/fitfi-beeld/2026-10-21-website/cast` (1, 3, 5, 7, 8, 11)
-  en bewerkingen daarvan, met de herkomst in `herkomst.json`. Het label staat
+  en beelden die met een castlid als referentie gemaakt zijn (de looks van
+  "Deze of deze?"), met de herkomst in `herkomst.json`. Een merkteken op
+  schoenen of kleding (een N, drie strepen, tekst op een lipje) is een
+  afkeuring; vervang dan alleen dat stuk. Het label staat
   onder het beeld ("Beeld gemaakt met AI. De persoon is een model."), nooit
   eroverheen, en een gegenereerd mens is nooit klant, review of resultaat.
   Geen vaste look van gracht, korrel en gouden uur: dat is in 2026 de
   standaardlook van AI-beeld.
-- **Een vraag die (nog) niet bestaat, staat niet op een openbare pagina.** Het
-  quizscherm "Deze of deze?" uit het prototype komt pas op de homepage als de
-  quiz zelf zo werkt.
+- **Een vraag die (nog) niet bestaat, staat niet op een openbare pagina.** Sinds
+  21 oktober 2026 werkt de quiz met "Deze of deze?" (`src/components/quiz/v2/DezeOfDeze.tsx`,
+  zeven rondes van twee looks), dus dat scherm mag nu ook op de homepage, met
+  de looks uit `src/data/dezeOfDeze.ts` en het AI-label eronder.
 - **Snelheid.** Doel: LCP onder 2,5 s op Lighthouse mobiel. Geen video of
   groot beeld boven de vouw dat de LCP draagt, geen preload van een beeld dat
   niet boven de vouw staat; op de homepage is de kop het grootste element.

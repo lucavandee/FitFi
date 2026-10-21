@@ -7,21 +7,30 @@ import { ArrowLeft, ArrowRight, AlertCircle, Clock, X } from "lucide-react";
  * 13 px; nu klassen en minstens 14 px, en elke knop minstens 44 px.
  */
 
-export function QuizKopbalk({ stap, totaal, voortgang, onStop }: { stap: number; totaal: number; voortgang: number; onStop: () => void }) {
+type QuizKopbalkProps = { voortgang: number; onStop?: () => void } & (
+  | { stap: number; totaal: number; label?: undefined }
+  | { label: string; stap?: undefined; totaal?: undefined }
+);
+
+/**
+ * Zonder onStop geen kruisje: de stopmelding hoort bij de vraagfase van
+ * OnboardingFlowPage. De regel houdt dan dezelfde hoogte (8 + 44 px).
+ */
+export function QuizKopbalk({ stap, totaal, label, voortgang, onStop }: QuizKopbalkProps) {
   return (
     <div className="flex-shrink-0 border-b border-[#E5E5E5] bg-white">
-      <div className="mx-auto flex max-w-3xl items-center justify-between px-4 pt-2 sm:px-6">
-        <p className="text-sm font-medium text-[#4A4A4A]">
-          Vraag {stap} van {totaal}
-        </p>
-        <button
-          type="button"
-          onClick={onStop}
-          aria-label="Stop de quiz"
-          className="-mr-2 flex h-11 w-11 items-center justify-center rounded-xl text-[#4A4A4A] transition-colors duration-200 hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/40"
-        >
-          <X className="h-5 w-5" />
-        </button>
+      <div className="mx-auto flex min-h-[52px] max-w-3xl items-center justify-between px-4 pt-2 sm:px-6">
+        <p className="text-sm font-medium text-[#4A4A4A]">{label ?? `Vraag ${stap} van ${totaal}`}</p>
+        {onStop && (
+          <button
+            type="button"
+            onClick={onStop}
+            aria-label="Stop de quiz"
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-xl text-[#4A4A4A] transition-colors duration-200 hover:text-[#1A1A1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A85740]/40"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
       <div className="mx-auto max-w-3xl px-4 pb-3 sm:px-6">
         <div className="h-1 overflow-hidden rounded-full bg-[#E5E5E5]">
