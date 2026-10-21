@@ -35,14 +35,22 @@ const SOCIAL: Array<{ href: string; label: string; Icon?: typeof Instagram; lett
   { href: "https://x.com/fitfi_ai", label: "Volg FitFi op X", letter: "X" },
 ];
 
+/**
+ * Pagina's die zelf al eindigen met een knop naar de quiz. Daar stond de
+ * CTA-strook er als tweede "Begin gratis" direct onder (21 oktober 2026: op
+ * /prijzen, /hoe-het-werkt, /veelgestelde-vragen en /results/preview twee
+ * afsluiters na elkaar). Eén afsluiter per pagina.
+ */
+const EIGEN_AFSLUITER = new Set(["/", "/prijzen", "/hoe-het-werkt", "/veelgestelde-vragen", "/results/preview"]);
+
 /** De container uit CLAUDE.md deel 3, zodat de footer niet naast de pagina uitlijnt. */
 const CONTAINER = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8";
 
 /**
  * Footer (plan fase 2, 4.6 en F1 tot F3).
  *
- * - De CTA-strook staat niet op /: daar sluit de pagina zelf af met een knop
- *   naar de quiz. Elders opent "Begin gratis" de quiz (/onboarding), niet het
+ * - De CTA-strook staat niet op pagina's die zelf afsluiten met een knop
+ *   naar de quiz (EIGEN_AFSLUITER). Elders opent "Begin gratis" de quiz (/onboarding), niet het
  *   registratiescherm, onder een kop in de sans in plaats van de serif.
  * - Geen serif-watermerk, geen kolomkoppen in terracotta kapitalen, geen
  *   pillen "GDPR" en "SSL".
@@ -69,12 +77,12 @@ export default function Footer() {
 
   if (pathname.startsWith("/onboarding")) return null;
 
-  const toonCta = !isAuthed && pathname !== "/";
+  const toonCta = !isAuthed && !EIGEN_AFSLUITER.has(pathname);
 
   return (
     <footer className="bg-[#F5F0EB]">
 
-      {/* CTA-strook: alleen voor uitgelogde bezoekers, en niet op de homepage */}
+      {/* CTA-strook: alleen voor uitgelogde bezoekers, en niet waar de pagina zelf afsluit */}
       {toonCta && (
         <div className={`${CONTAINER} py-40`}>
           <div className="bg-white border border-[#E5E5E5] rounded-2xl p-14 md:p-20 flex flex-col items-center text-center gap-3 transition-shadow duration-200 hover:shadow-md">
