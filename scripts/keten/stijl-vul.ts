@@ -35,15 +35,19 @@ function geldig(l: ProductLabel): boolean {
     ["hip", "gewoon", "beide"].includes(l.spoor) &&
     Number.isInteger(l.formeel) &&
     l.formeel >= 1 &&
-    l.formeel <= 5
+    l.formeel <= 5 &&
+    (l.seizoen === undefined || ["herfst-winter", "lente-zomer", "heel-jaar"].includes(l.seizoen))
   );
 }
 
 function sqlVoor(rijen: ProductLabel[], bron: string): string {
   const waarden = rijen
-    .map((l) => `('${l.id}', '${l.stuk.replace(/'/g, "''")}', array[${l.stijlen.map((s) => `'${s}'`).join(", ")}]::text[], '${l.spoor}', ${l.formeel}, '${bron}')`)
+    .map(
+      (l) =>
+        `('${l.id}', '${l.stuk.replace(/'/g, "''")}', array[${l.stijlen.map((s) => `'${s}'`).join(", ")}]::text[], '${l.spoor}', ${l.formeel}, ${l.seizoen ? `'${l.seizoen}'` : "null"}, ${typeof l.gedateerd === "boolean" ? String(l.gedateerd) : "null"}, '${bron}')`
+    )
     .join(",\n");
-  return `insert into public.keten_stijl_labels (product_id, stuk, stijlen, spoor, formeel, bron) values\n${waarden}\non conflict (product_id) do update set stuk = excluded.stuk, stijlen = excluded.stijlen, spoor = excluded.spoor, formeel = excluded.formeel, bron = excluded.bron, gelabeld_op = now();`;
+  return `insert into public.keten_stijl_labels (product_id, stuk, stijlen, spoor, formeel, seizoen, gedateerd, bron) values\n${waarden}\non conflict (product_id) do update set stuk = excluded.stuk, stijlen = excluded.stijlen, spoor = excluded.spoor, formeel = excluded.formeel, seizoen = excluded.seizoen, gedateerd = excluded.gedateerd, bron = excluded.bron, gelabeld_op = now();`;
 }
 
 function draai(bestand: string): Promise<string> {

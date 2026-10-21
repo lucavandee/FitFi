@@ -36,6 +36,11 @@ describe("zonderBotsendAccessoire", () => {
     expect(zonderBotsendAccessoire(outfit)).toHaveLength(1);
   });
 
+  it("laat een riem weg bij een joggingbroek of legging: geen lussen", () => {
+    const outfit = [stuk("top", "Hoodie", ["zwart"]), stuk("bottom", "H & M - Sweatpants - Loose Fit - Groen", ["groen"]), stuk("accessory", "Leren ceintuur", ["zwart"])];
+    expect(zonderBotsendAccessoire(outfit)).toHaveLength(2);
+  });
+
   it("houdt een stropdas alleen bij een overhemd met colbert", () => {
     const polo = [stuk("top", "Poloshirt", ["navy"]), stuk("bottom", "Jeans", ["blauw"]), stuk("accessory", "Stropdas", ["blauw"])];
     expect(zonderBotsendAccessoire(polo)).toHaveLength(2);

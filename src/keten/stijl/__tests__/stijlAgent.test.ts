@@ -76,4 +76,24 @@ describe("stijl-agent, labelen", () => {
     });
     expect(leesLabelAntwoord(tekst, cat)).toEqual([{ id: "p1", stuk: "hoodie", stijlen: ["streetwear", "casual"], spoor: "hip", formeel: 1 }]);
   });
+
+  it("leest seizoen en gedateerd als ze er zijn, en laat een onbekend seizoen weg", () => {
+    const cat = () => "footwear";
+    const tekst = JSON.stringify({
+      labels: [
+        { id: "a", stuk: "sneakers", stijlen: ["streetwear"], spoor: "hip", formeel: 1, seizoen: "heel-jaar", gedateerd: true },
+        { id: "b", stuk: "sandalen", stijlen: ["casual"], spoor: "gewoon", formeel: 1, seizoen: "zomerig" },
+      ],
+    });
+    const [a, b] = leesLabelAntwoord(tekst, cat);
+    expect(a).toMatchObject({ seizoen: "heel-jaar", gedateerd: true });
+    expect(b.seizoen).toBeUndefined();
+    expect(b.gedateerd).toBeUndefined();
+  });
+
+  it("vraagt seizoen en gedateerd in de labelprompt", () => {
+    const p = bouwLabelPrompt();
+    expect(p).toContain("- seizoen:");
+    expect(p).toContain("- gedateerd:");
+  });
 });

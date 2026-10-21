@@ -311,6 +311,9 @@ function bouwKandidatenPool(rijen: KandidaatRij[]): KandidatenPoolMetDiagnose {
     shoeType: rij.attrs?.shoe_type ?? undefined,
     // Alleen kandidaten uit get_stijl_kandidaten hebben stijllabels.
     stijlen: Array.isArray(rij.attrs?.stijlen) ? (rij.attrs.stijlen as string[]) : undefined,
+    // Labels versie 2 van de stijl-agent: formaliteit 1 tot 5 en seizoen.
+    formeel: typeof rij.attrs?.formeel === "number" ? (rij.attrs.formeel as number) : undefined,
+    seizoen: typeof rij.attrs?.seizoen === "string" ? (rij.attrs.seizoen as string) : undefined,
   }));
   const { classified, rejected } = reclassifyProducts(ruw);
   const { veilig, geweigerd } = filterVeiligeProducten(classified);

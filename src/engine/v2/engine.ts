@@ -14,7 +14,7 @@ import { composeOutfits } from './composer';
 import { diversifyOutfits } from './diversify';
 import { applyVisualCoherence } from './scoring/visualCoherence';
 import { getCurrentSeason } from './scoring/season';
-import { outfitBreuken, productBreuk, voorkeurVoorGelabeld, zonderBotsendAccessoire } from './stijlPoort';
+import { buitenSeizoen, formeelTeLaag, outfitBreuken, productBreuk, voorkeurVoorGelabeld, zonderBotsendAccessoire } from './stijlPoort';
 import { outfitTitel, outfitUitleg } from './outfitTekst';
 
 const OCCASION_COPY: Record<OccasionKey, { title: string; description: string }> = {
@@ -166,7 +166,7 @@ export function runEngineV2(
   // voordat er gecomponeerd wordt (geen pump bij alleen streetwear). Zie
   // stijlPoort.ts voor waarom dit niet op het afgeleide archetype kan.
   const toegestaan = voorkeurVoorGelabeld(
-    products.filter((p) => productBreuk(p, answers) === null),
+    products.filter((p) => productBreuk(p, answers) === null && !buitenSeizoen(p, season)),
     answers
   );
   const filter = filterAndPrepare(toegestaan, profile);
@@ -232,6 +232,7 @@ export function runEngineV2(
   const seenGlobalSignatures = new Set<string>();
   const allCandidates = rawCandidates.filter((cand) => {
     if (outfitBreuken(cand.products.map((p) => p.product), answers).length > 0) return false;
+    if (formeelTeLaag(cand.products.map((p) => p.product), cand.occasion)) return false;
     const signature = cand.products
       .map((p) => p.product.id)
       .sort()

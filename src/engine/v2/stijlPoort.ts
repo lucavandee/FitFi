@@ -147,6 +147,7 @@ const RIEM_RE = /\b(riem|ceintuur|belt)\b/i;
 const STROPDAS_RE = /\b(stropdas|tie|vlinderdas)\b/i;
 const OVERHEMD_RE = /overhemd|\bshirt\b.*(heren|men)|oxford|popeline/i;
 const COLBERT_RE = /colbert|blazer|jasje|smoking|pak\b/i;
+const ZONDER_LUSSEN_RE = /jogg|sweatpant|trainingsbroek|legging|pull-on|scuba/i;
 const NETTE_SCHOEN_RE = /loafer|derby|blucher|blücher|veter|brogue|oxford|chelsea|laars|boots|pump|hak|geklede|mocassin/i;
 
 /** Kleurfamilie voor riem en schoenen; null als de kleur niet te plaatsen is. */
@@ -172,9 +173,11 @@ export function zonderBotsendAccessoire(products: Product[]): Product[] {
   const netteSchoen = schoen && !isSneaker(schoen) && NETTE_SCHOEN_RE.test(schoen.name ?? "");
   const metOverhemd = products.some((p) => categorie(p) === "top" && OVERHEMD_RE.test(p.name ?? ""));
   const metColbert = products.some((p) => ["outerwear", "top"].includes(categorie(p)) && COLBERT_RE.test(p.name ?? ""));
+  const zonderLussen = products.some((p) => categorie(p) === "bottom" && ZONDER_LUSSEN_RE.test(p.name ?? ""));
   return products.filter((p) => {
     if (categorie(p) !== "accessory") return true;
     const naam = p.name ?? "";
+    if (RIEM_RE.test(naam) && zonderLussen) return false;
     if (RIEM_RE.test(naam) && netteSchoen) {
       const riem = familie(p);
       const schoenFamilie = familie(schoen!);
@@ -184,4 +187,31 @@ export function zonderBotsendAccessoire(products: Product[]): Product[] {
     if (STROPDAS_RE.test(naam) && !(metOverhemd && metColbert)) return false;
     return true;
   });
+}
+
+// ---------------------------------------------------------------------------
+// Labels versie 2: seizoen en formaliteit van de stijl-agent
+// ---------------------------------------------------------------------------
+
+/** Een lente-zomerstuk volgens de stijl-agent hoort niet in herfst of winter. */
+export function buitenSeizoen(p: Product, seizoen: string): boolean {
+  if (seizoen !== "autumn" && seizoen !== "winter") return false;
+  return p.seizoen === "lente-zomer";
+}
+
+/** Minimale formaliteit (1 tot 5, van de stijl-agent) van top, broek, rok of jurk per gelegenheid. */
+const MIN_FORMEEL: Partial<Record<string, number>> = { work: 3, formal: 3 };
+const HOOFDSTUK = new Set(["top", "bottom", "dress", "jumpsuit"]);
+
+/** De reden waarom een outfit te informeel is voor de gelegenheid, of null. Schoenen tellen niet mee. */
+export function formeelTeLaag(products: Product[], gelegenheid: string): string | null {
+  const min = MIN_FORMEEL[gelegenheid];
+  if (!min) return null;
+  for (const p of products) {
+    const f = typeof p.formeel === "number" ? p.formeel : null;
+    if (f !== null && HOOFDSTUK.has(categorie(p)) && f < min) {
+      return `${p.name} te informeel voor ${gelegenheid}`;
+    }
+  }
+  return null;
 }

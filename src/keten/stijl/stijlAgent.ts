@@ -22,7 +22,7 @@
  * opnieuw (npm run keten:stijl-keur).
  */
 
-export const STIJL_AGENT_VERSIE = "stijl-agent-2026-10-21-b";
+export const STIJL_AGENT_VERSIE = "stijl-agent-2026-10-21-c";
 
 export type Oordeel = "goed" | "twijfel" | "fout";
 export type Deelscore = "ja" | "deels" | "nee";
@@ -266,12 +266,18 @@ export interface LabelProduct {
   geslacht?: string | null;
 }
 
+export type LabelSeizoen = "herfst-winter" | "lente-zomer" | "heel-jaar";
+
 export interface ProductLabel {
   id: string;
   stuk: string;
   stijlen: string[];
   spoor: "hip" | "gewoon" | "beide";
   formeel: number;
+  /** Sinds label-versie 2 (21 okt 2026); oudere labels hebben het niet. */
+  seizoen?: LabelSeizoen;
+  /** Oogt het stuk in 2026 gedateerd (skinny, dad-sneaker, groot logo)? */
+  gedateerd?: boolean;
 }
 
 /** De systeemprompt voor het labelen van producten. */
@@ -286,14 +292,16 @@ Je krijgt producten uit de catalogus, met categorie en naam. Geef per product:
 - stuk: het soort stuk, precies een woord uit de lijst hieronder voor die categorie. Past niets, kies het algemeenste woord (top, broek, rok, jas) of bij accessoires "anders".
 - stijlen: de stijlen waarin een stylist dit stuk vanzelf zou gebruiken, de best passende eerst, hooguit vier. Gebruik alleen deze sleutels: ${STIJL_SLEUTELS.join(", ")}. Wees streng: een stuk hoort alleen bij een stijl als het daar typisch voor is, niet als het er met moeite in past. Een basic (wit T-shirt, rechte jeans) mag bij meer stijlen horen.
 - spoor: "hip" als het stuk vooral modebewust is (een trend van nu), "gewoon" als het vooral een verzorgde basis is, "beide" als het allebei kan.
-- formeel: 1 (sport, thuis) tot 5 (gala, pak).
+- formeel: 1 (sport, thuis) tot 5 (gala, pak). Een T-shirt of hoodie is 1 of 2, een overhemd of fijne trui 3, een colbert of nette jurk 4.
+- seizoen: "herfst-winter" als het vooral in de koude maanden gedragen wordt (wol, gevoerd, laarzen), "lente-zomer" als het vooral warm weer vraagt (stro, linnen, open schoenen, slingbacks, dunne bandjes, korte mouwen als bovenstuk zonder laag, zomerse bloemenprint, broderie), "heel-jaar" als het in elk seizoen kan (jeans, T-shirt onder een jas, sneakers).
+- gedateerd: true als het stuk er in 2026 gedateerd uitziet (skinny jeans, zware dad-sneaker met dikke zool, groot logo of merknaam op de borst, overal scheuren), anders false.
 
 ## Soorten stukken
 ${soorten}
 
 ## Antwoord
 Geef uitsluitend JSON, zonder tekst ervoor of erna:
-{"labels":[{"id":"...","stuk":"...","stijlen":["..."],"spoor":"hip|gewoon|beide","formeel":3}]}
+{"labels":[{"id":"...","stuk":"...","stijlen":["..."],"spoor":"hip|gewoon|beide","formeel":3,"seizoen":"herfst-winter|lente-zomer|heel-jaar","gedateerd":false}]}
 Een label per product, met dezelfde id.`;
 }
 
@@ -325,7 +333,11 @@ export function leesLabelAntwoord(tekst: string, categorieVan: (id: string) => s
     if (stijlen.length === 0) continue;
     const spoor = r.spoor === "hip" || r.spoor === "gewoon" ? r.spoor : "beide";
     const formeel = Math.min(5, Math.max(1, Math.round(Number(r.formeel) || 3)));
-    uit.push({ id, stuk, stijlen, spoor, formeel });
+    const seizoen = (["herfst-winter", "lente-zomer", "heel-jaar"] as const).find((x) => x === r.seizoen);
+    const label: ProductLabel = { id, stuk, stijlen, spoor, formeel };
+    if (seizoen) label.seizoen = seizoen;
+    if (typeof r.gedateerd === "boolean") label.gedateerd = r.gedateerd;
+    uit.push(label);
   }
   return uit;
 }
