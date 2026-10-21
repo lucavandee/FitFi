@@ -143,6 +143,8 @@ vi.mock("framer-motion", () => {
     AnimatePresence: (props: any) => props.children ?? null,
     useScroll: () => ({ scrollY: { get: () => 0, on: () => () => {} } }),
     useTransform: () => 0,
+    // De kleurcode op de omslag (RapportOmslag) vraagt dit.
+    useReducedMotion: () => true,
   };
 });
 
