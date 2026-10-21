@@ -55,12 +55,26 @@ export function ResultsFeedbackWidget({
         }
       }
 
-      // Show widget after 5 seconds delay (user has time to see results)
-      const timer = setTimeout(() => {
-        setShowWidget(true);
-      }, 5000);
+      // Pas na 5 seconden en als je voorbij de omslag gescrold bent. Tot 21
+      // oktober 2026 alleen na 5 seconden: op een telefoon schoof de kaart dan
+      // over bijna de helft van de omslag, voor je iets van je rapport had gezien.
+      let tijdOm = false;
+      let gescrold = false;
+      const probeer = () => { if (tijdOm && gescrold) setShowWidget(true); };
+      const timer = setTimeout(() => { tijdOm = true; probeer(); }, 5000);
+      const opScroll = () => {
+        if (window.scrollY > window.innerHeight) {
+          gescrold = true;
+          window.removeEventListener('scroll', opScroll);
+          probeer();
+        }
+      };
+      window.addEventListener('scroll', opScroll, { passive: true });
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('scroll', opScroll);
+      };
     } catch (error) {
     }
   }, []);

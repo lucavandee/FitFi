@@ -2,10 +2,9 @@ import React from "react";
 import Spinner from "@/components/ui/Spinner";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Share2, Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers, Palette, Eye, Shirt, SlidersHorizontal, Briefcase, Coffee, PartyPopper, Dumbbell, Plane, ShoppingBag, ExternalLink } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles, RefreshCw, ArrowRight, Heart, Check, Grid3x3, Layers, Palette, Shirt, SlidersHorizontal, Briefcase, Coffee, PartyPopper, Dumbbell, Plane, ShoppingBag, ExternalLink } from "lucide-react";
 import toast from 'react-hot-toast';
-import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import { LS_KEYS, ColorProfile, Archetype } from "@/lib/quiz/types";
 import type { OutfitSeed } from "@/lib/quiz/seeds";
 import { useOutfits } from "@/hooks/useOutfits";
@@ -46,6 +45,7 @@ import { hashProfile } from "@/services/ratings/outfitRatings";
 import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
 import { ARCHETYPE_WEERGAVE, archetypeSleutelVan } from "@/config/archetypeMapping";
+import { RapportOmslag } from "@/components/results/v2/RapportOmslag";
 import OutfitCard from "@/components/outfits/OutfitCard";
 import { OutfitPreviewCard } from "@/components/results/OutfitPreviewCard";
 import { openProductLink } from "@/utils/affiliate";
@@ -239,9 +239,6 @@ export default function EnhancedResultsPage() {
     threshold: 50,
   });
 
-  const { scrollY } = useScroll();
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const heroScale = useTransform(scrollY, [0, 300], [1, 0.95]);
 
   // Read localStorage snapshots once per mount so that every render downstream
   // gets a stable reference. Without this, `readJson` returns a fresh object on
@@ -386,6 +383,13 @@ export default function EnhancedResultsPage() {
   const heeftFotoAnalyse =
     Boolean((activeColorProfile as ColorProfile & { photoAnalysis?: unknown }).photoAnalysis) ||
     profileDataSource === 'photo_analysis';
+
+  // De kleurcode op de omslag: dezelfde kleuren als "Draag deze kleuren" in
+  // ColorPaletteSection, zodat de omslag geen andere kleuren belooft.
+  const omslagKleuren = React.useMemo(() => {
+    const palet = getColorPalette(activeColorProfile.subSeason || activeColorProfile.season);
+    return (palet?.doColors ?? []).map((k) => ({ hex: k.hex, naam: k.name }));
+  }, [activeColorProfile.subSeason, activeColorProfile.season]);
 
   const parsedBudget = React.useMemo(() => {
     const b = answers?.budget;
@@ -634,115 +638,60 @@ export default function EnhancedResultsPage() {
         outfitCount={displayOutfits?.length || 0}
       />
 
-      <Breadcrumbs />
+      {/* Geen kruimelpad: dat zei 'Voorbeeld resultaten' boven je eigen rapport,
+          en legde een lichte strook boven de donkere omslag. */}
 
-      {/* ── HERO ── */}
-      <motion.section
-        style={{
-          opacity: heroOpacity,
-          scale: heroScale,
-        }}
-        className="relative bg-[#F5F0EB] pt-44 md:pt-48 pb-12 overflow-hidden"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto text-center">
-            {hasCompletedQuiz ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                className="flex flex-col items-center gap-3"
-              >
-                {/* Eyebrow */}
-                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740] mb-4">
-                  Jouw stijlrapport
-                </p>
-
-                {/* Style name — Instrument Serif italic (inline style fallback) */}
-                <h1
-                  className="mb-3"
-                  style={{
-                    fontFamily: "'Instrument Serif', Georgia, serif",
-                    fontStyle: "italic",
-                    fontSize: "clamp(40px, 8vw, 64px)",
-                    fontWeight: 400,
-                    textTransform: "none",
-                    letterSpacing: "-1px",
-                    color: "#1A1A1A",
-                    lineHeight: 1.05,
-                    textAlign: "center",
-                  }}
-                >
-                  {archetypeDisplayNL.toLowerCase()}
-                </h1>
-
-                {/* Outfit count */}
-                <p className="text-base text-[#4A4A4A] mb-8">
-                  {displayOutfits.length} outfits{favs.length > 0 ? ` · ${favs.length} bewaard` : ''}
-                </p>
-
-                {/* Action buttons */}
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => {
-                      setActiveTab('outfits');
-                      // Scroll to tab bar so outfits content is immediately visible
-                      requestAnimationFrame(() => {
-                        const tabBar = document.querySelector('[role="tablist"]');
-                        if (tabBar) {
-                          const rect = tabBar.getBoundingClientRect();
-                          const scrollTop = window.scrollY + rect.top - 72; // 72px = fixed header height
-                          window.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' });
-                        }
-                      });
-                    }}
-                    className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
-                  >
-                    <Eye className="w-4 h-4 text-white" />
-                    Bekijk outfits
-                  </button>
-
-                  <button
-                    onClick={() => navigate('/onboarding?step=redo')}
-                    className="bg-white border border-[#E5E5E5] hover:border-[#A85740] text-[#1A1A1A] font-medium text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-200"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Quiz opnieuw
-                  </button>
-
-                  <button
-                    onClick={sharePage}
-                    className="w-10 h-10 rounded-full border border-[#E5E5E5] hover:border-[#A85740] flex items-center justify-center transition-colors duration-200"
-                    aria-label="Delen"
-                  >
-                    <Share2 className="w-4 h-4 text-[#4A4A4A]" />
-                  </button>
-                </div>
-              </motion.div>
-            ) : (
-              <div className="py-4 text-left">
-                <p className="text-xs font-semibold tracking-[2.5px] uppercase text-[#A85740] mb-4">
-                  Style Report
-                </p>
-                <h1
-                  className="font-serif italic text-[#1A1A1A] leading-[1.05] mb-3"
-                  style={{ fontSize: 'clamp(2.5rem, 4vw, 3.5rem)' }}
-                >
-                  Jouw stijl
-                </h1>
-                <p className="text-base text-[#4A4A4A] mb-8 leading-relaxed max-w-sm">Voltooi de stijlquiz om je persoonlijke outfit-aanbevelingen te ontvangen</p>
-                <NavLink
-                  to="/onboarding"
-                  className="bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-sm py-3 px-6 rounded-full inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(194,101,74,0.2)]"
-                >
-                  Begin gratis
-                  <ArrowRight className="w-4 h-4" />
-                </NavLink>
-              </div>
-            )}
+      {/* ── OMSLAG (designsysteem v2) ── */}
+      {hasCompletedQuiz ? (
+        <RapportOmslag
+          stijlwoord={archetypeDisplayNL}
+          seizoen={activeColorProfile ? getSeasonDisplayName(activeColorProfile) : ''}
+          kenmerken={[
+            activeColorProfile && TEMPERATUUR_BIJVOEGLIJK[activeColorProfile.temperature]
+              ? `${TEMPERATUUR_BIJVOEGLIJK[activeColorProfile.temperature]} tinten`
+              : '',
+            activeColorProfile && CONTRAST_BIJVOEGLIJK[activeColorProfile.contrast]
+              ? `${CONTRAST_BIJVOEGLIJK[activeColorProfile.contrast]} contrast`
+              : '',
+          ].filter(Boolean)}
+          kleuren={omslagKleuren}
+          aantalOutfits={displayOutfits.length}
+          aantalBewaard={favs.length}
+          onBekijkOutfits={() => {
+            setActiveTab('outfits');
+            // Naar de tabbalk, zodat de outfits meteen in beeld staan.
+            requestAnimationFrame(() => {
+              const tabBar = document.querySelector('[role="tablist"]');
+              if (tabBar) {
+                const rect = tabBar.getBoundingClientRect();
+                const scrollTop = window.scrollY + rect.top - 72;
+                window.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' });
+              }
+            });
+          }}
+          onQuizOpnieuw={() => navigate('/onboarding?step=redo')}
+          onDelen={sharePage}
+        />
+      ) : (
+        <section className="bg-[#F5F0EB] pt-44 pb-16 md:pt-52 md:pb-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-[32px] md:text-[64px] text-[#1A1A1A] leading-[1.05]">
+              <span className="font-serif italic">Jouw </span>
+              <span className="font-sans font-bold">stijlrapport</span>
+            </h1>
+            <p className="text-base text-[#4A4A4A] text-center mt-4 max-w-lg mx-auto">
+              Doe de stijlquiz en je rapport staat hier: je kleuren, je stijl en outfits.
+            </p>
+            <NavLink
+              to="/onboarding"
+              className="mt-8 bg-[#A85740] hover:bg-[#9A503B] text-white font-semibold text-base py-3 px-6 rounded-xl inline-flex items-center gap-2 transition-colors duration-200"
+            >
+              Begin gratis
+              <ArrowRight className="w-5 h-5" />
+            </NavLink>
           </div>
-        </div>
-      </motion.section>
+        </section>
+      )}
 
       {/* ── STICKY TAB BAR ── */}
       {hasCompletedQuiz && (
