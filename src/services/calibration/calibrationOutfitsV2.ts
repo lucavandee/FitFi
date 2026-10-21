@@ -15,20 +15,16 @@
  * outfit kunnen belanden: een schoen met `category='bottom'` in de feed
  * wordt hier alsnog als footwear herkend.
  *
- * `getProducts(gender)` hierbeneden geeft alleen een gender door, geen
- * `occasions` of `budget`. `naarKandidatenParams` (taak 6) vertaalt dat naar
- * `p_occasions: []` (geen gelegenheid-filter) en het standaardbudget €0-150
- * (`STANDAARD_BUDGET_MAX` in `kandidaten.ts`) — er is voor calibratie geen
- * quizantwoord met een echt budget om te vertalen. Vóór taak 7 had dit pad
- * helemaal geen prijsfilter; nu begrenst het standaardbudget de pool
- * impliciet tot €150. Dat bleek in de praktijk een verbetering, geen
- * regressie: get_kandidaten rangschikt op afstand tot het midden van het
- * budget, en zonder enige budgetgrens trok dat de kandidatenpool naar de
- * duurste kant van de catalogus (Giglio-artikelen rond de €8.990), waar met
- * het €0-150-plafond gewone kledingprijzen overblijven, verspreid over
- * meerdere retailers inclusief H&M. Geen bewuste ontwerpkeuze van taak 7 zelf
- * (die keuze zat al in `naarKandidatenParams`), maar wel een gedragsverschil
- * dat deze aanroeper raakt en dat hier voor het eerst wordt vastgelegd.
+ * Tot 21 oktober 2026 vroeg dit pad de pool op met `getProducts(gender)`:
+ * geen gelegenheden, het standaardbudget van 0 tot 150 euro en geen
+ * pasvorm of print. De engine stelde de kaarten dan per gelegenheid samen uit
+ * een pool die daar niet op gekozen was. Lucs quiz (streetwear, vier
+ * gelegenheden, tot 500 euro) kreeg zo een oversized hoodie met een denim
+ * rok als "formeel". Nu gaat de quiz mee zoals de uitslag hem ook meestuurt,
+ * zonder de oordelen uit deze stap zelf: de kaarten en het alternatief bij
+ * een wissel blijven dan dezelfde pool, hoe er ook beoordeeld wordt. Wie nog
+ * niets beoordeelde, vraagt daardoor exact dezelfde pool als de uitslag, en
+ * die staat dan al in de cache van outfitService.
  */
 import { outfitService } from '@/services/outfits/outfitService';
 import type {
@@ -44,13 +40,20 @@ import {
   type CalibrationSlot,
 } from './engineV2Calibration';
 
+/** De quiz zoals de uitslag hem naar get_kandidaten stuurt, zonder de oordelen uit deze stap. */
+export function poolAntwoordenVoorKalibratie(
+  quizData: CalibrationQuizData | undefined
+): Record<string, unknown> {
+  const { calibrationRatings: _oordelen, ...antwoorden } = (quizData ?? {}) as Record<string, unknown>;
+  return antwoorden;
+}
+
 export async function generateCalibrationOutfitsV2(
   quizData: CalibrationQuizData | undefined,
   sessionId?: string | null,
   options: BuildCalibrationOptions = {}
 ): Promise<CalibrationOutfit[]> {
-  const gender = typeof quizData?.gender === 'string' ? quizData.gender : undefined;
-  const products = await outfitService.getProducts(gender);
+  const products = await outfitService.getProducts(poolAntwoordenVoorKalibratie(quizData));
 
   if (products.length === 0) {
     console.warn('[CalibrationV2] geen producten beschikbaar');
@@ -84,8 +87,7 @@ export async function swapCalibrationItemV2(
   sessionId?: string | null,
   options: BuildCalibrationOptions = {}
 ): Promise<CalibrationOutfitItem | null> {
-  const gender = typeof quizData?.gender === 'string' ? quizData.gender : undefined;
-  const products = await outfitService.getProducts(gender);
+  const products = await outfitService.getProducts(poolAntwoordenVoorKalibratie(quizData));
   if (products.length === 0) return null;
 
   const inGebruik = Object.values(outfit.items)

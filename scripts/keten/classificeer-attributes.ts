@@ -164,14 +164,19 @@ async function metHerhaling<T>(
   return laatste;
 }
 
-/** Classificeert precies de product-id's uit het bestand, in porties van 200, en schrijft ze via dezelfde RPC. */
+/**
+ * Classificeert precies de product-id's uit het bestand en schrijft ze via dezelfde RPC, in
+ * porties van 100 met een korte pauze: de Micro-instantie viel op 9 oktober 2026 om na grote
+ * schrijfporties (zie de feed-sync), en elke rij hier raakt ook de triggers van de pool.
+ */
 async function classificeerIds(pad: string, log: (...args: unknown[]) => void): Promise<void> {
   const ids = readFileSync(pad, "utf8").split("\n").map((r) => r.trim()).filter(Boolean);
   log(`${ids.length} product-id's uit ${pad}`);
   const overgang: Record<string, number> = {};
   let geschreven = 0;
-  for (let i = 0; i < ids.length; i += 200) {
-    const deel = ids.slice(i, i + 200);
+  for (let i = 0; i < ids.length; i += 100) {
+    if (i > 0) await new Promise((r) => setTimeout(r, 1500));
+    const deel = ids.slice(i, i + 100);
     const { data, error } = await metHerhaling(
       () => client.from("products").select("id, name, description, category, type, is_kids, retailer, brand").in("id", deel),
       "lezen van products op id",

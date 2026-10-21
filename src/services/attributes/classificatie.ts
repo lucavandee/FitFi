@@ -6,7 +6,7 @@ import type { Product } from "@/engine/types";
  * Verhoog deze string als productClassifier.ts verandert, en draai
  * scripts/keten/classificeer-attributes.ts opnieuw.
  */
-export const CLASSIFIER_VERSIE = "productClassifier-2026-10-13-naam-voor-categorie";
+export const CLASSIFIER_VERSIE = "productClassifier-2026-10-21-schoenwoorden";
 
 export type AttribuutCategorie = "top" | "bottom" | "footwear" | "outerwear" | "dress" | "accessory";
 

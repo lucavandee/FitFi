@@ -25,28 +25,36 @@ const FOOTWEAR_RULES: PatternEntry[] = [
   { regex: /\b(?!handschoen)[a-z]*schoen(en)?\b/i, subcategory: 'schoenen', weight: 3 },
   { regex: /\bschoeisel\b/i, subcategory: 'schoeisel', weight: 2 },
   { regex: /\bshoe(s)?\b/i, subcategory: 'shoes', weight: 3 },
-  { regex: /\blaars\b|\blaarzen\b/i, subcategory: 'laarzen', weight: 3 },
-  { regex: /\bboot(s)?\b/i, subcategory: 'boots', weight: 3 },
+  // Ook samenstellingen: regenlaarzen, enkellaarsjes, veterboots, chelseaboots.
+  { regex: /\b[a-z]*laars(?:je|jes)?\b|\b[a-z]*laarzen\b/i, subcategory: 'laarzen', weight: 3 },
+  // Samenstellingen alleen in het meervoud: "Zeilboot" in een kleurnaam is geen schoen.
+  { regex: /\bboot(s)?\b|\b[a-z]+boots\b/i, subcategory: 'boots', weight: 3 },
   { regex: /\bchelsea\b/i, subcategory: 'chelsea boots', weight: 3 },
   { regex: /\boxford[\s-]?(shoe|schoen|lace[-\s]?up|boot)?\b/i, subcategory: 'oxfords', weight: 1 },
   { regex: /\bderby\b/i, subcategory: 'derbys', weight: 2 },
   { regex: /\bbrogue(s)?\b/i, subcategory: 'brogues', weight: 3 },
-  { regex: /\bloafer(s)?\b/i, subcategory: 'loafers', weight: 3 },
+  { regex: /\b[a-z]*loafer(s)?\b/i, subcategory: 'loafers', weight: 3 },
   { regex: /\bmocassin(s)?\b|\bmoccasin(s)?\b/i, subcategory: 'mocassins', weight: 3 },
   { regex: /\bpump(s)?\b/i, subcategory: 'pumps', weight: 2 },
-  { regex: /\bsandaal\b|\bsandalen\b|\bsandal(s)?\b/i, subcategory: 'sandalen', weight: 3 },
+  { regex: /\b[a-z]*sanda(?:al|altjes?|len|lette|letten)\b|\bsandal(s)?\b/i, subcategory: 'sandalen', weight: 3 },
   { regex: /\bespadrille(s)?\b/i, subcategory: 'espadrilles', weight: 3 },
   { regex: /\binstapper(s)?\b/i, subcategory: 'instappers', weight: 3 },
   // H&M noemt een kledingstuk zonder sluiting ook "slip-on": "Slip-on jurk",
   // "Satijnen slip-on rok". Staat er een kledingstuk achter, dan is het geen schoen.
-  { regex: /\bslip-on(s)?\b(?!\s+(?:jurk|rok|dress|skirt|top|blouse|broek|trui))/i, subcategory: 'slip-ons', weight: 3 },
+  { regex: /\bslip-(?:on|in)s?\b(?!\s+(?:jurk|rok|dress|skirt|top|blouse|broek|trui))/i, subcategory: 'slip-ons', weight: 3 },
   { regex: /\bveterschoen(en)?\b/i, subcategory: 'veterschoenen', weight: 3 },
   { regex: /\benkellaars\b|\bankle[\s-]?boot(s)?\b/i, subcategory: 'enkellaarzen', weight: 3 },
   { regex: /\bkuitlaars\b|\bknee[\s-]?high[\s-]?boot(s)?\b/i, subcategory: 'kuitlaarzen', weight: 3 },
   { regex: /\bstiletto(s)?\b/i, subcategory: 'stilettos', weight: 3 },
   { regex: /\bwedge(s)?\b/i, subcategory: 'wedges', weight: 2 },
-  { regex: /\bmuil(en)?\b|\bmule(s)?\b/i, subcategory: 'mules', weight: 3 },
-  { regex: /\bballerina(s)?\b|\bballerina[\s-]?flat(s)?\b/i, subcategory: 'ballerinas', weight: 3 },
+  { regex: /\bmuil(?:en|tjes)?\b|\bmule(s)?\b/i, subcategory: 'mules', weight: 3 },
+  // "Velvet ballet flats" stond als top in de pool: zonder schoenwoord in de
+  // naam won "Jersey linings" uit de omschrijving van de feedcategorie.
+  { regex: /\b[a-z]*ballerina(s)?\b|\bballerina[\s-]?flat(s)?\b|\bballet[\s-]?flat(s)?\b/i, subcategory: 'ballerinas', weight: 3 },
+  { regex: /\bslingback[a-z]*\b/i, subcategory: 'slingbacks', weight: 3 },
+  { regex: /\bkitten[\s-]?heel(s)?\b/i, subcategory: 'kitten heels', weight: 3 },
+  { regex: /\bmary[\s-]?janes?\b/i, subcategory: 'mary janes', weight: 3 },
+  { regex: /\b[a-z]*clog(s)?\b|\bklomp(en)?\b/i, subcategory: 'clogs', weight: 3 },
   { regex: /\bdesert[\s-]?boot(s)?\b/i, subcategory: 'desert boots', weight: 3 },
   { regex: /\bfootwear\b/i, subcategory: 'footwear', weight: 2 },
 ];
@@ -270,7 +278,7 @@ const TOP_RULES: PatternEntry[] = [
 // merk-gestripte naam). Twee bronnen van waarheid voor "is dit zwemkleding"
 // naast elkaar laten bestaan leidt tot drift; vandaar de verplaatsing i.p.v.
 // een losse toevoeging hier.
-const REJECT_REGEX = /\b(pyjama|nachthem|slaappak|ochtendjas|badjas|nightwear|pantoffel|sloffen|slippers?|flip[\s-]?flop|badslip|teenslipper|romper|kruippak|slab|boxpak|babypak|kaars|candle|lamp|vaas|decor|kussen|plaid|handdoek|baddoek|gordijn|laken|dekbed|overtrek|matras|deken|vloerkleed|tapijt|mok|bord|spiegel|knuffeldier|knuffel|speelgoed|puzzel|telefoonhoesje|sleutelhanger|poster|parfum|make-up|mascara|lipstick|foundation|concealer|serum|shampoo|douchegel|bodylotion|aftershave|deodorant|luier|fopspeen|aankleedkussen|multipack|hemd|tafelkleed|tafelloper|bedsprei|meegroeipakje|wanten|kunstnagel|press-on|kwast|bronzer|voetbalshirt|voetbaltenue|voetbalbroek|voetbalsok|thuisshirt|uitshirt|thuistenue|uittenue|thuisbroek|uitbroek|prematch|pre[\s-]?match|(?:football|soccer|voetbal|rugby|hockey|match|game)[\s-]?(?:jersey|shirt|kit|tenue|jacket|pant|broek))\b/i;
+const REJECT_REGEX = /\b(pyjama|nachthem|slaappak|ochtendjas|badjas|nightwear|pantoffels?|slof(?:fen|jes?)?|[a-z]*slippers?|flip[\s-]?flops?|verkleed[a-z]*|romper|kruippak|slab|boxpak|babypak|kaars|candle|lamp|vaas|decor|kussen|plaid|handdoek|baddoek|gordijn|laken|dekbed|overtrek|matras|deken|vloerkleed|tapijt|mok|bord|spiegel|knuffeldier|knuffel|speelgoed|puzzel|telefoonhoesje|sleutelhanger|poster|parfum|make-up|mascara|lipstick|foundation|concealer|serum|shampoo|douchegel|bodylotion|aftershave|deodorant|luier|fopspeen|aankleedkussen|multipack|hemd|tafelkleed|tafelloper|bedsprei|meegroeipakje|wanten|kunstnagel|press-on|kwast|bronzer|voetbalshirt|voetbaltenue|voetbalbroek|voetbalsok|thuisshirt|uitshirt|thuistenue|uittenue|thuisbroek|uitbroek|prematch|pre[\s-]?match|(?:football|soccer|voetbal|rugby|hockey|match|game)[\s-]?(?:jersey|shirt|kit|tenue|jacket|pant|broek))\b/i;
 
 const SPORT_FOOTWEAR_REGEX = /\b(fg|ag|sg|mg|tf|ic|in)\s*[/\\]\s*(fg|ag|sg|mg|tf|ic|in)\b/i;
 
