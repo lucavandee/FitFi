@@ -18,15 +18,17 @@ describe("tel", () => {
     _vergeetTellingen();
   });
 
-  it("roept tel_gebeurtenis aan met de gebeurtenis", () => {
+  it("roept tel_gebeurtenis aan met de gebeurtenis", async () => {
     tel("quiz_start");
+    await new Promise((r) => setTimeout(r, 0));
     expect(rpc).toHaveBeenCalledWith("tel_gebeurtenis", { p_gebeurtenis: "quiz_start" });
   });
 
-  it("telt een gebeurtenis maar een keer per paginalading", () => {
+  it("telt een gebeurtenis maar een keer per paginalading", async () => {
     tel("home");
     tel("home");
     tel("quiz_af");
+    await new Promise((r) => setTimeout(r, 0));
     expect(rpc).toHaveBeenCalledTimes(2);
   });
 

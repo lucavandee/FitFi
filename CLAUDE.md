@@ -312,3 +312,54 @@ de lezer kan volgen: minstens 200vh scroll per scene.
 ## 17. Aanvullingen uit "Onder de hero" (oktober 2026)
 
 Deze regels gaan voor wat er hierboven staat. Deel 7: wereld- en sfeerbeeld staat in `aspect-[4/5] object-cover`, en productfoto's uit een feed houden de verhouding van de bron en worden nooit uitgesneden (geen `aspect-[3/4]`, geen `object-cover`, niets eroverheen). Deel 5: foto's hebben geen radius; app-weergave en kaarten houden `rounded-2xl`. Deel 1: tekstlinks zijn `text-[#1A1A1A] underline underline-offset-2`, want `#4A7EC2` haalt op geen van onze ondergronden 4,5:1. Deel 2: de displaykop staat ook in het slot van de landingspagina, een schermvullend beeld met een knop; overal anders onder de hero geen serif. Deel 10: "Bekijk voorbeeld" is een vaste tekst. Deel 4 en 14: de kop is 90 tot 125 px hoog (tussen 768 en ongeveer 850 px breed hoger dan 90); Navbar meet hem in `--header-h`, en ruimte onder de kop rekent daarmee, als `calc(var(--header-h, 90px) + 16px)`. Deel 16: scroll-gekoppelde beweging buiten ScrollScene, zoals de wipe van de kleurpiek, haalt zijn invoerbereik ook uit `beatBereik`.
+
+## 18. Designsysteem v2: een modeblad dat je kunt bedienen (21 oktober 2026)
+
+Luc koos op 21 oktober 2026 variant A uit het prototype (plan:
+`~/claude-artifacts/fitfi-beeld/2026-10-21-website/plan.md`). Deze regels gaan
+voor deel 1 tot en met 17 waar ze botsen. Palet, knoppen, kaarten, inputs,
+badges, radii, schaduwen, iconen en vaste CTA-teksten blijven zoals hierboven.
+
+- **Avondsecties.** `bg-[#1A1A1A]` mag als sectie-achtergrond: de hero van de
+  homepage, de omslag van een rapport en de afsluiter. Koppen daarop
+  `text-[#FAFAF8]`, lopende tekst `text-[#E5E5E5]`, randen `border-[#4A4A4A]`.
+  Nooit twee avondsecties achter elkaar; wissel af met zand (`#F5F0EB`) en
+  gebroken wit (`#FAFAF8`). "Achtergrond altijd #FAFAF8" en "koppen altijd
+  #1A1A1A" gelden voor de lichte secties.
+- **Displaykop van de homepage.** Instrument Serif in twee regels, de eerste
+  italic: `text-[64px] sm:text-[80px] lg:text-[112px] xl:text-[128px]
+  leading-[0.95]`. Hooguit zes woorden. Andere pagina's houden de displaykop
+  uit deel 2.
+- **Serif onder de hero** alleen voor het stijlwoord op de omslag van een
+  rapport, een quizvraag en de kop van de afsluiter. Sectiekoppen blijven de
+  H2 uit deel 2 in de sans, met een regel erboven in
+  `text-sm font-medium text-[#A85740]`. Geen badge-pillen als sectiekop.
+- **Lopende tekst in een hero of intro** mag `text-lg leading-relaxed`.
+- **De kleurcode** (`src/components/landing/v2/Kleurcode.tsx`) is het
+  beeldteken van FitFi: een strook balken uit een echt palet (`COLOR_PALETTES`
+  of iemands rapport), nooit decoratieve kleuren. `rand="licht"` op een lichte,
+  `rand="donker"` op een donkere ondergrond. Bouwt hooguit een keer op bij het
+  laden. Op een marketingpagina staat erbij dat het een voorbeeld is.
+- **Voorbeelden op marketingpagina's** komen uit
+  `src/content/voorbeeldOutfits.ts`: alleen outfits die de stijlcontrole
+  goedkeurde, met de producten exact vastgesteld en de datum van de prijzen.
+  Toon ze met `Packshot` (`src/components/landing/v2/Packshot.tsx`): de
+  verhouding van de bron, `object-contain` op `#FAFAF8`, geen radius, niets
+  eroverheen (deel 17), en de kleinere versie via de beeldparameter van de
+  winkel (`?imwidth=` bij H&M).
+- **Gegenereerde mensen.** Alleen de goedgekeurde cast uit
+  `~/claude-artifacts/fitfi-beeld/2026-10-21-website/cast` (1, 3, 5, 7, 8, 11)
+  en bewerkingen daarvan, met de herkomst in `herkomst.json`. Het label staat
+  onder het beeld ("Beeld gemaakt met AI. De persoon is een model."), nooit
+  eroverheen, en een gegenereerd mens is nooit klant, review of resultaat.
+  Geen vaste look van gracht, korrel en gouden uur: dat is in 2026 de
+  standaardlook van AI-beeld.
+- **Een vraag die (nog) niet bestaat, staat niet op een openbare pagina.** Het
+  quizscherm "Deze of deze?" uit het prototype komt pas op de homepage als de
+  quiz zelf zo werkt.
+- **Snelheid.** Doel: LCP onder 2,5 s op Lighthouse mobiel. Geen video of
+  groot beeld boven de vouw dat de LCP draagt, geen preload van een beeld dat
+  niet boven de vouw staat; op de homepage is de kop het grootste element.
+  Stand 21 oktober 2026 op de preview: 2,7 tot 2,8 s (was 4,8 s). De rest zit
+  in de JavaScript die de hele pagina in de browser tekent (eerste verf 2,3 s);
+  dat lost alleen vooraf renderen naar HTML op.

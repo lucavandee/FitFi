@@ -4,6 +4,9 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieBanner from "@/components/legal/CookieBanner";
+// Niet lazy: de homepage is de meeste eerste bezoeken, en als losse chunk kostte
+// hij een extra rondgang voordat de kop (het LCP-element) getekend kon worden.
+import LandingPage from "@/pages/LandingPage";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
@@ -21,7 +24,6 @@ import { NotificationProvider } from "@/context/NotificationContext";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 
 // Lazy pages
-const LandingPage        = lazy(() => import("@/pages/LandingPage"));
 const HowItWorksPage     = lazy(() => import("@/pages/HowItWorksPage"));
 const PricingPage        = lazy(() => import("@/pages/PricingPage"));
 const AboutPage          = lazy(() => import("@/pages/AboutPage"));
