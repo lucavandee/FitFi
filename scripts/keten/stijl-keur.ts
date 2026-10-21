@@ -13,7 +13,14 @@
  * doet. Het rapport noemt het model dat echt antwoordde: zet dat id vast.
  *
  * De set is een JSON-bestand met { outfits: [{ id, verwacht, profiel, stukken }] }.
- * verwacht is "goed", "fout" of null (alleen ter informatie).
+ * verwacht is "goed", "fout" of null (alleen ter informatie). Hangt een
+ * verwachting af van iets wat de nacht niet stuurt (lichtheid, kleurtemperatuur,
+ * spoor), dan staat dat in afhankelijk_van en telt ze niet mee.
+ *
+ * De agent ziet hetzelfde als in de nacht (src/keten/stijl/kalibratie.ts): de
+ * hele set gehusseld met een vast zaad, per portie korte id's k1 tot k9, en een
+ * profiel met alleen geslacht, stijl en gelegenheid. Tot 21 oktober 2026 gingen
+ * de id's uit de set ("goed-4", "fout-4") letterlijk mee, in porties op volgorde.
  *
  * Wat telt (kalibratie):
  *  - Een outfit die fout had moeten zijn maar "goed" kreeg, is de dure fout: die
@@ -35,15 +42,20 @@ import {
   type KeurOordeel,
   type KeurOutfit,
 } from "../../src/keten/stijl/stijlAgent";
-import { isLimiet } from "../../src/keten/stijl/stijlSets";
+import { kalibratiePorties, verwachtZoalsDeNacht, zoalsDeNacht } from "../../src/keten/stijl/kalibratie";
+import { isLimiet, leesPortieAntwoord } from "../../src/keten/stijl/stijlSets";
 import { heeftVlag, leesVlag } from "./args";
 import { bouwKeurArgs, omgevingVoor, roepClaudeAan } from "./claudeStream";
 import { leesSleutel } from "./sleutel";
 
 interface SetOutfit extends KeurOutfit {
   verwacht: "goed" | "fout" | null;
+  afhankelijk_van?: string[];
   bron?: string;
 }
+
+/** Vast zaad voor het husselen, zodat twee kalibraties dezelfde porties krijgen. */
+const ZAAD = 2026;
 
 const argv = process.argv.slice(2);
 const SET = leesVlag(argv, "set") || "scripts/keten/stijl/kalibratie.json";
@@ -52,12 +64,6 @@ const PORTIE = Math.max(1, Number(leesVlag(argv, "portie") || 9));
 const EFFORT = leesVlag(argv, "effort") || null;
 const VIA = leesVlag(argv, "via");
 const TIMEOUT_MS = 8 * 60 * 1000;
-
-function porties<T>(xs: T[], n: number): T[][] {
-  const uit: T[][] = [];
-  for (let i = 0; i < xs.length; i += n) uit.push(xs.slice(i, i + n));
-  return uit;
-}
 
 interface PortieUitslag {
   oordelen: KeurOordeel[];
@@ -68,17 +74,21 @@ interface PortieUitslag {
   bron: string | null;
 }
 
-async function keurPortie(portie: SetOutfit[], systeem: string, env: NodeJS.ProcessEnv): Promise<PortieUitslag> {
-  const args = bouwKeurArgs({ model: MODEL, effort: EFFORT, systeem, opdracht: bouwKeurOpdracht(portie) });
-  const u = await roepClaudeAan(args, { timeoutMs: TIMEOUT_MS, env });
+async function keurPortie(portie: Array<{ outfit: SetOutfit; kort: string }>, systeem: string, env: NodeJS.ProcessEnv): Promise<PortieUitslag> {
+  const opdracht = bouwKeurOpdracht(portie.map((x) => zoalsDeNacht(x.outfit, x.kort)));
+  const u = await roepClaudeAan(bouwKeurArgs({ model: MODEL, effort: EFFORT, systeem, opdracht }), { timeoutMs: TIMEOUT_MS, env });
   const meta = { model: u.model, bron: u.apiKeySource, usd: u.total_cost_usd ?? undefined };
   if (!u.ok) return { ...meta, oordelen: [], fout: u.tekst.slice(0, 300), limiet: isLimiet(u.tekst) };
-  return { ...meta, oordelen: leesKeurAntwoord(u.tekst) };
+  // Terug van k1..k9 naar de id's uit de set; alleen verstuurde id's, elk een keer.
+  const echt = new Map(portie.map((x) => [x.kort, x.outfit.id]));
+  const { perId } = leesPortieAntwoord(u.tekst, portie.map((x) => x.kort));
+  return { ...meta, oordelen: [...perId.values()].map((k) => ({ ...k, id: echt.get(k.id)! })) };
 }
 
 function oordeelRegel(o: SetOutfit, k: KeurOordeel | undefined): string {
   if (!k) return `- ${o.id}: GEEN OORDEEL`;
-  const verwacht = o.verwacht ? ` (verwacht ${o.verwacht})` : "";
+  const v = verwachtZoalsDeNacht(o);
+  const verwacht = v ? ` (verwacht ${v})` : o.verwacht ? ` (verwacht ${o.verwacht}, telt niet: hangt af van ${o.afhankelijk_van?.join(", ")})` : "";
   const redenen = k.redenen.length ? ` ${k.redenen.join(" ")}` : "";
   const beter = k.verbetering ? ` Beter: ${k.verbetering}` : "";
   return `- ${o.id}: **${k.oordeel}**${verwacht}. stijl ${k.stijl}, gelegenheid ${k.gelegenheid}, kleur ${k.kleur}, samenhang ${k.samenhang}.${redenen}${beter}`;
@@ -87,7 +97,7 @@ function oordeelRegel(o: SetOutfit, k: KeurOordeel | undefined): string {
 async function main(): Promise<void> {
   const set = JSON.parse(readFileSync(SET, "utf8")) as { versie?: string; outfits: SetOutfit[] };
   const outfits = set.outfits;
-  const delen = porties(outfits, PORTIE);
+  const delen = kalibratiePorties(outfits, PORTIE, ZAAD);
   console.log(`${KEUR_VERSIE}, model ${MODEL}, denkniveau ${EFFORT ?? "standaard"}, set ${SET} (${set.versie ?? "zonder versie"})`);
   console.log(`${outfits.length} outfits in ${delen.length} porties van hooguit ${PORTIE}.`);
   if (!heeftVlag(argv, "ja")) {
@@ -118,16 +128,16 @@ async function main(): Promise<void> {
     }
   }
 
-  const metVerwachting = outfits.filter((o) => o.verwacht);
-  const tellen = (f: (o: SetOutfit, k: KeurOordeel) => boolean) =>
-    metVerwachting.filter((o) => perId.has(o.id) && f(o, perId.get(o.id)!));
-  const dureFouten = tellen((o, k) => o.verwacht === "fout" && k.oordeel === "goed");
-  const terechtFout = tellen((o, k) => o.verwacht === "fout" && k.oordeel !== "goed");
-  const terechtGoed = tellen((o, k) => o.verwacht === "goed" && k.oordeel === "goed");
-  const teStreng = tellen((o, k) => o.verwacht === "goed" && k.oordeel !== "goed");
+  const metVerwachting = outfits.filter((o) => verwachtZoalsDeNacht(o));
+  const tellen = (f: (v: "goed" | "fout", k: KeurOordeel) => boolean) =>
+    metVerwachting.filter((o) => perId.has(o.id) && f(verwachtZoalsDeNacht(o)!, perId.get(o.id)!));
+  const dureFouten = tellen((v, k) => v === "fout" && k.oordeel === "goed");
+  const terechtFout = tellen((v, k) => v === "fout" && k.oordeel !== "goed");
+  const terechtGoed = tellen((v, k) => v === "goed" && k.oordeel === "goed");
+  const teStreng = tellen((v, k) => v === "goed" && k.oordeel !== "goed");
   const zonder = metVerwachting.filter((o) => !perId.has(o.id));
-  const aantalFout = metVerwachting.filter((o) => o.verwacht === "fout").length;
-  const aantalGoed = metVerwachting.filter((o) => o.verwacht === "goed").length;
+  const aantalFout = metVerwachting.filter((o) => verwachtZoalsDeNacht(o) === "fout").length;
+  const aantalGoed = metVerwachting.filter((o) => verwachtZoalsDeNacht(o) === "goed").length;
 
   const r: string[] = [];
   r.push(`# Kalibratie stijl-agent, ${new Date().toISOString().slice(0, 16).replace("T", " ")}`);
