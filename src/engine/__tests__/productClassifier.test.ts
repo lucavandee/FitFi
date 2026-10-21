@@ -146,6 +146,34 @@ describe('FOOTWEAR classification', () => {
   it('classifies desert boots', () => {
     expect(cat('Clarks Desert Boot Tan')).toBe('footwear');
   });
+
+  // H&M-feed van 15 oktober 2026: 329 van de 1.082 schoennamen hadden geen
+  // schoenwoord dat de classifier kende. Zonder treffer in de naam won een
+  // woord uit de omschrijving: "Velvet ballet flats" met "Jersey linings"
+  // stond als top in de pool en kwam zo als top op een kalibratiekaart.
+  it.each([
+    'H & M - Velvet ballet flats - Donkerbruin',
+    "H & M - Lakballerina's - Zwart",
+    'H & M - Chunky veterboots - Zwart',
+    'H & M - Chelseaboots met plateauzool - Zwart',
+    'H & M - Regenlaarzen - Zwart',
+    'H & M - Enkellaarsjes met hak - Bruin',
+    'H & M - Suède sandaletten - Donker Kakigroen',
+    'H & M - Vissersandalen - Bruin',
+    'H & M - Suède slip-ins met voetbed - Zwart',
+    'H & M - Slingbacks met kittenheel - Zwart',
+    'H & M - Slingbackpumps - Beige',
+    'H & M - Mary Janes in espadrillestijl - Roomwit',
+    'H & M - Pennyloafers - Bruin',
+    'H & M - Plateauclogs met hak - Bruin',
+    'H & M - Leren muiltjes - Zwart',
+  ])('herkent %s op naam als schoen', (naam) => {
+    expect(classifyProductDetailed(naam, 'Jersey linings.', 'footwear', 'H & M').category).toBe('footwear');
+  });
+
+  it('een kleurnaam met "boot" maakt van sokken geen schoen', () => {
+    expect(cat('H & M - 4 paar sneakersokken - Marineblauw/Zeilboot')).not.toBe('footwear');
+  });
 });
 
 // ─── OUTERWEAR ─────────────────────────────────────────────────────────────
@@ -298,6 +326,20 @@ describe('Rejected products', () => {
   it('rejects sport footwear (stud pattern)', () => {
     const r = classifyProductDetailed('Adidas Predator FG/AG');
     expect(r.rejected).toBe(true);
+  });
+
+  // De afwijslijst noemde sloffen, pantoffel en teenslipper al, maar ving de
+  // vormen niet die H&M gebruikt: slofjes, pantoffels, teenslippers, badslippers.
+  it.each([
+    'H & M - Gebreide katoenen slofjes - Roomwit',
+    'H & M - Sloffen met fluffy voering - Beige',
+    'H & M - Gevilte pantoffels - Donkergrijs',
+    'H & M - Teenslippers - Donkerbruin',
+    'H & M - Badslippers - Zwart',
+    'H & M - Verkleedpak - Geel/Leeuw',
+    'H & M - Tweedelige verkleedset - monster - Zwart',
+  ])('wijst %s af: geen stuk voor een outfit', (naam) => {
+    expect(classifyProductDetailed(naam, '', 'footwear', 'H & M').rejected).toBe(true);
   });
 });
 

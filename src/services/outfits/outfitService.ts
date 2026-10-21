@@ -57,8 +57,8 @@ class OutfitService {
    * ze op attributen in plaats van embeddings en blijft zo onder de 0,4 s;
    * met embeddings liep hij met negen likes 4 van 4 keer in de timeout.
    *
-   * Een string als eerste argument wordt gelezen als gender; dat is de vorm
-   * die calibrationOutfitsV2 gebruikt.
+   * Een string als eerste argument wordt gelezen als gender; zo vroeg de
+   * kalibratiestap de pool op tot 21 oktober 2026 (zie calibrationOutfitsV2).
    *
    * Gebruikt bereidKandidatenVoorMetDiagnose (niet de gewone variant): die
    * geeft classifierAfgekeurd, veiligheidsnetGeweigerd en geweigerdPerReden

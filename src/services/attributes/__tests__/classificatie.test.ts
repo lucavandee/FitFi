@@ -52,7 +52,11 @@ describe("classificeerRij", () => {
     // Daarna verhoogd (13 oktober 2026) voor "de naam gaat voor een foute oude
     // categorie": Giglio-tops en pakken als accessoire, slip-on jurken als schoen.
     // Ook gericht herschreven met --ids-bestand.
-    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-10-13-naam-voor-categorie");
+    // Daarna verhoogd (21 oktober 2026) voor de schoenwoorden: 329 van de 1.082
+    // H&M-schoennamen hadden geen woord dat de classifier kende, en "Velvet
+    // ballet flats" stond zo als top in de pool. Sloffen, slippers en
+    // verkleedkleding vallen nu af. Gericht herschreven met --ids-bestand.
+    expect(CLASSIFIER_VERSIE).toBe("productClassifier-2026-10-21-schoenwoorden");
   });
 
   it("een Giglio-top is een top en een volledig pak valt eruit", () => {

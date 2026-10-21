@@ -63,6 +63,16 @@ const batterij: Geval[] = [
   { naam: 'Jeans ICON DENIM LOS ANGELES Woman color Blue', beschrijving: '', categoryPath: '', merk: 'Icon Denim Los Angeles' },
   { naam: 'Jeans DENIM X ALEXANDER WANG Woman color Blue', beschrijving: '', categoryPath: '', merk: 'Denim X Alexander Wang' },
   { naam: 'T-Shirt COMME DES GARÇONS SHIRT Men color White', beschrijving: '', categoryPath: '', merk: 'Comme Des Garçons Shirt' },
+  // Schoenwoorden uit de H&M-feed van 15 oktober 2026.
+  { naam: 'H & M - Velvet ballet flats - Donkerbruin', beschrijving: 'Jersey linings.', categoryPath: 'footwear', merk: 'H & M' },
+  { naam: 'H & M - Chunky veterboots - Zwart', beschrijving: '', categoryPath: '', merk: 'H & M' },
+  { naam: 'H & M - Regenlaarzen - Zwart', beschrijving: '', categoryPath: '', merk: 'H & M' },
+  { naam: 'H & M - Suède sandaletten - Donker Kakigroen', beschrijving: '', categoryPath: '', merk: 'H & M' },
+  { naam: 'H & M - Suède slip-ins met voetbed - Zwart', beschrijving: '', categoryPath: '', merk: 'H & M' },
+  { naam: 'H & M - Slingbacks met kittenheel - Zwart', beschrijving: '', categoryPath: '', merk: 'H & M' },
+  { naam: 'H & M - Mary Janes in espadrillestijl - Roomwit', beschrijving: '', categoryPath: '', merk: 'H & M' },
+  { naam: 'H & M - Plateauclogs met hak - Bruin', beschrijving: '', categoryPath: '', merk: 'H & M' },
+  { naam: 'H & M - 4 paar sneakersokken - Marineblauw/Zeilboot', beschrijving: '', categoryPath: '', merk: 'H & M' },
   // Grensgevallen op leesteken/accent (fixronde 1 en 2).
   { naam: 'Sweater JEANS CO. Men color Black', beschrijving: '', categoryPath: '', merk: 'Jeans Co.' },
   { naam: 'Sweater JEANS CO- Men color Black', beschrijving: '', categoryPath: '', merk: 'Jeans Co-' },
