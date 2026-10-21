@@ -53,7 +53,8 @@ interface VoorbeeldOutfit {
  *
  * De productfoto's zijn de feedfoto's van H&M, ongewijzigd (Daisycon art.
  * 2.6): ze staan op hun eigen lichtgrijze ondergrond (#F9F9F9) in een kader
- * met dezelfde kleur en verhouding (2:3), zonder bijsnijden. De
+ * in gebroken wit uit het palet (#FAFAF8, een tint verschil, niet te zien)
+ * met dezelfde verhouding (2:3), zonder bijsnijden. De
  * imwidth-parameter vraagt een kleinere versie bij H&M zelf op.
  */
 const VOORBEELD_OUTFITS: VoorbeeldOutfit[] = [
@@ -395,7 +396,7 @@ export default function ResultsPreviewPage() {
                     <ul className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                       {outfit.stukken.map((stuk) => (
                         <li key={stuk.beeld}>
-                          <div className="aspect-[2/3] rounded-xl bg-[#F9F9F9] overflow-hidden">
+                          <div className="aspect-[2/3] rounded-xl bg-[#FAFAF8] overflow-hidden">
                             <img
                               src={formaat(stuk.beeld, 600)}
                               srcSet={`${formaat(stuk.beeld, 400)} 400w, ${formaat(stuk.beeld, 800)} 800w`}
