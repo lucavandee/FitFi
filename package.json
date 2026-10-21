@@ -35,6 +35,7 @@
     "keten:stijl-vergelijk": "vite-node scripts/keten/stijl-vergelijk.ts",
     "keten:stijl-vul": "vite-node scripts/keten/stijl-vul.ts",
     "keten:stijl-eindtoets": "vite-node scripts/keten/stijl-eindtoets.ts",
+    "keten:stijl-sets": "vite-node scripts/keten/stijl-sets.ts",
     "keten:tag": "vite-node scripts/keten/tag-products.ts",
     "keten:poort": "vite-node scripts/keten/feed-poort.ts",
     "keten:feed-sync": "vite-node scripts/keten/feed-sync.ts",

@@ -1,11 +1,16 @@
 /**
  * Laat de stijl-agent (src/keten/stijl/stijlAgent.ts) outfits keuren met
- * `claude -p` op het abonnement, en legt zijn oordeel naast het verwachte.
+ * `claude -p`, en legt zijn oordeel naast het verwachte.
  *
  * Gebruik:
- *   npm run keten:stijl-keur                 droge run: aantallen, geen aanroep
- *   npm run keten:stijl-keur -- --ja         keuren (standaard de kalibratieset)
- *   npm run keten:stijl-keur -- --ja --set pad/naar/set.json --model sonnet --portie 9
+ *   npm run keten:stijl-keur                                droge run: aantallen, geen aanroep
+ *   npm run keten:stijl-keur -- --ja --via sleutel --model <id> --effort xhigh
+ *   npm run keten:stijl-keur -- --ja --via abonnement --set pad/naar/set.json --portie 9
+ *
+ * --via is verplicht bij --ja: sleutel (de API-sleutel in ~/.config/fitfi) of
+ * abonnement (Lucs Max). De aanroep is dezelfde als in de nacht van het vooraf
+ * keuren (scripts/keten/claudeStream.ts), zodat de kalibratie meet wat de nacht
+ * doet. Het rapport noemt het model dat echt antwoordde: zet dat id vast.
  *
  * De set is een JSON-bestand met { outfits: [{ id, verwacht, profiel, stukken }] }.
  * verwacht is "goed", "fout" of null (alleen ter informatie).
@@ -30,8 +35,10 @@ import {
   type KeurOordeel,
   type KeurOutfit,
 } from "../../src/keten/stijl/stijlAgent";
+import { isLimiet } from "../../src/keten/stijl/stijlSets";
 import { heeftVlag, leesVlag } from "./args";
-import { bouwClaudeArgs, voerClaudeCliUit } from "./tagCli";
+import { bouwKeurArgs, omgevingVoor, roepClaudeAan } from "./claudeStream";
+import { leesSleutel } from "./sleutel";
 
 interface SetOutfit extends KeurOutfit {
   verwacht: "goed" | "fout" | null;
@@ -42,6 +49,8 @@ const argv = process.argv.slice(2);
 const SET = leesVlag(argv, "set") || "scripts/keten/stijl/kalibratie.json";
 const MODEL = leesVlag(argv, "model") || process.env.STIJL_MODEL || "sonnet";
 const PORTIE = Math.max(1, Number(leesVlag(argv, "portie") || 9));
+const EFFORT = leesVlag(argv, "effort") || null;
+const VIA = leesVlag(argv, "via");
 const TIMEOUT_MS = 8 * 60 * 1000;
 
 function porties<T>(xs: T[], n: number): T[][] {
@@ -50,11 +59,21 @@ function porties<T>(xs: T[], n: number): T[][] {
   return uit;
 }
 
-async function keurPortie(portie: SetOutfit[], systeem: string): Promise<{ oordelen: KeurOordeel[]; fout?: string; usd?: number }> {
-  const args = bouwClaudeArgs({ model: MODEL, systeemPrompt: systeem, opdracht: bouwKeurOpdracht(portie) });
-  const r = await voerClaudeCliUit(args, TIMEOUT_MS);
-  if (r.is_error) return { oordelen: [], fout: String(r.result ?? r.subtype ?? "onbekend").slice(0, 300) };
-  return { oordelen: leesKeurAntwoord(String(r.result ?? "")), usd: r.total_cost_usd };
+interface PortieUitslag {
+  oordelen: KeurOordeel[];
+  fout?: string;
+  limiet?: boolean;
+  usd?: number;
+  model: string | null;
+  bron: string | null;
+}
+
+async function keurPortie(portie: SetOutfit[], systeem: string, env: NodeJS.ProcessEnv): Promise<PortieUitslag> {
+  const args = bouwKeurArgs({ model: MODEL, effort: EFFORT, systeem, opdracht: bouwKeurOpdracht(portie) });
+  const u = await roepClaudeAan(args, { timeoutMs: TIMEOUT_MS, env });
+  const meta = { model: u.model, bron: u.apiKeySource, usd: u.total_cost_usd ?? undefined };
+  if (!u.ok) return { ...meta, oordelen: [], fout: u.tekst.slice(0, 300), limiet: isLimiet(u.tekst) };
+  return { ...meta, oordelen: leesKeurAntwoord(u.tekst) };
 }
 
 function oordeelRegel(o: SetOutfit, k: KeurOordeel | undefined): string {
@@ -69,24 +88,34 @@ async function main(): Promise<void> {
   const set = JSON.parse(readFileSync(SET, "utf8")) as { versie?: string; outfits: SetOutfit[] };
   const outfits = set.outfits;
   const delen = porties(outfits, PORTIE);
-  console.log(`${KEUR_VERSIE}, model ${MODEL}, set ${SET} (${set.versie ?? "zonder versie"})`);
+  console.log(`${KEUR_VERSIE}, model ${MODEL}, denkniveau ${EFFORT ?? "standaard"}, set ${SET} (${set.versie ?? "zonder versie"})`);
   console.log(`${outfits.length} outfits in ${delen.length} porties van hooguit ${PORTIE}.`);
   if (!heeftVlag(argv, "ja")) {
-    console.log("Droge run: geen aanroep. Voeg --ja toe om te keuren.");
+    console.log("Droge run: geen aanroep. Voeg --ja en --via sleutel of --via abonnement toe om te keuren.");
     return;
   }
+  if (VIA !== "sleutel" && VIA !== "abonnement") throw new Error("Kies bewust hoe er betaald wordt: --via sleutel of --via abonnement");
+  const env = omgevingVoor(VIA, VIA === "sleutel" ? leesSleutel() : null);
 
   const systeem = bouwStijlAgentPrompt();
   const perId = new Map<string, KeurOordeel>();
   const fouten: string[] = [];
+  const modellen = new Set<string>();
+  const bronnen = new Set<string>();
   let usd = 0;
   for (const [i, portie] of delen.entries()) {
     const t0 = Date.now();
-    const r = await keurPortie(portie, systeem);
-    console.log(`  portie ${i + 1}/${delen.length}: ${r.oordelen.length} van ${portie.length} oordelen, ${Math.round((Date.now() - t0) / 1000)} s${r.fout ? `, fout: ${r.fout}` : ""}`);
+    const r = await keurPortie(portie, systeem, env);
+    console.log(`  portie ${i + 1}/${delen.length}: ${r.oordelen.length} van ${portie.length} oordelen, ${Math.round((Date.now() - t0) / 1000)} s, model ${r.model ?? "?"}${r.fout ? `, fout: ${r.fout}` : ""}`);
     if (r.fout) fouten.push(`portie ${i + 1}: ${r.fout}`);
+    if (r.model) modellen.add(r.model);
+    if (r.bron) bronnen.add(r.bron);
     usd += r.usd ?? 0;
     for (const k of r.oordelen) perId.set(k.id, k);
+    if (r.limiet) {
+      console.error("Gestopt op een limietmelding.");
+      break;
+    }
   }
 
   const metVerwachting = outfits.filter((o) => o.verwacht);
@@ -103,7 +132,10 @@ async function main(): Promise<void> {
   const r: string[] = [];
   r.push(`# Kalibratie stijl-agent, ${new Date().toISOString().slice(0, 16).replace("T", " ")}`);
   r.push("");
-  r.push(`${KEUR_VERSIE}, model ${MODEL}, set ${set.versie ?? SET}. Equivalent ${usd.toFixed(2)} dollar op het abonnement.`);
+  r.push(
+    `${KEUR_VERSIE}, gevraagd model ${MODEL}, denkniveau ${EFFORT ?? "standaard"}, set ${set.versie ?? SET}. ` +
+      `Antwoordde: ${[...modellen].join(", ") || "onbekend"}. Betaalroute ${VIA} (${[...bronnen].join(", ") || "onbekend"}). ${usd.toFixed(2)} dollar.`
+  );
   r.push("");
   r.push(`- Fout herkend: ${terechtFout.length} van ${aantalFout}`);
   r.push(`- Goed herkend: ${terechtGoed.length} van ${aantalGoed}`);
@@ -120,7 +152,10 @@ async function main(): Promise<void> {
   const stempel = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
   const pad = join(map, `stijl-kalibratie-${stempel}.md`);
   writeFileSync(pad, r.join("\n") + "\n", "utf8");
-  writeFileSync(pad.replace(/\.md$/, ".json"), JSON.stringify({ versie: KEUR_VERSIE, model: MODEL, oordelen: Object.fromEntries(perId) }, null, 1));
+  writeFileSync(
+    pad.replace(/\.md$/, ".json"),
+    JSON.stringify({ versie: KEUR_VERSIE, model: MODEL, effort: EFFORT, antwoordde: [...modellen], via: VIA, oordelen: Object.fromEntries(perId) }, null, 1)
+  );
   console.log("\n" + r.slice(0, 10).join("\n"));
   console.log(`\nRapport: ${pad}`);
   process.exit(dureFouten.length === 0 && zonder.length === 0 && fouten.length === 0 ? 0 : 1);
