@@ -110,13 +110,21 @@ const DOELGROEP = new RegExp(
  * terecht accessoires. Op die bredere variant waren 142 van de 170 treffers
  * vals. Met pantalon en broek alleen: 28 treffers, nul vals.
  *
- * \bbroek\b raakt "broekriem" niet, want daar ontbreekt de woordgrens. Dat is
- * precies de bedoeling: een broekriem is wel een accessoire.
+ * \w*broek\b raakt "broekriem" niet, want daar ontbreekt de woordgrens na
+ * broek. Dat is precies de bedoeling: een broekriem is wel een accessoire.
+ *
+ * Sinds 21 oktober 2026 ook kleding met een sjaal: de classificatie zag de
+ * sjaal en maakte er een accessoire van ("Capribroek met sjaal", "Caprilegging
+ * met sjaaldetail", "Overhemdblouse met sjaal", "Jasje van twill met
+ * driehoekige sjaal", "Satijnen top met sjaal"). Gemeten op alle 6.585
+ * accessoirenamen in de kandidaatkopie: 13 treffers, alle 13 kleding.
+ * "Schoudertas met sjaal-look" blijft staan. Geen jeans en geen shirt: die
+ * staan in merknamen (TOMMY JEANS, COMME DES GARÇONS SHIRT).
  *
  * Weigeren en niet herstellen: als de categorie accessory is, kan het item ook
  * niet als bottom dienen. Er gaat dus niets bruikbaars verloren.
  */
-const KLEDING_ALS_ACCESSOIRE = /\bpantalon\b|\bbroek\b/i;
+const KLEDING_ALS_ACCESSOIRE = /\bpantalon\b|\w*broek\b|\w*legging\b|\w*blouse\b|\bjasje\b|\btop met (?:\w+ )?sjaal/i;
 
 /** Expliciete kindmarkeringen in de productnaam. */
 const KIND_IN_NAAM = new RegExp(
