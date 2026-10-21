@@ -62,8 +62,22 @@ export const REGELS = {
  * claude-headless.mjs, LIMIET), plus "resets". Alleen toepassen op een
  * mislukte aanroep, niet op het antwoord van de agent.
  */
-const LIMIET =
-  /you(?:'|’)?(?:ve|re| have| are)?\s*(?:hit|reached|out of)\s*(?:your\s*)?(?:usage\s*)?limit|usage limit reached|rate.?limit|resets/i;
+const LIMIET = new RegExp(
+  [
+    "you(?:'|’)?(?:ve|re| have| are)?\\s*(?:hit|reached|out of)\\s*(?:your\\s*)?(?:usage\\s*)?limit",
+    "usage limit reached",
+    "rate.?limit",
+    "\\bresets\\b",
+    // Ook de vormen zonder resettijd en die van de API-sleutel (review 21 oktober 2026):
+    // "hit your session limit", "reached your specified workspace API usage limits",
+    // "Credit balance is too low", "out of extra usage", "add funds".
+    "(?:hit|reached|exceeded)\\s+(?:your|the)\\b[^.\\n]{0,60}\\blimits?\\b",
+    "credit balance (?:is )?too low",
+    "out of (?:extra )?usage",
+    "add funds",
+  ].join("|"),
+  "i"
+);
 const RESET = /resets\s+(?:(\w{3})\s+(\d{1,2})\s+at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)\s*\(([^)]+)\)/i;
 
 export function isLimiet(tekst: string): boolean {

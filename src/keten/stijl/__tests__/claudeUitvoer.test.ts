@@ -59,6 +59,21 @@ describe("stream-uitvoer van claude -p", () => {
     expect(naarUitkomst(leesStream(""), { stderr: "", timeout: false, onderbroken: true, exitFout: true })).toMatchObject({ ok: false, timeout: false, tekst: "onderbroken" });
   });
 
+  it("ziet een afgewezen limiet in de stream of een 429", () => {
+    const afgewezen = { type: "rate_limit_event", rate_limit_info: { status: "rejected", rateLimitType: "seven_day" } };
+    expect(leesStream(regels(init, afgewezen, result)).afgewezen).toBe(true);
+    expect(leesStream(regels(init, { ...result, is_error: true, api_error_status: 429 })).afgewezen).toBe(true);
+    expect(leesStream(regels(init, limiet, result)).afgewezen).toBe(false);
+    const u = naarUitkomst(leesStream(regels(init, afgewezen)), { stderr: "", timeout: false, onderbroken: false, exitFout: true });
+    expect(u.afgewezen).toBe(true);
+  });
+
+  it("neemt de foutlijst van een mislukte uitvoering mee in de tekst", () => {
+    const fout = { type: "result", subtype: "error_during_execution", is_error: true, errors: ["Credit balance is too low"] };
+    const u = naarUitkomst(leesStream(regels(init, fout)), { stderr: "", timeout: false, onderbroken: false, exitFout: true });
+    expect(u.tekst).toContain("Credit balance is too low");
+  });
+
   it("noemt een resultaat zonder fout maar zonder tekst mislukt", () => {
     const leeg = { ...result, result: undefined };
     expect(naarUitkomst(leesStream(regels(init, leeg)), { stderr: "", timeout: false, onderbroken: false, exitFout: false }).ok).toBe(false);

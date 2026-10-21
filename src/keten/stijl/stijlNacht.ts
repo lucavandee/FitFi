@@ -151,7 +151,7 @@ export async function draaiNacht(o: NachtOpties, deps: NachtDeps, signal?: Abort
     });
 
     misOpRij = gelukt ? 0 : misOpRij + 1;
-    const limiet = !u.ok && isLimiet(u.tekst);
+    const limiet = !u.ok && (u.afgewezen || isLimiet(u.tekst));
     let stopreden: Stopreden | null = null;
     if (signal?.aborted) stopreden = "onderbroken";
     else if (limiet) stopreden = "limiet";

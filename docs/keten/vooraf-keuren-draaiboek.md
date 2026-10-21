@@ -66,8 +66,12 @@ cd /Users/luc/FitFi-worktrees/beloftes
 nohup caffeinate -i npm run -s keten:stijl-sets -- \
   --pool ~/claude-artifacts/fitfi-keten/stijl-sets/pool-<datum>.json \
   --via sleutel --model <id uit de kalibratie> --ja \
-  > ~/claude-artifacts/fitfi-keten/stijl-sets/nacht.log 2>&1 &
+  > ~/claude-artifacts/fitfi-keten/stijl-sets/nacht.log 2>&1 & disown
 ```
+
+Het terminalvenster mag daarna dicht: `disown` houdt de shell weg van de nacht, en het script negeert
+ook zelf SIGHUP (Node zet het negeren door nohup bij het starten terug). Een onbekende of verkeerd
+gespelde vlag laat het script direct stoppen, voordat er iets gebeurt.
 
 Standaard: hooguit 72 aanroepen (`--max-aanroepen`), denkniveau `xhigh`, 6 minuten per aanroep.
 Met `--via abonnement` stopt de nacht ook voor 02:30 (`--tot`).
@@ -76,7 +80,7 @@ De nacht stopt vanzelf bij: het plafond, de deadline, een limietmelding, drie mi
 rij, een ander model dan `--model`, of een andere betaalroute dan `--via`. Ook als elke combinatie
 vol is (12 bevestigd), arm, of door haar kandidaten heen.
 
-**Met de hand stoppen:** `kill -INT $(cat ~/claude-artifacts/fitfi-keten/stijl-sets/.lock/pid)`.
+**Met de hand stoppen:** `kill -INT $(cat ~/claude-artifacts/fitfi-keten/stijl-sets/.lock)`.
 De lopende aanroep wordt afgebroken, het logboek is al bijgewerkt, het rapport volgt.
 
 ## 4. De ochtend

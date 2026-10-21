@@ -24,11 +24,16 @@ import {
   type ProductLabel,
 } from "../../src/keten/stijl/stijlAgent";
 import { isLimiet } from "../../src/keten/stijl/stijlSets";
-import { heeftVlag, leesVlag } from "./args";
+import { heeftVlag, leesVlag, onbekendeVlaggen } from "./args";
 import { bouwKeurArgs, omgevingVoor, roepClaudeAan } from "./claudeStream";
 import { leesSleutel } from "./sleutel";
 
 const argv = process.argv.slice(2);
+const ONBEKEND = onbekendeVlaggen(argv, ["in", "uit", "model", "effort", "via", "portie", "ja"]);
+if (ONBEKEND.length > 0) {
+  console.error(`Onbekende vlag: ${ONBEKEND.join(", ")}`);
+  process.exit(1);
+}
 const IN = leesVlag(argv, "in");
 const UIT = leesVlag(argv, "uit");
 const MODEL = leesVlag(argv, "model") || process.env.STIJL_MODEL || "sonnet";
@@ -71,7 +76,7 @@ async function main(): Promise<void> {
     // Dezelfde aanroep als het keuren, met de labelprompt als systeemprompt.
     const u = await roepClaudeAan(bouwKeurArgs({ model: MODEL, effort: EFFORT, systeem, opdracht: bouwLabelOpdracht(kort) }), { timeoutMs: TIMEOUT_MS, env });
     // Noodrem: Lucs jobs delen het abonnement (reference_claude_quotum_jobs).
-    if (!u.ok && isLimiet(u.tekst)) {
+    if (!u.ok && (u.afgewezen || isLimiet(u.tekst))) {
       console.error(`Gestopt op een limietmelding: ${u.tekst.slice(0, 200)}`);
       break;
     }

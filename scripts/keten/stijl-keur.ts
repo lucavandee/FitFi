@@ -44,7 +44,7 @@ import {
 } from "../../src/keten/stijl/stijlAgent";
 import { kalibratiePorties, verwachtZoalsDeNacht, zoalsDeNacht } from "../../src/keten/stijl/kalibratie";
 import { isLimiet, leesPortieAntwoord } from "../../src/keten/stijl/stijlSets";
-import { heeftVlag, leesVlag } from "./args";
+import { heeftVlag, leesVlag, onbekendeVlaggen } from "./args";
 import { bouwKeurArgs, omgevingVoor, roepClaudeAan } from "./claudeStream";
 import { leesSleutel } from "./sleutel";
 
@@ -58,6 +58,11 @@ interface SetOutfit extends KeurOutfit {
 const ZAAD = 2026;
 
 const argv = process.argv.slice(2);
+const ONBEKEND = onbekendeVlaggen(argv, ["ja", "via", "model", "effort", "set", "portie"]);
+if (ONBEKEND.length > 0) {
+  console.error(`Onbekende vlag: ${ONBEKEND.join(", ")}`);
+  process.exit(1);
+}
 const SET = leesVlag(argv, "set") || "scripts/keten/stijl/kalibratie.json";
 const MODEL = leesVlag(argv, "model") || process.env.STIJL_MODEL || "sonnet";
 const PORTIE = Math.max(1, Number(leesVlag(argv, "portie") || 9));
@@ -78,7 +83,7 @@ async function keurPortie(portie: Array<{ outfit: SetOutfit; kort: string }>, sy
   const opdracht = bouwKeurOpdracht(portie.map((x) => zoalsDeNacht(x.outfit, x.kort)));
   const u = await roepClaudeAan(bouwKeurArgs({ model: MODEL, effort: EFFORT, systeem, opdracht }), { timeoutMs: TIMEOUT_MS, env });
   const meta = { model: u.model, bron: u.apiKeySource, usd: u.total_cost_usd ?? undefined };
-  if (!u.ok) return { ...meta, oordelen: [], fout: u.tekst.slice(0, 300), limiet: isLimiet(u.tekst) };
+  if (!u.ok) return { ...meta, oordelen: [], fout: u.tekst.slice(0, 300), limiet: u.afgewezen || isLimiet(u.tekst) };
   // Terug van k1..k9 naar de id's uit de set; alleen verstuurde id's, elk een keer.
   const echt = new Map(portie.map((x) => [x.kort, x.outfit.id]));
   const { perId } = leesPortieAntwoord(u.tekst, portie.map((x) => x.kort));

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { heeftVlag, leesVlag } from "../args";
+import { heeftVlag, leesVlag, onbekendeVlaggen } from "../args";
 import { STANDAARD_RETAILER } from "../retailers";
 
 describe("leesVlag", () => {
@@ -11,6 +11,21 @@ describe("leesVlag", () => {
   it("geeft undefined als de vlag ontbreekt en een lege string als hij geen waarde heeft", () => {
     expect(leesVlag(["--ja"], "retailer")).toBeUndefined();
     expect(leesVlag(["--retailer", "--ja"], "retailer")).toBe("");
+  });
+});
+
+describe("leesVlag met is-teken", () => {
+  it("leest ook --naam=waarde", () => {
+    expect(leesVlag(["--max-aanroepen=5"], "max-aanroepen")).toBe("5");
+    expect(leesVlag(["--tot=01:00", "--ja"], "tot")).toBe("01:00");
+    expect(leesVlag(["--model=claude-x"], "model")).toBe("claude-x");
+  });
+});
+
+describe("onbekendeVlaggen", () => {
+  it("noemt elke vlag die het script niet kent, ook een typfout", () => {
+    expect(onbekendeVlaggen(["--max-aanroep", "5", "--ja", "--tot=01:00"], ["max-aanroepen", "ja", "tot"])).toEqual(["--max-aanroep"]);
+    expect(onbekendeVlaggen(["--pool", "a.json", "--ja"], ["pool", "ja"])).toEqual([]);
   });
 });
 

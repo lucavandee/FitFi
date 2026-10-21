@@ -34,12 +34,17 @@ import {
   type KandidaatRij,
 } from "../../src/services/outfits/kandidaten";
 import { isLimiet } from "../../src/keten/stijl/stijlSets";
-import { heeftVlag, leesVlag } from "./args";
+import { heeftVlag, leesVlag, onbekendeVlaggen } from "./args";
 import { bouwKeurArgs, omgevingVoor, roepClaudeAan } from "./claudeStream";
 import { leesDotEnv } from "./env";
 import { leesSleutel } from "./sleutel";
 
 const argv = process.argv.slice(2);
+const ONBEKEND = onbekendeVlaggen(argv, ["ja", "via", "model", "effort", "aantal"]);
+if (ONBEKEND.length > 0) {
+  console.error(`Onbekende vlag: ${ONBEKEND.join(", ")}`);
+  process.exit(1);
+}
 const MODEL = leesVlag(argv, "model") || process.env.STIJL_MODEL || "sonnet";
 const AANTAL = Number(leesVlag(argv, "aantal") || 6);
 const EFFORT = leesVlag(argv, "effort") || null;
@@ -127,7 +132,7 @@ async function main(): Promise<void> {
   for (let i = 0; i < alle.length; i += 9) {
     const portie = alle.slice(i, i + 9).map((x) => x.keur);
     const u = await roepClaudeAan(bouwKeurArgs({ model: MODEL, effort: EFFORT, systeem, opdracht: bouwKeurOpdracht(portie) }), { timeoutMs: 10 * 60 * 1000, env });
-    if (!u.ok && isLimiet(u.tekst)) {
+    if (!u.ok && (u.afgewezen || isLimiet(u.tekst))) {
       console.error("Gestopt op een limietmelding.");
       break;
     }

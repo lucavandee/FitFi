@@ -21,7 +21,7 @@
  * zodat de Mac niet in slaap valt.
  */
 import { execFileSync } from "node:child_process";
-import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
@@ -45,13 +45,14 @@ import {
   type Stopreden,
 } from "../../src/keten/stijl/stijlSets";
 import type { KandidaatRij } from "../../src/services/outfits/kandidaten";
-import { heeftVlag, leesVlag } from "./args";
+import { heeftVlag, leesVlag, onbekendeVlaggen } from "./args";
 import { bouwKeurArgs, omgevingVoor, roepClaudeAan } from "./claudeStream";
 import { leesDotEnv } from "./env";
 import { leesSleutel } from "./sleutel";
 
 const argv = process.argv.slice(2);
-const MAP = join(homedir(), "claude-artifacts", "fitfi-keten", "stijl-sets");
+// STIJL_SETS_MAP alleen voor proeven, zodat het echte logboek schoon blijft.
+const MAP = process.env.STIJL_SETS_MAP || join(homedir(), "claude-artifacts", "fitfi-keten", "stijl-sets");
 const OORDELEN = join(MAP, "oordelen.jsonl");
 const AANROEPEN = join(MAP, "aanroepen.jsonl");
 const NACHTEN = join(MAP, "nachten.jsonl");
@@ -222,24 +223,41 @@ function leeft(pid: number): boolean {
   }
 }
 
-/** Een map als slot, met de pid erin. Een slot van een gestopt proces wordt overgenomen. */
+/**
+ * Een slotbestand met de pid, in een keer aangemaakt (flag wx): twee starts
+ * tegelijk kunnen niet allebei slagen. Een slot van een gestopt proces wordt
+ * overgenomen; een leeg slot van minder dan vijf seconden oud is een start die
+ * nog bezig is.
+ */
 function neemSlot(): () => void {
   mkdirSync(MAP, { recursive: true });
-  try {
-    mkdirSync(SLOT);
-  } catch {
-    let pid = 0;
+  for (let poging = 0; poging < 2; poging++) {
     try {
-      pid = Number(readFileSync(join(SLOT, "pid"), "utf8")) || 0;
-    } catch {
-      // Geen pid: een crash tussen het maken van de map en het schrijven.
+      writeFileSync(SLOT, String(process.pid), { flag: "wx" });
+      return () => {
+        try {
+          if (readFileSync(SLOT, "utf8").trim() === String(process.pid)) rmSync(SLOT, { force: true });
+        } catch {
+          // Al weg.
+        }
+      };
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== "EEXIST") throw e;
+      let pid = 0;
+      let jong = false;
+      try {
+        pid = Number(readFileSync(SLOT, "utf8").trim()) || 0;
+        jong = Date.now() - statSync(SLOT).mtimeMs < 5000;
+      } catch {
+        // Net weg of onleesbaar: opnieuw proberen.
+      }
+      if (pid && leeft(pid)) throw new Error(`Er draait al een nacht (pid ${pid}).`);
+      if (!pid && jong) throw new Error("Er start net een andere nacht.");
+      // Een slot uit een eerdere versie van dit script is een map.
+      rmSync(SLOT, { recursive: true, force: true });
     }
-    if (pid && leeft(pid)) throw new Error(`Er draait al een nacht (pid ${pid}).`);
-    rmSync(SLOT, { recursive: true, force: true });
-    mkdirSync(SLOT);
   }
-  writeFileSync(join(SLOT, "pid"), String(process.pid));
-  return () => rmSync(SLOT, { recursive: true, force: true });
+  throw new Error(`Kon ${SLOT} niet nemen.`);
 }
 
 /**
@@ -345,6 +363,11 @@ async function nacht(): Promise<void> {
     return;
   }
 
+  // Node zet bij het starten de signalen terug op de standaard, dus het negeren
+  // van SIGHUP door nohup vervalt: zonder deze regel stopt de nacht als het
+  // terminalvenster dichtgaat (review 21 oktober 2026). De uitvoer gaat naar
+  // nacht.log, dus de terminal is niet nodig.
+  process.on("SIGHUP", () => console.error("SIGHUP genegeerd: de nacht loopt door."));
   const losSlot = neemSlot();
   const run = new Date().toISOString();
   const git = gitSha();
@@ -455,7 +478,11 @@ function rapportOpnieuw(): void {
   });
 }
 
+const VLAGGEN = ["alleen-pool", "pool", "via", "model", "effort", "max-aanroepen", "tot", "ja", "zonder-seizoen", "rapport", "run", "werkmap"];
+
 async function main(): Promise<void> {
+  const onbekend = onbekendeVlaggen(argv, VLAGGEN);
+  if (onbekend.length > 0) throw new Error(`Onbekende vlag: ${onbekend.join(", ")}. Bekend: ${VLAGGEN.map((v) => `--${v}`).join(" ")}`);
   if (heeftVlag(argv, "alleen-pool")) return maakPool(PILOT_CELLEN);
   if (heeftVlag(argv, "rapport")) return rapportOpnieuw();
   return nacht();

@@ -116,6 +116,16 @@ describe("limietmelding", () => {
     expect(isLimiet("kon de uitvoer van claude -p niet als JSON lezen: Hallo")).toBe(false);
   });
 
+  it("herkent ook de meldingen van de API-sleutel en de andere vormen van het abonnement", () => {
+    expect(isLimiet("Credit balance is too low · Add funds: https://platform.claude.com/settings/billing")).toBe(true);
+    expect(isLimiet("You have reached your specified workspace API usage limits. You will regain access on 2026-11-01")).toBe(true);
+    expect(isLimiet("You've hit your session limit")).toBe(true);
+    expect(isLimiet("You've hit your weekly limit")).toBe(true);
+    expect(isLimiet("You're out of extra usage")).toBe(true);
+    expect(isLimiet("Your org is out of usage · add funds to continue")).toBe(true);
+    expect(isLimiet("API Error: 529 Overloaded")).toBe(false);
+  });
+
   it("haalt de resettijd letterlijk uit de tekst", () => {
     expect(resetTekst("You've hit your limit · resets Oct 22 at 4am (Europe/Amsterdam)")).toBe("Oct 22 at 4am (Europe/Amsterdam)");
     expect(resetTekst("You've hit your limit · resets 11:20pm (Europe/Amsterdam)")).toBe("11:20pm (Europe/Amsterdam)");

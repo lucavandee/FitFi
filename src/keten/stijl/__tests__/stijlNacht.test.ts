@@ -48,6 +48,7 @@ const uitkomst = (over: Partial<AanroepUitkomst> = {}): AanroepUitkomst => ({
   modelUsage: null,
   num_turns: 1,
   rateLimits: [],
+  afgewezen: false,
   ...over,
 });
 
@@ -119,6 +120,12 @@ describe("de nacht", () => {
     expect(aanroepen).toHaveLength(1);
     expect(aanroepen[0]).toMatchObject({ stopreden: "limiet", reset: "4am (Europe/Amsterdam)", gelukt: false });
     expect(oordelen.every((r) => !r.aanroep_gelukt)).toBe(true);
+  });
+
+  it("stopt ook op een afgewezen limiet zonder herkenbare tekst", async () => {
+    const { opties, deps, aanroepen } = opzet([() => uitkomst({ ok: false, tekst: "exitcode 1", afgewezen: true, model: null })]);
+    expect((await draaiNacht(opties, deps)).stopreden).toBe("limiet");
+    expect(aanroepen).toHaveLength(1);
   });
 
   it("stopt na drie mislukte aanroepen op rij: geen JSON, 4 van 9, onbekende id's", async () => {

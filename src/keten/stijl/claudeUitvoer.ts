@@ -27,6 +27,8 @@ export interface StreamUitslag {
   model: string | null;
   apiKeySource: string | null;
   rateLimits: unknown[];
+  /** Een limiet die de aanroep weigerde: status rejected in de stream, of HTTP 429. */
+  afgewezen: boolean;
   /** Regels die geen JSON zijn, zoals een limietmelding in platte tekst. */
   overigeTekst: string;
 }
@@ -36,6 +38,7 @@ export function leesStream(stdout: string): StreamUitslag {
   let model: string | null = null;
   let apiKeySource: string | null = null;
   const rateLimits: unknown[] = [];
+  let afgewezen = false;
   const overig: string[] = [];
   for (const regel of String(stdout ?? "").split("\n")) {
     const r = regel.trim();
@@ -51,16 +54,19 @@ export function leesStream(stdout: string): StreamUitslag {
       if (typeof ev.model === "string") model = ev.model;
       if (typeof ev.apiKeySource === "string") apiKeySource = ev.apiKeySource;
     } else if (ev.type === "rate_limit_event") {
-      rateLimits.push(ev.rate_limit_info ?? ev);
+      const info = (ev.rate_limit_info ?? ev) as { status?: unknown };
+      rateLimits.push(info);
+      if (info.status === "rejected") afgewezen = true;
     } else if (ev.type === "result") {
       result = ev as ClaudeResultaat;
+      if (result.api_error_status === 429) afgewezen = true;
     }
   }
   if (!model && result?.modelUsage) {
     const [hoofd] = Object.entries(result.modelUsage).sort((a, b) => (b[1]?.outputTokens ?? 0) - (a[1]?.outputTokens ?? 0));
     if (hoofd) model = hoofd[0];
   }
-  return { result, model, apiKeySource, rateLimits, overigeTekst: overig.join("\n") };
+  return { result, model, apiKeySource, rateLimits, afgewezen, overigeTekst: overig.join("\n") };
 }
 
 /** Wat de nacht van een aanroep wil weten. */
@@ -78,6 +84,8 @@ export interface AanroepUitkomst {
   modelUsage: unknown;
   num_turns: number | null;
   rateLimits: unknown[];
+  /** De aanroep liep op een limiet, ook als de tekst dat niet zegt. */
+  afgewezen: boolean;
 }
 
 export function naarUitkomst(
@@ -94,11 +102,14 @@ export function naarUitkomst(
     modelUsage: r?.modelUsage ?? null,
     num_turns: typeof r?.num_turns === "number" ? r.num_turns : null,
     rateLimits: s.rateLimits,
+    afgewezen: s.afgewezen,
   };
   if (p.onderbroken) return { ...basis, ok: false, timeout: false, tekst: "onderbroken" };
   if (p.timeout) return { ...basis, ok: false, timeout: true, tekst: `time-out na ${Math.round((p.timeoutMs ?? 0) / 1000)} s` };
   const antwoord = typeof r?.result === "string" ? r.result : "";
   if (r && !r.is_error && !p.exitFout && antwoord.trim()) return { ...basis, ok: true, timeout: false, tekst: antwoord };
-  const tekst = [antwoord, s.overigeTekst, p.stderr.trim(), r?.subtype && !antwoord ? String(r.subtype) : ""].filter(Boolean).join("\n");
+  // Bij error_during_execution staat de oorzaak in errors[], niet in result.
+  const fouten = Array.isArray(r?.errors) ? r.errors.map(String).join("\n") : "";
+  const tekst = [antwoord, fouten, s.overigeTekst, p.stderr.trim(), r?.subtype && !antwoord ? String(r.subtype) : ""].filter(Boolean).join("\n");
   return { ...basis, ok: false, timeout: false, tekst: tekst || "geen uitvoer" };
 }
