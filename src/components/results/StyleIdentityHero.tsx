@@ -19,7 +19,7 @@ interface StyleIdentityHeroProps {
 const DESCRIPTIONS: Record<ArchetypeKey, string> = {
   MINIMALIST: 'Tijdloze outfits met clean lines en subtiele elegantie.',
   CLASSIC: 'Verfijnde looks met aandacht voor detail en kwaliteit.',
-  SMART_CASUAL: 'Moeiteloos gepolijste stijl — comfort én verzorgd.',
+  SMART_CASUAL: 'Moeiteloos gepolijst: comfortabel en toch verzorgd.',
   STREETWEAR: 'Expressieve urban looks met een sportieve edge.',
   ATHLETIC: 'Functionele outfits met een sportieve, moderne uitstraling.',
   AVANT_GARDE: 'Statement looks die conventie uitdagen.',
@@ -59,9 +59,9 @@ function buildInsights(quizAnswers: Record<string, any>, swipeInsights?: StyleId
   const out: string[] = [];
 
   const neutralMap: Record<string, string> = {
-    warm: 'Warme basis — beige, camel en terracotta',
-    koel: 'Koele basis — grijs, navy en steenkleur',
-    neutraal: 'Neutrale basis — zwart, wit en grijs',
+    warm: 'Warme basis: beige, camel en terracotta',
+    koel: 'Koele basis: grijs, navy en steenkleur',
+    neutraal: 'Neutrale basis: zwart, wit en grijs',
   };
   if (quizAnswers.neutrals && neutralMap[quizAnswers.neutrals]) out.push(neutralMap[quizAnswers.neutrals]);
 

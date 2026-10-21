@@ -45,7 +45,7 @@ import { OutfitRatingButtons } from "@/components/results/OutfitRatingButtons";
 import { hashProfile } from "@/services/ratings/outfitRatings";
 import { canonicalUrl } from "@/utils/urls";
 import track from "@/utils/telemetry";
-import { getArchetypeDisplayNL } from "@/utils/displayNames";
+import { ARCHETYPE_WEERGAVE, archetypeSleutelVan } from "@/config/archetypeMapping";
 import OutfitCard from "@/components/outfits/OutfitCard";
 import { OutfitPreviewCard } from "@/components/results/OutfitPreviewCard";
 import { openProductLink } from "@/utils/affiliate";
@@ -301,33 +301,13 @@ export default function EnhancedResultsPage() {
     }
   }, [answers]);
 
-  /** Dutch-friendly display name for the archetype */
-  const archetypeDisplayNL = React.useMemo(() => getArchetypeDisplayNL(archetypeName), [archetypeName]);
 
-  const archetypeKey = React.useMemo((): ArchetypeKey => {
-    const nameToKey: Record<string, ArchetypeKey> = {
-      'minimalist': 'MINIMALIST',
-      'clean minimal': 'MINIMALIST',
-      'classic': 'CLASSIC',
-      'classic soft': 'CLASSIC',
-      'smart casual': 'SMART_CASUAL',
-      'smart_casual': 'SMART_CASUAL',
-      'streetwear': 'STREETWEAR',
-      'athletic': 'ATHLETIC',
-      'sporty sharp': 'ATHLETIC',
-      'avant-garde': 'AVANT_GARDE',
-      'avant garde': 'AVANT_GARDE',
-      'avant_garde': 'AVANT_GARDE',
-    };
 
-    const raw = archetypeName.toLowerCase().trim();
-
-    if (raw === raw.toUpperCase().toLowerCase() && Object.values(nameToKey).includes(raw.toUpperCase() as ArchetypeKey)) {
-      return raw.toUpperCase() as ArchetypeKey;
-    }
-
-    return nameToKey[raw] || 'SMART_CASUAL';
-  }, [archetypeName]);
+  // Alle tien vormen uit style_profiles.archetype (urban, MINIMALIST,
+  // minimalistisch, Smart Casual ...) naar een sleutel; zie archetypeSleutelVan.
+  const archetypeKey = React.useMemo((): ArchetypeKey => archetypeSleutelVan(archetypeName), [archetypeName]);
+  /** Wat de gebruiker ziet: "Streetwear", niet "urban" of "STREETWEAR". */
+  const archetypeDisplayNL = ARCHETYPE_WEERGAVE[archetypeKey];
 
   const [generatedProfile, setGeneratedProfile] = React.useState<ColorProfile | null>(null);
   const [profileDataSource, setProfileDataSource] = React.useState<'photo_analysis' | 'quiz+swipes' | 'quiz_only' | 'swipes_only' | 'fallback'>('fallback');
@@ -636,15 +616,15 @@ export default function EnhancedResultsPage() {
   return (
     <div className="bg-[#FAFAF8] text-[#1A1A1A] relative" style={{ minHeight: 'calc(100vh - 72px)' }}>
       <Helmet>
-        <title>Jouw Style Report – FitFi</title>
+        <title>Jouw stijlrapport | FitFi</title>
         <meta name="description" content="Jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies." />
         <link rel="canonical" href={canonicalUrl('/results')} />
-        <meta property="og:title" content={`${archetypeName} Style Report – FitFi`} />
+        <meta property="og:title" content={`Stijlrapport ${archetypeDisplayNL.toLowerCase()} | FitFi`} />
         <meta property="og:description" content="Ontdek jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies op FitFi." />
         <meta property="og:url" content={canonicalUrl('/results')} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${archetypeName} Style Report – FitFi`} />
+        <meta name="twitter:title" content={`Stijlrapport ${archetypeDisplayNL.toLowerCase()} | FitFi`} />
         <meta name="twitter:description" content="Ontdek jouw persoonlijke stijlprofiel met outfit-aanbevelingen en kleuradvies op FitFi." />
       </Helmet>
 
@@ -693,7 +673,7 @@ export default function EnhancedResultsPage() {
                     textAlign: "center",
                   }}
                 >
-                  {archetypeName}
+                  {archetypeDisplayNL.toLowerCase()}
                 </h1>
 
                 {/* Outfit count */}
@@ -1374,9 +1354,9 @@ export default function EnhancedResultsPage() {
                         if (goalsNL.length > 0) parts.push(`een ${goalsNL.slice(0, 2).join(' en ')} doel`);
 
                         if (parts.length > 0) {
-                          return `Op basis van ${parts.join(', ')} — past het ${archetypeDisplayNL} profiel het beste bij jou.`;
+                          return `Op basis van ${parts.join(', ')}: jouw stijl is ${archetypeDisplayNL.toLowerCase()}.`;
                         }
-                        return `Op basis van jouw quizantwoorden past het ${archetypeDisplayNL} profiel het beste bij jou.`;
+                        return `Op basis van jouw quizantwoorden: jouw stijl is ${archetypeDisplayNL.toLowerCase()}.`;
                       })()}
                     </p>
                   </div>
@@ -1413,7 +1393,7 @@ export default function EnhancedResultsPage() {
                   <div>
                     <h4 className="text-sm font-semibold text-[#1A1A1A] mb-1.5">Jouw outfits</h4>
                     <p className="text-sm text-[#4A4A4A] leading-relaxed">
-                      We combineerden kleurharmonie, stijl en gelegenheid om outfits samen te stellen die passen bij jouw {archetypeDisplayNL} · {getSeasonDisplayName(activeColorProfile)} profiel.
+                      We combineerden kleurharmonie, stijl en gelegenheid om outfits samen te stellen die passen bij jouw profiel: {archetypeDisplayNL.toLowerCase()}, {getSeasonDisplayName(activeColorProfile).toLowerCase()}.
                     </p>
                   </div>
 
@@ -1913,7 +1893,7 @@ export default function EnhancedResultsPage() {
         onToggleFav={toggleFav}
         favs={favs}
         allOutfits={displayOutfits as any[]}
-        archetypeName={archetypeName}
+        archetypeName={archetypeDisplayNL}
         activeColorProfile={activeColorProfile}
         colorProfile={color}
       />
