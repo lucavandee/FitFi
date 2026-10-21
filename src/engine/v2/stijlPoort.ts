@@ -105,9 +105,14 @@ export function voorkeurVoorGelabeld(products: Product[], a: PoortAntwoorden): P
       genoeg.set(cat, (genoeg.get(cat) ?? 0) + 1);
     }
   }
+  // Zijn top, broek en schoenen in de stijl gedekt, dan kan er een volledige
+  // outfit uit gelabelde stukken komen: dan vallen ook ongelabelde jurken en
+  // jassen weg (anders kreeg sportief nog een katoenen jurk met sneakers).
+  const gedekt = ["top", "bottom", "footwear"].every((c) => (genoeg.get(c) ?? 0) >= MIN_GELABELD);
   return products.filter((p) => {
     const cat = categorie(p);
     if (!BEELDBEPALEND.has(cat) || Array.isArray(p.stijlen)) return true;
+    if (gedekt) return false;
     return (genoeg.get(cat) ?? 0) < MIN_GELABELD;
   });
 }

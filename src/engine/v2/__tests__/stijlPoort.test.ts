@@ -133,6 +133,15 @@ describe("voorkeurVoorGelabeld", () => {
     expect(voorkeurVoorGelabeld(pool, street)).toContain(los);
   });
 
+  it("laat ook ongelabelde jurken vallen als tops, broeken en schoenen in de stijl gedekt zijn", () => {
+    const sport = { stylePreferences: ["athletic"] };
+    const reeks = (cat: string, naam: string) =>
+      Array.from({ length: MIN_GELABELD }, (_, i) => stuk(cat, `${naam} ${i}`, { stijlen: ["athletic"] }));
+    const jurk = stuk("dress", "H & M - Katoenen jurk - Wit");
+    const pool = [...reeks("top", "sporttop"), ...reeks("bottom", "legging"), ...reeks("footwear", "runner"), jurk];
+    expect(voorkeurVoorGelabeld(pool, sport)).not.toContain(jurk);
+  });
+
   it("doet niets zonder gekozen stijl", () => {
     const pool = [...Array.from({ length: MIN_GELABELD }, (_, i) => gelabeld(i)), los];
     expect(voorkeurVoorGelabeld(pool, {})).toHaveLength(pool.length);
