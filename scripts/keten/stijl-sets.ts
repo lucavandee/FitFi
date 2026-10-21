@@ -28,7 +28,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { combinatieSleutel, type Combinatie } from "../../src/keten/stijl/kandidaatOutfits";
 import { KEUR_VERSIE, bouwStijlAgentPrompt } from "../../src/keten/stijl/stijlAgent";
 import { draaiNacht } from "../../src/keten/stijl/stijlNacht";
-import { algemeenParams, algemeenSleutel, kandidatenUitPool, stijlParams, stijlSleutel, stijlZaden, type PoolBestand } from "../../src/keten/stijl/stijlPool";
+import { algemeenParams, algemeenSleutel, kandidatenUitPool, seizoenDekking, stijlParams, stijlSleutel, stijlZaden, type PoolBestand } from "../../src/keten/stijl/stijlPool";
 import {
   PILOT_CELLEN,
   REGELS,
@@ -37,7 +37,9 @@ import {
   deadlineVoor,
   herstelStaat,
   keurderSleutel,
+  nachtVan,
   type AanroepRegel,
+  type CelInfo,
   type Kandidaat,
   type OordeelRegel,
   type Stopreden,
@@ -52,6 +54,7 @@ const argv = process.argv.slice(2);
 const MAP = join(homedir(), "claude-artifacts", "fitfi-keten", "stijl-sets");
 const OORDELEN = join(MAP, "oordelen.jsonl");
 const AANROEPEN = join(MAP, "aanroepen.jsonl");
+const NACHTEN = join(MAP, "nachten.jsonl");
 const SLOT = join(MAP, ".lock");
 const WERKMAP = leesVlag(argv, "werkmap") || "/Users/luc/Desktop/FitFi-clone";
 
@@ -135,9 +138,12 @@ async function maakPool(cellen: Combinatie[]): Promise<void> {
   const stap = async (naam: string, params: object, label: string): Promise<KandidaatRij[] | null> => {
     const r = await rpc(client, naam, params);
     await wacht(PAUZE_MS);
-    if ("fout" in r) {
-      pool.mislukt.push(`${label}: ${r.fout}`);
-      console.log(`  ${label}: mislukt (${r.fout})`);
+    // Nul rijen is ook mislukt: dan klopt er iets niet met rechten of labels,
+    // en een lege stijlpool zou de nacht op alleen de algemene pool laten keuren.
+    const fout = "fout" in r ? r.fout : r.rijen.length === 0 ? "0 rijen" : null;
+    if (fout !== null || "fout" in r) {
+      pool.mislukt.push(`${label}: ${fout}`);
+      console.log(`  ${label}: mislukt (${fout})`);
       opRij += 1;
       if (opRij >= 3) throw new Error("Drie fouten op rij; de poolstap stopt.");
       return null;
@@ -167,12 +173,45 @@ async function maakPool(cellen: Combinatie[]): Promise<void> {
   mkdirSync(MAP, { recursive: true });
   const pad = join(MAP, `pool-${datum}.json`);
   writeFileSync(pad, JSON.stringify(pool));
+  toonSeizoenDekking(pool);
   console.log(`\nPool: ${pad}${pool.mislukt.length ? ` (${pool.mislukt.length} mislukt)` : ""}`);
+}
+
+/** Labels v2 (seizoen, gedateerd) moeten er zijn voordat de nacht keurt. */
+const MIN_SEIZOEN_DEKKING = 0.9;
+
+function toonSeizoenDekking(pool: PoolBestand): string[] {
+  const te_laag: string[] = [];
+  for (const [stijl, d] of Object.entries(seizoenDekking(pool))) {
+    const aandeel = d.rijen ? d.metSeizoen / d.rijen : 0;
+    if (aandeel < MIN_SEIZOEN_DEKKING) te_laag.push(stijl);
+    console.log(`  seizoenlabel ${stijl}: ${d.metSeizoen} van ${d.rijen} stijlrijen (${Math.round(aandeel * 100)}%)`);
+  }
+  return te_laag;
 }
 
 // ---------------------------------------------------------------------------
 // De nacht
 // ---------------------------------------------------------------------------
+
+/** Een start- of stopregel in nachten.jsonl: wat er gestart is, en waarom het stopte. */
+interface NachtRegel {
+  soort: "start" | "stop";
+  run: string;
+  tijd: string;
+  via?: string;
+  model?: string;
+  effort?: string;
+  keurder?: string;
+  git?: string;
+  max?: number;
+  deadline?: string | null;
+  pool?: string;
+  stopreden?: Stopreden | "fout";
+  fout?: string;
+  aanroepen?: number;
+  cellen?: CelInfo[];
+}
 
 function leeft(pid: number): boolean {
   try {
@@ -203,7 +242,12 @@ function neemSlot(): () => void {
   return () => rmSync(SLOT, { recursive: true, force: true });
 }
 
-/** Op het abonnement: eerst Lucs avondjobs laten afmaken, hooguit een kwartier. */
+/**
+ * Op het abonnement: eerst Lucs avondjobs laten afmaken, hooguit een kwartier.
+ * Beide run.sh's starten node met het volledige pad (exec .../brein-eod/
+ * generate.mjs en .../brein-curator/curator.mjs), dus pgrep op het pad ziet ze
+ * zolang ze lopen. launchctl roept deze code bewust niet aan.
+ */
 async function wachtOpLucsJobs(): Promise<void> {
   const tot = Date.now() + 15 * 60 * 1000;
   for (;;) {
@@ -215,19 +259,40 @@ async function wachtOpLucsJobs(): Promise<void> {
   }
 }
 
-function schrijfRapport(o: { regels: OordeelRegel[]; aanroepen: AanroepRegel[]; keurder: string; run: string; via: string; stopreden: Stopreden | null }): void {
+function schrijfRapport(o: {
+  regels: OordeelRegel[];
+  aanroepen: AanroepRegel[];
+  keurder: string;
+  run: string;
+  via: string;
+  git: string;
+  stop: string;
+  stopreden: Stopreden | null;
+  cellen?: CelInfo[];
+  achtervoegsel?: string;
+}): void {
   const { md, json } = bouwNachtrapport({
     regels: o.regels,
     aanroepen: o.aanroepen,
     keurder: o.keurder,
     run: o.run,
-    meta: { start: o.run, stop: new Date().toISOString(), git: gitSha(), via: o.via, stopreden: o.stopreden },
+    meta: { start: o.run, stop: o.stop, git: o.git, via: o.via, stopreden: o.stopreden },
+    cellen: o.cellen,
   });
   const stempel = o.run.slice(0, 16).replace(/[:T]/g, "-");
-  const pad = join(MAP, `nacht-${stempel}.md`);
+  const pad = join(MAP, `nacht-${stempel}${o.achtervoegsel ?? ""}.md`);
   writeFileSync(pad, md);
   writeFileSync(pad.replace(/\.md$/, ".json"), JSON.stringify(json, null, 1));
-  console.log(`\n${md.split("\n").slice(0, 20).join("\n")}\nRapport: ${pad}`);
+  console.log(`\n${md.split("\n").slice(0, 24).join("\n")}\nRapport: ${pad}`);
+}
+
+/** Zonder --model: de keurder van de laatste keuring met deze keurversie en dit denkniveau. */
+function keurderUitLogboek(regels: OordeelRegel[], effort: string): string | null {
+  for (let i = regels.length - 1; i >= 0; i--) {
+    const r = regels[i];
+    if (r.keur_versie === KEUR_VERSIE && r.effort === effort) return r.keurder;
+  }
+  return null;
 }
 
 async function nacht(): Promise<void> {
@@ -247,18 +312,28 @@ async function nacht(): Promise<void> {
   }
   const dagen = (Date.now() - Date.parse(pool.gemaakt)) / 86_400_000;
   if (dagen > 2) console.warn(`Let op: de pool is ${Math.round(dagen)} dagen oud; voorraad en prijzen kunnen veranderd zijn.`);
+  const zonderSeizoen = toonSeizoenDekking(pool);
+  if (ja && zonderSeizoen.length > 0 && !heeftVlag(argv, "zonder-seizoen")) {
+    throw new Error(
+      `Te weinig seizoenlabels in de pool (${zonderSeizoen.join(", ")}): eerst labels v2 afmaken en wegschrijven, ` +
+        "dan de pool opnieuw ophalen (draaiboek stap 2.1 en 2.3). Bewust toch: --zonder-seizoen."
+    );
+  }
 
   const regels = leesJsonl<OordeelRegel>(OORDELEN);
-  const keurder = keurderSleutel(KEUR_VERSIE, model || "(geen model)", effort);
+  const uitLogboek = model ? null : keurderUitLogboek(regels, effort);
+  const keurder = model ? keurderSleutel(KEUR_VERSIE, model, effort) : uitLogboek ?? keurderSleutel(KEUR_VERSIE, "(geen model)", effort);
   const staat = herstelStaat(regels, keurder);
   const nieuw = new Map<string, Kandidaat[]>();
-  console.log(`Keurder ${keurder}; pool van ${pool.datum}.`);
+  const info = new Map<string, CelInfo>();
+  console.log(`Keurder ${keurder}${model ? "" : uitLogboek ? " (uit het logboek)" : " (nog geen keuringen in het logboek)"}; pool van ${pool.datum}.`);
   for (const c of pool.cellen) {
     const cel = combinatieSleutel(c);
     const c0 = staat.perCel.get(cel);
     const cijfers = c0 ? celCijfers(c0) : null;
     const uit = await kandidatenUitPool(pool, c, { bekend: cijfers?.bekend ?? new Set(), max: REGELS.ronde1PerNacht });
     nieuw.set(cel, uit.kandidaten);
+    info.set(cel, { cel, kandidaten: uit.kandidaten.length, nogTeKeuren: uit.kandidaten.length, reden: uit.reden });
     console.log(
       `  ${cel}: ${cijfers?.status ?? "nieuw"}, ${uit.kandidaten.length} nieuwe kandidaten uit ${uit.outfits} outfits` +
         `${uit.zonderKleur ? ` (${uit.zonderKleur} zonder kleur)` : ""}${uit.reden ? `, ${uit.reden}` : ""}` +
@@ -271,12 +346,29 @@ async function nacht(): Promise<void> {
   }
 
   const losSlot = neemSlot();
+  const run = new Date().toISOString();
+  const git = gitSha();
+  let stopregel: NachtRegel = { soort: "stop", run, tijd: run, stopreden: "fout" };
   try {
     if (via === "abonnement") await wachtOpLucsJobs();
     const env = omgevingVoor(via as "abonnement" | "sleutel", via === "sleutel" ? leesSleutel() : null);
     const systeem = bouwStijlAgentPrompt();
-    const run = new Date().toISOString();
     const deadline = tot ? deadlineVoor(tot, new Date()) : null;
+
+    // Een herstart in dezelfde nacht telt mee voor het plafond en de nachtlimiet.
+    const dezeNacht = nachtVan(new Date());
+    const eerdereAanroepen = leesJsonl<AanroepRegel>(AANROEPEN).filter((a) => nachtVan(new Date(a.tijd)) === dezeNacht).length;
+    const ronde1PerCel = new Map<string, number>();
+    for (const r of regels) {
+      if (r.keurder !== keurder || !r.aanroep_gelukt || r.ronde !== 1 || r.poging !== 1 || nachtVan(new Date(r.tijd)) !== dezeNacht) continue;
+      ronde1PerCel.set(r.cel, (ronde1PerCel.get(r.cel) ?? 0) + 1);
+    }
+    if (eerdereAanroepen > 0) console.log(`Eerder deze nacht al ${eerdereAanroepen} aanroepen; die tellen mee voor het plafond.`);
+
+    appendFileSync(
+      NACHTEN,
+      JSON.stringify({ soort: "start", run, tijd: run, via, model, effort, keurder, git, max: maxAanroepen, deadline: deadline ? new Date(deadline).toISOString() : null, pool: poolPad } satisfies NachtRegel) + "\n"
+    );
     const ac = new AbortController();
     const stop = () => {
       console.error("Onderbroken: de lopende aanroep wordt afgebroken, het logboek is bijgewerkt.");
@@ -284,10 +376,22 @@ async function nacht(): Promise<void> {
     };
     process.on("SIGINT", stop);
     process.on("SIGTERM", stop);
-    console.log(`\nStart ${run}, via ${via}, hooguit ${maxAanroepen} aanroepen${deadline ? `, klaar voor ${new Date(deadline).toLocaleTimeString("nl-NL")}` : ""}.`);
+    console.log(`\nStart ${run}, via ${via}, hooguit ${maxAanroepen} aanroepen deze nacht${deadline ? `, klaar voor ${new Date(deadline).toLocaleTimeString("nl-NL")}` : ""}.`);
 
     const uit = await draaiNacht(
-      { run, keurVersie: KEUR_VERSIE, model, effort, via: via as "abonnement" | "sleutel", maxAanroepen, deadline, cellen: pool.cellen.map(combinatieSleutel), nieuw, bestaand: regels },
+      {
+        run,
+        keurVersie: KEUR_VERSIE,
+        model,
+        effort,
+        via: via as "abonnement" | "sleutel",
+        maxAanroepen,
+        deadline,
+        cellen: pool.cellen.map(combinatieSleutel),
+        nieuw,
+        bestaand: regels,
+        eerder: { aanroepen: eerdereAanroepen, ronde1PerCel },
+      },
       {
         roepAan: (opdracht, signal) => roepClaudeAan(bouwKeurArgs({ model, effort, systeem, opdracht }), { timeoutMs: REGELS.margeMs, signal, env }),
         schrijfOordeel: (r) => appendFileSync(OORDELEN, JSON.stringify(r) + "\n"),
@@ -300,22 +404,55 @@ async function nacht(): Promise<void> {
       },
       ac.signal
     );
+
+    // Wat er per combinatie nog over is, voor "uitgeput" in het rapport.
+    const eind = herstelStaat(uit.regels, keurder);
+    const cellen = [...info.values()].map((ci) => {
+      const c = eind.perCel.get(ci.cel);
+      const bekend = c ? celCijfers(c).bekend : new Set<string>();
+      return { ...ci, nogTeKeuren: (nieuw.get(ci.cel) ?? []).filter((k) => !bekend.has(k.outfit_key)).length };
+    });
+    stopregel = { soort: "stop", run, tijd: new Date().toISOString(), stopreden: uit.stopreden, aanroepen: uit.aanroepen, cellen };
     console.log(`\nGestopt: ${uit.stopreden} na ${uit.aanroepen} aanroepen.`);
-    schrijfRapport({ regels: uit.regels, aanroepen: leesJsonl<AanroepRegel>(AANROEPEN), keurder, run, via: via!, stopreden: uit.stopreden });
+    schrijfRapport({ regels: uit.regels, aanroepen: leesJsonl<AanroepRegel>(AANROEPEN), keurder, run, via: via!, git, stop: stopregel.tijd, stopreden: uit.stopreden, cellen });
+  } catch (e) {
+    stopregel = { soort: "stop", run, tijd: new Date().toISOString(), stopreden: "fout", fout: e instanceof Error ? e.message.slice(0, 300) : String(e) };
+    throw e;
   } finally {
+    appendFileSync(NACHTEN, JSON.stringify(stopregel) + "\n");
     losSlot();
   }
 }
 
+/**
+ * Het rapport van een run opnieuw, uit de logboeken. Schrijft naast het
+ * origineel (-herberekend), met de stoptijd, stopreden en git-sha van de nacht
+ * zelf uit nachten.jsonl.
+ */
 function rapportOpnieuw(): void {
   const aanroepen = leesJsonl<AanroepRegel>(AANROEPEN);
   const regels = leesJsonl<OordeelRegel>(OORDELEN);
-  const run = leesVlag(argv, "run") || aanroepen[aanroepen.length - 1]?.run;
-  if (!run) throw new Error(`Geen runs in ${AANROEPEN}`);
-  const eigen = regels.find((r) => r.run === run && r.aanroep_gelukt) ?? regels.find((r) => r.run === run);
-  if (!eigen) throw new Error(`Geen oordelen van run ${run}`);
+  const nachten = leesJsonl<NachtRegel>(NACHTEN);
+  const run = leesVlag(argv, "run") || nachten.filter((n) => n.soort === "start").pop()?.run || aanroepen[aanroepen.length - 1]?.run;
+  if (!run) throw new Error(`Geen runs in ${NACHTEN} of ${AANROEPEN}`);
+  const start = nachten.find((n) => n.run === run && n.soort === "start");
+  const stop = nachten.find((n) => n.run === run && n.soort === "stop");
   const deze = aanroepen.filter((a) => a.run === run);
-  schrijfRapport({ regels, aanroepen, keurder: eigen.keurder, run, via: deze[0]?.via ?? "onbekend", stopreden: deze[deze.length - 1]?.stopreden ?? null });
+  const keurder = start?.keurder ?? regels.find((r) => r.run === run)?.keurder;
+  if (!keurder) throw new Error(`Geen keurder bekend voor run ${run}`);
+  if (!stop) console.warn("Geen stopregel: het proces stopte zonder af te sluiten. Stoptijd is die van de laatste aanroep.");
+  schrijfRapport({
+    regels,
+    aanroepen,
+    keurder,
+    run,
+    via: start?.via ?? deze[0]?.via ?? "onbekend",
+    git: start?.git ?? "onbekend",
+    stop: stop?.tijd ?? deze[deze.length - 1]?.tijd ?? run,
+    stopreden: stop?.stopreden && stop.stopreden !== "fout" ? stop.stopreden : (deze[deze.length - 1]?.stopreden ?? null),
+    cellen: stop?.cellen,
+    achtervoegsel: "-herberekend",
+  });
 }
 
 async function main(): Promise<void> {
