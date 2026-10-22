@@ -14,8 +14,11 @@
          liggend daarboven, met dezelfde srcset en sizes als de <picture> in
          Kleurkamer.tsx (SIZES_STAAND en SIZES_LIGGEND), zodat de browser het
          vooraf geladen bestand hergebruikt. Met ?kleur= of ?wie= in de URL is
-         het startbeeld een ander, en laden we niets vooraf. Op de andere
-         pagina's de serif van de displaykop, zoals voorheen. -->
+         het startbeeld een ander, en laden we niets vooraf. De klasse kk-home
+         zet Archivo als letter voor de hele pagina (index.css) voor de eerste
+         render, zodat kop en voet niet van letter wisselen; LandingPage zet
+         en verwijdert hem bij navigatie binnen de app. Op de andere pagina's
+         de serif van de displaykop, zoals voorheen. -->
     <script>
       (function () {
         var h = document.head, p = location.pathname, q = location.search;
@@ -26,15 +29,16 @@
           h.appendChild(l);
         }
         if (p === "/") {
+          document.documentElement.classList.add("kk-home");
           pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/archivo-latin.4c98b9d4.woff2" });
           if (!/[?&](kleur|wie)=/.test(q)) {
             pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(max-width: 1023px)", imagesizes: "100vw",
-              imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-45-640.3c5162da.avif 640w, /beeld/kleurkamer/kk-h-dieprood-45-960.ec117b82.avif 960w, /beeld/kleurkamer/kk-h-dieprood-45-1229.0a54f936.avif 1229w" });
+              imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-45-640.e8b97b01.avif 640w, /beeld/kleurkamer/kk-h-dieprood-45-960.f22930cd.avif 960w, /beeld/kleurkamer/kk-h-dieprood-45-1229.0d6fe1bd.avif 1229w" });
             pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(min-width: 1024px)", imagesizes: "90vw",
-              imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-1280.f7f16cf9.avif 1280w, /beeld/kleurkamer/kk-h-dieprood-1920.dc3f0e5e.avif 1920w, /beeld/kleurkamer/kk-h-dieprood-2752.99aa122a.avif 2752w" });
+              imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-1280.55b2ca41.avif 1280w, /beeld/kleurkamer/kk-h-dieprood-1920.b09070e8.avif 1920w, /beeld/kleurkamer/kk-h-dieprood-2752.edd80db6.avif 2752w" });
           }
           var t = document.querySelector('meta[name="theme-color"]');
-          if (t) t.setAttribute("content", "#8E2F25");
+          if (t) t.setAttribute("content", "#933126");
         } else {
           pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/instrument-serif-italic-latin.6ee678c3.woff2" });
           pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/instrument-serif-latin.60c06664.woff2" });
@@ -67,12 +71,12 @@
     <meta property="og:locale" content="nl_NL" />
     <meta property="og:title" content="FitFi: stijladvies op basis van wat je graag draagt" />
     <meta property="og:description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
-    <meta property="og:image" content="https://www.fitfi.ai/og/og-home_1200x630.7c31a04e.jpg" />
+    <meta property="og:image" content="https://www.fitfi.ai/og/og-home_1200x630.9059a97c.jpg" />
     <meta property="og:url" content="https://www.fitfi.ai/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="FitFi: stijladvies op basis van wat je graag draagt" />
     <meta name="twitter:description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
-    <meta name="twitter:image" content="https://www.fitfi.ai/og/og-home_1200x630.7c31a04e.jpg" />
+    <meta name="twitter:image" content="https://www.fitfi.ai/og/og-home_1200x630.9059a97c.jpg" />
     <meta name="description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
 
     <title>FitFi: stijladvies op basis van wat je graag draagt</title>

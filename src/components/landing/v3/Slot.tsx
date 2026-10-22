@@ -13,6 +13,13 @@ const MASKER: CSSProperties = {
   maskComposite: "intersect",
 };
 
+/*
+ * De persoon begint in de grijze still op 56 procent (heren) en 62 procent
+ * (dames) van de breedte, gemeten op 22 oktober 2026. De plaat is hooguit 1920
+ * px breed en staat in het midden; het tekstblok stopt 48 px voor 54 procent.
+ */
+const TEKST_BREED = "calc(min(100vw, 1920px) * 0.54 + max(0px, (100vw - 1920px) / 2) - var(--rand) - 48px)";
+
 const MASKER_STAAND: CSSProperties = {
   WebkitMaskImage: "linear-gradient(to bottom, #000 0, #000 92%, transparent 100%)",
   maskImage: "linear-gradient(to bottom, #000 0, #000 92%, transparent 100%)",
@@ -37,7 +44,7 @@ export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerS
     <div>
       <div className="flex items-start gap-4">
         {k && <span aria-hidden="true" className="mt-2 h-10 w-10 flex-none border border-[rgba(26,26,26,0.3)]" style={{ backgroundColor: k.hex }} />}
-        <h2 id="slot-kop" className="font-archivo text-[36px] text-[#1A1A1A] lg:text-[clamp(56px,6vw,104px)]" style={ARCHIVO.display}>
+        <h2 id="slot-kop" className="font-archivo text-[36px] text-[#1A1A1A] [text-wrap:balance] lg:text-[clamp(56px,6vw,104px)]" style={ARCHIVO.display}>
           {slotVraag(k)}
         </h2>
       </div>
@@ -79,7 +86,7 @@ export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerS
             />
           </picture>
         </figure>
-        <div className="px-4 pb-16 pt-4">
+        <div className="px-[var(--rand)] pb-16 pt-4">
           <p id="slot-ai" className="text-[14px] text-[#1A1A1A]">
             {COPY.aiLabel}
           </p>
@@ -90,32 +97,36 @@ export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerS
 
       {/* Desktop: de liggende plaat, met de tekst op het lege papier links. */}
       <div className="hidden lg:block">
-        <div className="relative mx-auto w-full max-w-[1920px]" style={{ aspectRatio: "16 / 9", maxHeight: "100svh" }}>
-          <div className="absolute inset-0" style={MASKER}>
-            <picture>
-              <source type="image/avif" srcSet={srcSet(liggend.avif)} sizes="100vw" />
-              <img
-                src={liggend.webp[1920]}
-                srcSet={srcSet(liggend.webp)}
-                sizes="100vw"
-                alt={alt}
-                aria-describedby="slot-ai-desktop"
-                width={liggend.verhouding[0]}
-                height={liggend.verhouding[1]}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
-                style={{ objectPosition: "62% 50%" }}
-              />
-            </picture>
+        <div className="relative">
+          <div className="relative mx-auto w-full max-w-[1920px]" style={{ aspectRatio: "16 / 9", maxHeight: "100svh" }}>
+            <div className="absolute inset-0" style={MASKER}>
+              <picture>
+                <source type="image/avif" srcSet={srcSet(liggend.avif)} sizes="100vw" />
+                <img
+                  src={liggend.webp[1920]}
+                  srcSet={srcSet(liggend.webp)}
+                  sizes="100vw"
+                  alt={alt}
+                  aria-describedby="slot-ai-desktop"
+                  width={liggend.verhouding[0]}
+                  height={liggend.verhouding[1]}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </picture>
+            </div>
           </div>
-          <div className="absolute left-10 top-[24%] max-w-[44%]">{tekstblok}</div>
+          {/* Op de linkerrand van de pagina (--rand), en smal genoeg om voor de persoon te stoppen. */}
+          <div className="absolute left-[var(--rand)] top-[24%]" style={{ maxWidth: TEKST_BREED }}>
+            {tekstblok}
+          </div>
         </div>
-        <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-8 px-10 pb-8">
-          <p id="slot-ai-desktop" className="text-[14px] text-[#1A1A1A]">
+        <div className="flex items-baseline justify-between gap-8 px-[var(--rand)] pb-8">
+          <p id="slot-ai-desktop" className="flex-none text-[14px] text-[#1A1A1A]">
             {COPY.aiLabel}
           </p>
-          <p className="max-w-[46rem] text-right text-[14px] leading-[22px] text-[#1A1A1A]">{COPY.plannen.tekst}</p>
+          <p className="max-w-[60rem] text-right text-[14px] leading-[22px] text-[#1A1A1A]">{COPY.plannen.tekst}</p>
         </div>
       </div>
     </section>

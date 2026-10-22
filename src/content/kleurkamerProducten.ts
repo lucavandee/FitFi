@@ -6,6 +6,9 @@
  * van de kamer, prijsniveau H&M. De prijzen en links zijn die van die dag (keten_kandidaat_product).
  * Een kamer met minder dan drie stukken voor iemand toont de rij niet.
  *
+ * winkelTitel maakt van de feednaam een korte titel: zonder winkel, zonder de
+ * kleur (die staat al in de kop) en zonder pasvorm ("Regular Fit").
+ *
  * De productfoto is de feedfoto van de winkel, ongewijzigd (Daisycon art. 2.6).
  */
 
@@ -65,19 +68,9 @@ export const KLEURKAMER_PRODUCTEN: Record<string, { dames: WinkelStuk[]; heren: 
       { id: "416a2d15-be19-400e-8696-d974480e71a8", naam: "H & M - Licht gewatteerd jack - Rood", merk: "H&M", winkel: "H&M (NL)", prijs: 49.99, beeld: "https://image.hm.com/assets/hm/7c/b0/7cb0fc6a4e5278557c350c19645ea39c31faeaab.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=42fd5810637c6fd994528e211ba34de0&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.431496506872848910847819%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.1316516003.html&ws=fitfihm" },
     ],
   },
-  warmterracotta: {
-    dames: [
-      { id: "0d5b9bb5-3db0-4527-b051-db9b9d83ab17", naam: "H & M - Blouse met platte plooitjes - Abrikoos", merk: "H&M", winkel: "H&M (NL)", prijs: 24.99, beeld: "https://image.hm.com/assets/hm/a6/74/a674f2b27173f44a0cae1bd91e1b1171b81bff29.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=dccc3081643cd78c78011548de5a31ad&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.4314916957499149041981736%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.1345494002.html&ws=fitfihm" },
-      { id: "7c987fc3-be54-4ced-85ad-2700d44e3e9f", naam: "H & M - Blouse met kant - Licht Perzikroze", merk: "H&M", winkel: "H&M (NL)", prijs: 24.99, beeld: "https://image.hm.com/assets/hm/38/84/38842ab1d6272fbb9674c1e4ce9209f4760a35b9.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=afb249cc137d906b39de013e4c062476&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.4314912445194683867497802%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.1325413002.html&ws=fitfihm" },
-      { id: "0a71246b-009d-4878-9a76-101556ce2266", naam: "H & M - Rechte broek met kralen - Perzikroze", merk: "H&M", winkel: "H&M (NL)", prijs: 24.99, beeld: "https://image.hm.com/assets/hm/25/b5/25b578bd62990492bf50bb78de939c2cd4791e8c.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=f10c4deabfc48215ee812aab2aeee5a0&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.431498409447496186673381%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.1341607001.html&ws=fitfihm" },
-      { id: "27ff054e-6a20-4cc7-9745-0a078bfe1d37", naam: "H & M - Satijnen maxirok - Perzikroze", merk: "H&M", winkel: "H&M (NL)", prijs: 34.99, beeld: "https://image.hm.com/assets/hm/f1/98/f198d82e9e5b191a94a4be6ab852a6543f328eb5.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=bc75aacc4add4955b474ee9157e7e636&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.4314918035803997574871562%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.1334576001.html&ws=fitfihm" },
-    ],
-    heren: [
-      { id: "f63863ea-07f0-43e4-a859-63c758e8a770", naam: "H & M - T-shirt - Loose Fit - Perzikroze", merk: "H&M", winkel: "H&M (NL)", prijs: 9.99, beeld: "https://image.hm.com/assets/hm/0a/ed/0aedc3eaec51708a3a83a96c1132103b7b3d7e9d.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=7cb0e151b8ac305e1d11883f26d98465&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.431499330652351428008138%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.0608945136.html&ws=fitfihm" },
-      { id: "26b87de4-29d8-4581-a749-66e1306c7fa8", naam: "H & M - T-shirt van interlocktricot - Loose Fit - Koraalroze", merk: "H&M", winkel: "H&M (NL)", prijs: 14.99, beeld: "https://image.hm.com/assets/hm/d2/94/d294fd241e507a5ae72fcd8b8ddd7592a23815e4.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=b4ad1b2b589d270110975a0dd022b20c&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.431498172365379396783975%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.1313925012.html&ws=fitfihm" },
-      { id: "5b35bc21-5818-440a-ba13-dd7fc1c4887e", naam: "H & M - Overhemd met korte mouwen - Regular Fit - Perzikroze", merk: "H&M", winkel: "H&M (NL)", prijs: 29.99, beeld: "https://image.hm.com/assets/hm/a1/93/a193af79e62c69fe8732c9858199011c00bf0d1b.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=635e8d8adb7e8ec3bb2f7ba236cf25ff&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.4314910466174184860292769%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.1265144003.html&ws=fitfihm" },
-    ],
-  },
+  // Leeg: in de pool stonden voor deze kleur alleen bleke perzik- en roze stukken
+  // (22 oktober 2026). Met minder dan drie stukken toont de homepage de rij niet.
+  warmterracotta: { dames: [], heren: [] },
   olijfgroen: {
     dames: [
       { id: "003d422c-9274-444e-bd28-8e4b9b8d5325", naam: "H & M - Korte trenchcoat - Donker Kakigroen", merk: "H&M", winkel: "H&M (NL)", prijs: 34.99, beeld: "https://image.hm.com/assets/hm/2c/dd/2cdd583a998bb9b4b7c9b41a7ffcf66fc3cef58c.jpg", link: "https://jf79.net/c/?si=17004&li=1740343&wi=418695&pid=cc07c0f488ac4e525d4a49f82ddd4631&dl=link%3Fid%3Dp5Zs8TJlngw%26offerid%3D1577657.431499168095659802119522%26type%3D15%26murl%3Dhttps%253A%252F%252Fwww2.hm.com%252Fnl_nl%252Fproductpage.1349874003.html&ws=fitfihm" },
@@ -107,3 +100,12 @@ export const KLEURKAMER_PRODUCTEN: Record<string, { dames: WinkelStuk[]; heren: 
     ],
   },
 };
+
+/** "H & M - Wollen ziptop-trui - Regular Fit - Donker Kakigroen" wordt "Wollen ziptop-trui". */
+export function winkelTitel(naam: string): string {
+  const delen = naam.replace(/^H\s*&\s*M\s*-\s*/i, "").split(/\s+-\s+/);
+  const zonderKleur = delen.length > 1 ? delen.slice(0, -1) : delen;
+  const zonderFit = zonderKleur.filter((d) => !/\bfit$/i.test(d.trim()));
+  const [eerste = naam, ...rest] = zonderFit;
+  return [eerste, ...rest.map((r) => r.toLowerCase())].join(", ");
+}

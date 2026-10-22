@@ -2,7 +2,8 @@ import React from "react";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
-  variant?: "default" | "light" | "dark";
+  /** "inkt": alles in inkt, zonder terracotta (homepage, de kleurkamer) */
+  variant?: "default" | "light" | "dark" | "inkt";
   className?: string;
 }
 
@@ -33,10 +34,12 @@ const Logo: React.FC<LogoProps> = ({
 
   const inky =
     variant === "light" ? "rgba(255,255,255,0.55)"
+    : variant === "inkt" ? "rgba(26,26,26,0.55)"
     : "#A85740";
 
   const diamond =
     variant === "light" ? "rgba(255,255,255,0.85)"
+    : variant === "inkt" ? "#1A1A1A"
     : "#A85740";
 
   const W = Math.round(102 * s);

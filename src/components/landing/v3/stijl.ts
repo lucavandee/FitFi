@@ -30,8 +30,8 @@ export const KNOP_OP = {
 export const TEKSTLINK =
   "inline-flex min-h-[44px] items-center text-base underline decoration-1 underline-offset-4 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
 
-/** Tekst hooguit 1360 px breed, marges 16, 32 en 40 px. */
-export const RASTER = "mx-auto w-full max-w-[1360px] px-4 md:px-8 lg:px-10";
+/** Dezelfde linkerrand als kop, held, slot en voet (--rand in index.css): tekst hooguit 1280 px breed. */
+export const RASTER = "w-full px-[var(--rand)]";
 
 /** Secties op papier: 128 px boven en onder op desktop, 80 px op mobiel. */
 export const SECTIE = "py-20 lg:py-32";

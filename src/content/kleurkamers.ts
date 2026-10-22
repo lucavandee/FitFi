@@ -18,10 +18,11 @@ import { KLEURKAMER_BEELDEN, KLEURKAMER_FILMS, type Beeldbron } from "@/content/
  * ~/claude-artifacts/fitfi-beeld/2026-10-22-herontwerp/kleurkamer/herkomst.json.
  *
  * Kleuren: de staal is de hex uit COLOR_PALETTES (dezelfde naam, dus dezelfde
- * sleutel als in de engine). Het veld is de gemeten mediaan van de rand van de
- * still (links en boven, zonder vloer), zodat foto en veld naadloos op elkaar
- * aansluiten. Het contrast van de tekst is op die gemeten waarde gerekend;
- * __tests__/kleurkamers.test.ts bewaakt het.
+ * sleutel als in de engine). Het papier in de foto is vlak gemaakt (de grote
+ * lichtval eruit, schaduw en structuur blijven), zodat de foto zonder lichte doos
+ * in het veld overloopt. Het veld is de gemeten mediaan van de rand van de still;
+ * die ligt nu binnen enkele niveaus van de hex. Het contrast van de tekst is op
+ * die gemeten waarde gerekend; __tests__/kleurkamers.test.ts bewaakt het.
  */
 
 export type KamerSleutel = "softblauw" | "donkerblauw" | "dieprood" | "warmterracotta" | "olijfgroen" | "chocolade";
@@ -38,8 +39,8 @@ export interface Kamer {
   hex: string;
   /** Gemeten veldkleur aan de rand van de still, per persoon. */
   veld: Record<Wie, string>;
-  /** Tekst op het veld: papier op donkere kamers, inkt op lichte. */
-  tekst: "papier" | "inkt";
+  /** Tekst op het veld: papier op donkere kamers, inkt op lichte, wit waar papier net geen 4,5:1 haalt. */
+  tekst: "papier" | "inkt" | "wit";
   /** Hoe het kledingstuk in de alt-tekst heet. */
   kleurWoord: string;
 }
@@ -54,7 +55,7 @@ export const KAMERS: readonly Kamer[] = [
     seizoen: "zomer",
     kant: "koel",
     hex: "#85C1E2",
-    veld: { dames: "#80BBDB", heren: "#7CB4D3" },
+    veld: { dames: "#84C2E2", heren: "#85C1E1" },
     tekst: "inkt",
     kleurWoord: "lichtblauwe",
   },
@@ -64,7 +65,7 @@ export const KAMERS: readonly Kamer[] = [
     seizoen: "winter",
     kant: "koel",
     hex: "#34495E",
-    veld: { dames: "#32465B", heren: "#304457" },
+    veld: { dames: "#34495E", heren: "#34495E" },
     tekst: "papier",
     kleurWoord: "blauwe",
   },
@@ -74,7 +75,7 @@ export const KAMERS: readonly Kamer[] = [
     seizoen: "winter",
     kant: "koel",
     hex: "#943126",
-    veld: { dames: "#8E2F25", heren: "#8A2D23" },
+    veld: { dames: "#933126", heren: "#943126" },
     tekst: "papier",
     kleurWoord: "diep rode",
   },
@@ -84,7 +85,7 @@ export const KAMERS: readonly Kamer[] = [
     seizoen: "lente",
     kant: "warm",
     hex: "#E08E79",
-    veld: { dames: "#D78975", heren: "#D18470" },
+    veld: { dames: "#DF8F79", heren: "#DF8E78" },
     tekst: "inkt",
     kleurWoord: "terracotta",
   },
@@ -94,8 +95,9 @@ export const KAMERS: readonly Kamer[] = [
     seizoen: "herfst",
     kant: "warm",
     hex: "#6E7A45",
-    veld: { dames: "#6A7643", heren: "#667240" },
-    tekst: "papier",
+    veld: { dames: "#6D7A45", heren: "#6E7A45" },
+    // Papier haalt op het vlakke olijf 4,45:1; zuiver wit 4,63:1.
+    tekst: "wit",
     kleurWoord: "olijfgroene",
   },
   {
@@ -104,7 +106,7 @@ export const KAMERS: readonly Kamer[] = [
     seizoen: "herfst",
     kant: "warm",
     hex: "#4E342E",
-    veld: { dames: "#4B322C", heren: "#48302A" },
+    veld: { dames: "#4D342E", heren: "#4E342E" },
     tekst: "papier",
     kleurWoord: "chocoladebruine",
   },
@@ -116,7 +118,7 @@ export const START_KAMER: KamerSleutel = "dieprood";
 export const HINT_KAMER: KamerSleutel = "olijfgroen";
 
 /** De grijze kamer van het slot: zelfde studio, papier op #9A9A97 gezet; veld gemeten. */
-export const GRIJZE_KAMER = { veld: { dames: "#949593", heren: "#8F908D" } } as const;
+export const GRIJZE_KAMER = { veld: { dames: "#999B97", heren: "#9A9A96" } } as const;
 
 export function kamer(sleutel: KamerSleutel): Kamer {
   return KAMERS.find((k) => k.sleutel === sleutel) ?? KAMERS[2];
@@ -127,7 +129,12 @@ export function isKamer(x: unknown): x is KamerSleutel {
 }
 
 export function tekstKleur(k: Kamer): string {
-  return k.tekst === "papier" ? PAPIER : INKT;
+  return k.tekst === "papier" ? PAPIER : k.tekst === "wit" ? "#FFFFFF" : INKT;
+}
+
+/** Licht op donker (papier of wit), of inkt op licht. */
+export function isDonkereKamer(k: Kamer): boolean {
+  return k.tekst !== "inkt";
 }
 
 const LETTER: Record<Wie, string> = { dames: "h", heren: "m" };
@@ -162,20 +169,30 @@ export function altTekst(k: Kamer, wie: Wie): string {
 // Teksten, met waar elke bewering op rust (zelfde vorm als landingCopy.ts).
 
 const zin = (tekst: string, ...bronnen: Bron[]): Zin => ({ tekst, bronnen });
+const QUIZ = "src/data/quizSteps.ts";
 const VEERTIEN: Bron = { data: "aantalStappen", waarde: 14, inTekst: "veertien" };
+const ZEVEN: Bron = { data: "rondesDezeOfDeze", waarde: 7, inTekst: "zeven" };
+const RAPPORT_BRONNEN: Bron[] = [
+  { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "<ColorPaletteSection" },
+  { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "StyleProfileGenerator.generateStyleProfile(" },
+  { bestand: "src/components/results/OutfitDetailModal.tsx", zoek: "const opened = await openProductLink({" },
+];
 
 export const KLEURKAMER_COPY = {
   held: {
-    kop: ["Welke kleur", "staat jou?"] as const,
+    /*
+     * Een vraag over wat je draagt, niet over wat je "staat": de quiz zegt bij
+     * stap 1 zelf "Dit is geen kleuranalyse" en vraagt bij stap 3 welke kleuren
+     * je het liefst draagt. Alleen de optionele selfie kijkt naar je uiterlijk.
+     */
+    kop: ["Welke kleur", "draag jij?"] as const,
+    kopBron: zin("Welke kleur draag jij?", { bestand: QUIZ, zoek: "title: 'Welke kleuren draag jij het liefst?'" }),
     onderregel: zin(
-      "Na veertien vragen weet je welke kleuren bij je passen. Je krijgt ook je stijl en outfits met links naar de winkel.",
-      VEERTIEN,
-      { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "<ColorPaletteSection" },
-      { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "StyleProfileGenerator.generateStyleProfile(" },
-      { bestand: "src/components/results/OutfitDetailModal.tsx", zoek: "const opened = await openProductLink({" },
+      "Kies wat je graag draagt. Je krijgt je kleurpalet, je stijl en outfits met links naar de winkel.",
+      { bestand: QUIZ, zoek: "Kies wat jij graag draagt." },
+      ...RAPPORT_BRONNEN,
     ),
     knop: "Begin gratis",
-    knopIngelogd: "Bekijk je resultaten",
     voorbeeld: "Bekijk voorbeeld",
     aiLabel: "Beeld gemaakt met AI. De persoon is een model.",
     kleurGroep: "Kleur van de kamer",
@@ -188,21 +205,35 @@ export const KLEURKAMER_COPY = {
   winkel: {
     tekst: "Het model en de kleding hierboven zijn gemaakt met AI. Deze stukken kun je bestellen.",
     knop: "Bekijk bij partner",
+    nieuwVenster: "opent in een nieuw venster",
+  },
+  kamers: {
+    kop: "De zes kamers",
+    tekst: zin(
+      "Dezelfde foto in zes kleuren. Alleen de muur en het stuk bij het gezicht veranderen.",
+      { bestand: "src/content/kleurkamers.ts", zoek: "zijn in elke kamer pixel voor pixel gelijk" },
+    ),
   },
   rapport: {
     label: "Voorbeeld",
     kop: "Je rapport.",
     tekst: zin(
-      "Je kleuren, je stijl en outfits met echte stukken. Bij elk stuk staat een link naar de winkel.",
-      { bestand: "src/pages/EnhancedResultsPage.tsx", zoek: "<ColorPaletteSection" },
-      { bestand: "src/components/results/OutfitDetailModal.tsx", zoek: "const opened = await openProductLink({" },
+      "In je rapport staan je kleuren, je stijl en outfits met echte stukken, met bij elk stuk een link naar de winkel.",
+      ...RAPPORT_BRONNEN,
     ),
-    kleurcode: "Je kleurcode",
+    /* De twee labels van de echte omslag (RapportOmslag.tsx), letterlijk. */
+    omslag: "Jouw stijlrapport",
+    kleurcode: "Jouw kleurcode",
     samen: "Samen",
   },
   slot: {
-    vraagZonderKeuze: "Welke kleuren passen bij jou?",
-    tekst: zin("Na veertien vragen weet je het.", VEERTIEN),
+    vraagZonderKeuze: "Welke kleur draag jij?",
+    tekst: zin(
+      "Beantwoord veertien vragen en kies zeven keer tussen twee looks. Voor je rapport maak je een gratis account.",
+      VEERTIEN,
+      ZEVEN,
+      { bestand: "src/App.tsx", zoek: '<Route path="/results" element={<RequireAuth>' },
+    ),
     plannen: zin(
       `Gratis: tot ${OUTFIT_LIMIET.gratis} outfits met links naar de winkel, en dat blijft zo. Premium: tot ${OUTFIT_LIMIET.premium} outfits en een kleuranalyse op basis van je foto.`,
       { bestand: "src/pages/PricingPage.tsx", zoek: "Free is geen proefperiode, het blijft altijd beschikbaar." },
@@ -217,8 +248,8 @@ export function staalNaam(k: Kamer): string {
   return `${k.naam}, uit het ${k.seizoen}palet`;
 }
 
-/** "Past diep rood bij jou?" */
+/** "Draag jij olijfgroen?": dezelfde vraag als de held, nu over de kleur die je koos. */
 export function slotVraag(k: Kamer | null): string {
-  return k ? `Past ${k.naam.toLowerCase()} bij jou?` : KLEURKAMER_COPY.slot.vraagZonderKeuze;
+  return k ? `Draag jij\u00a0${k.naam.toLowerCase()}?` : KLEURKAMER_COPY.slot.vraagZonderKeuze;
 }
 

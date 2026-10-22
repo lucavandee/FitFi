@@ -7,6 +7,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { COLOR_PALETTES } from "@/data/colorPalettes";
 import { quizSteps } from "@/data/quizSteps";
+import { AANTAL_RONDES, RONDES } from "@/data/dezeOfDeze";
 import {
   GRIJZE_KAMER,
   INKT,
@@ -102,11 +103,17 @@ describe("bestanden", () => {
 });
 
 describe("in de winkel", () => {
-  it("elke kamer heeft voor dames en heren minstens drie stukken, met prijs, beeld en partnerlink", () => {
+  /*
+   * Een rij met minder dan drie stukken blijft weg (InDeWinkel). Warm
+   * terracotta heeft er op 22 oktober geen: in de catalogus stonden geen drie
+   * stukken die echt die kleur hebben. Liever geen rij dan een rij in een
+   * andere kleur; vijf van de zes kamers moeten er wel een hebben.
+   */
+  it("elke rij heeft nul of minstens drie stukken, met prijs, beeld en partnerlink", () => {
     for (const k of KAMERS) {
       for (const w of WIE) {
         const stukken = KLEURKAMER_PRODUCTEN[k.sleutel][w];
-        expect(stukken.length, `${k.sleutel} ${w}`).toBeGreaterThanOrEqual(3);
+        expect(stukken.length === 0 || stukken.length >= 3, `${k.sleutel} ${w}: ${stukken.length}`).toBe(true);
         for (const s of stukken) {
           expect(s.prijs).toBeGreaterThan(0);
           expect(s.beeld).toMatch(/^https:\/\//);
@@ -115,10 +122,23 @@ describe("in de winkel", () => {
       }
     }
   });
+
+  it("minstens vijf van de zes kamers hebben een winkelrij, voor dames en voor heren", () => {
+    for (const w of WIE) {
+      expect(KAMERS.filter((k) => KLEURKAMER_PRODUCTEN[k.sleutel][w].length >= 3).length, w).toBeGreaterThanOrEqual(5);
+    }
+  });
 });
 
 describe("teksten", () => {
-  const zinnen = [KLEURKAMER_COPY.held.onderregel, KLEURKAMER_COPY.rapport.tekst, KLEURKAMER_COPY.slot.tekst, KLEURKAMER_COPY.slot.plannen];
+  const zinnen = [
+    KLEURKAMER_COPY.held.kopBron,
+    KLEURKAMER_COPY.held.onderregel,
+    KLEURKAMER_COPY.kamers.tekst,
+    KLEURKAMER_COPY.rapport.tekst,
+    KLEURKAMER_COPY.slot.tekst,
+    KLEURKAMER_COPY.slot.plannen,
+  ];
 
   it("elke bewering rust op een bestand dat de zoektekst nog bevat, of op data die klopt", () => {
     for (const z of zinnen) {
@@ -128,6 +148,13 @@ describe("teksten", () => {
         } else if ("data" in b && b.data === "aantalStappen") {
           expect(quizSteps.length).toBe(b.waarde);
           expect(z.tekst).toContain(b.inTekst);
+        } else if ("data" in b && b.data === "rondesDezeOfDeze") {
+          expect(AANTAL_RONDES).toBe(b.waarde);
+          expect(RONDES.female).toHaveLength(b.waarde);
+          expect(RONDES.male).toHaveLength(b.waarde);
+          expect(z.tekst).toContain(b.inTekst);
+        } else {
+          throw new Error(`onbekende bron: ${JSON.stringify(b)}`);
         }
       }
     }

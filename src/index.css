@@ -215,3 +215,40 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .kk-in { animation: none; }
 }
+
+/* Kleurkamer (homepage): één linkerrand voor kop, held, secties, slot en voet.
+   Op desktop gelijk aan een tekstbreedte van 1360 px met 40 px marge. */
+:root {
+  --rand: 16px;
+}
+@media (min-width: 768px) {
+  :root { --rand: 32px; }
+}
+@media (min-width: 1024px) {
+  :root { --rand: max(40px, calc((100vw - 1360px) / 2 + 40px)); }
+}
+
+/* Op de homepage één letterfamilie, ook in kop, voet en cookiebanner. De klasse
+   zet index.html al voor de eerste paint; LandingPage houdt hem bij. */
+html.kk-home body {
+  font-family: "Archivo", "Archivo Terugval", Arial, sans-serif;
+}
+/* Op de homepage is er geen onderbalk, dus geen 72 px reserve onderin. */
+html.kk-home {
+  scroll-padding-bottom: var(--banner-h, 0px);
+}
+
+/* De cookiebanner op de homepage in de vormtaal van de kleurkamer: recht, op
+   papier, op dezelfde linkerrand als de rest van de pagina. Alleen vorm; de
+   tekst, de knoppen en hun volgorde blijven die van CookieBanner.tsx. */
+html.kk-home [data-cookiebanner] :is(section, button, a, div, input) {
+  border-radius: 0;
+}
+html.kk-home [data-cookiebanner] > .border-t {
+  background-color: #FAFAF8;
+  border-top-color: rgba(26, 26, 26, 0.14);
+}
+html.kk-home [data-cookiebanner] .max-w-7xl {
+  max-width: none;
+  padding-inline: var(--rand);
+}

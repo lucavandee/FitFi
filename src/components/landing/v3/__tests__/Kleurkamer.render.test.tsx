@@ -25,7 +25,7 @@ describe("Kleurkamer", () => {
     const html = render(stand("dieprood"));
     expect(HERO_SELECTOR).toBe('section[aria-labelledby="hero-heading"]');
     expect(html).toContain('aria-labelledby="hero-heading"');
-    expect(html).toMatch(/<h1 id="hero-heading"[^>]*>Welke kleur<br\/>staat jou\?<\/h1>/);
+    expect(html).toMatch(/<h1 id="hero-heading"[^>]*>Welke kleur<br\/>draag jij\?<\/h1>/);
   });
 
   it("zes stalen in een radiogroep; de actieve kamer is aangevinkt en heeft de focus", () => {
@@ -36,9 +36,10 @@ describe("Kleurkamer", () => {
     expect(html.match(/aria-label="[^"]+, uit het (winter|zomer|lente|herfst)palet" tabindex="-1"/g)?.length).toBe(5);
   });
 
-  it("het veld en de tekst volgen de kamer: papier op donker, inkt op licht", () => {
-    expect(render(stand("dieprood"))).toMatch(/background-color:#8E2F25;color:#FAFAF8/);
-    expect(render(stand("softblauw", "heren"))).toMatch(/background-color:#7CB4D3;color:#1A1A1A/);
+  it("het veld en de tekst volgen de kamer: papier op donker, inkt op licht, wit op olijf", () => {
+    expect(render(stand("dieprood"))).toMatch(/background-color:#933126;color:#FAFAF8/);
+    expect(render(stand("softblauw", "heren"))).toMatch(/background-color:#85C1E1;color:#1A1A1A/);
+    expect(render(stand("olijfgroen"))).toMatch(/background-color:#6D7A45;color:#FFFFFF/);
   });
 
   it("de still beschrijft wat je ziet, met het AI-label als beschrijving", () => {
