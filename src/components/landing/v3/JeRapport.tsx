@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useMediaquery } from "@/components/landing/beeld/useMediaquery";
 import { COLOR_PALETTES } from "@/data/colorPalettes";
 import { KLEURKAMER_COPY } from "@/content/kleurkamers";
 import { VOORBEELD_OUTFITS, euro, formaat } from "@/content/voorbeeldOutfits";
@@ -13,17 +14,17 @@ const KLEURCODE = PALET.doColors.map((k) => ({ hex: k.hex, naam: k.name }));
 const RAND_OP_INKT = "border border-[rgba(250,250,248,0.3)]";
 
 /**
- * De kleurcode: elk vlak met zijn naam eronder, drie per rij (een naam als
- * Smaragdgroen past niet onder een zesde van de omslag). Op inkt vallen zwart
- * en navy weg zonder rand, daarom heeft elk vlak een haarlijn.
+ * De kleurcode: elk vlak met zijn naam eronder, drie per rij en onder 400 px
+ * twee (Smaragdgroen past op 320 px niet onder een derde van de omslag). Op
+ * inkt vallen zwart en navy weg zonder rand, daarom heeft elk vlak een haarlijn.
  */
 function Kleurcode() {
   return (
-    <ul className="grid grid-cols-3 gap-x-3 gap-y-5">
+    <ul className="grid grid-cols-2 gap-x-3 gap-y-5 min-[400px]:grid-cols-3">
       {KLEURCODE.map((k) => (
         <li key={k.hex}>
           <span aria-hidden="true" className={`block h-12 ${RAND_OP_INKT}`} style={{ backgroundColor: k.hex }} />
-          <span className="mt-2 block text-[14px] leading-tight">{k.naam}</span>
+          <span className="mt-2 block text-[14px] leading-tight [overflow-wrap:anywhere]">{k.naam}</span>
         </li>
       ))}
     </ul>
@@ -38,12 +39,14 @@ function Kleurcode() {
  */
 export default function JeRapport() {
   const totaal = OUTFIT.stukken.reduce((som, s) => som + s.prijs, 0);
+  // Onder 1024 px scrolt de outfitrij zijwaarts zonder iets aanklikbaars erin: dan moet hij zelf focus kunnen krijgen.
+  const rij = useMediaquery("(max-width: 1023px)");
   return (
     <section aria-labelledby="rapport-kop" className={`bg-[#FAFAF8] ${SECTIE}`}>
       {/* grid-cols-1 is minmax(0, 1fr): zonder die ondergrens rekt de outfitrij (168vw breed) de kolom op. */}
       <div className={`${RASTER} grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-6`}>
         <div
-          className="flex min-h-[120vw] flex-col justify-between bg-[#1A1A1A] p-6 text-[#FAFAF8] sm:min-h-[600px] lg:col-span-6 lg:min-h-[760px] lg:p-10"
+          className="flex min-h-[120vw] flex-col justify-between overflow-hidden bg-[#1A1A1A] p-6 text-[#FAFAF8] sm:min-h-[600px] lg:col-span-6 lg:min-h-[760px] lg:p-10"
           style={{ containerType: "inline-size" }}
         >
           <p className={LABEL} style={ARCHIVO.label}>
@@ -52,7 +55,7 @@ export default function JeRapport() {
           <div>
             <p
               aria-hidden="true"
-              className="font-archivo leading-[0.85]"
+              className="font-archivo leading-[0.85] [overflow-wrap:anywhere]"
               style={{ fontStretch: "62%", fontWeight: 600, letterSpacing: "-0.03em", fontSize: "min(160px, 22cqw)" }}
             >
               minimalistisch
@@ -84,7 +87,11 @@ export default function JeRapport() {
             <h3 className="mt-3 font-archivo text-[24px] text-[#1A1A1A]" style={ARCHIVO.kop}>
               {OUTFIT.titel}
             </h3>
-            <ul className="-mx-[var(--rand)] mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--rand)] pb-2 [scroll-padding-inline:var(--rand)] lg:mx-0 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-0">
+            <ul
+              tabIndex={rij ? 0 : undefined}
+              aria-label={rij ? "Stukken in deze outfit" : undefined}
+              className="-mx-[var(--rand)] mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[var(--rand)] pb-2 [scroll-padding-inline:var(--rand)] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#1A1A1A] lg:mx-0 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-0"
+            >
               {OUTFIT.stukken.map((stuk) => {
                 const naam = toonNaam({ name: stuk.naam, brand: stuk.merk });
                 return (
@@ -94,7 +101,7 @@ export default function JeRapport() {
                       <img
                         src={formaat(stuk.beeld, 400)}
                         srcSet={`${formaat(stuk.beeld, 400)} 400w, ${formaat(stuk.beeld, 600)} 600w`}
-                        sizes="(min-width: 1024px) 180px, 56vw"
+                        sizes="(min-width: 1024px) 180px, (min-width: 640px) 36vw, 56vw"
                         alt={naam}
                         loading="lazy"
                         decoding="async"

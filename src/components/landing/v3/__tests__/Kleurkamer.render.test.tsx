@@ -36,6 +36,20 @@ describe("Kleurkamer", () => {
     expect(html.match(/aria-label="[^"]+, uit het (winter|zomer|lente|herfst)palet" tabindex="-1"/g)?.length).toBe(5);
   });
 
+  /*
+   * Windows-contrastmodus: rand en ring van een staal moeten de systeemkleur
+   * krijgen, dus forced-color-adjust: none alleen op de vulling.
+   */
+  it("stalen: de vulling houdt zijn kleur in de contrastmodus, rand en ring niet", () => {
+    const html = render(stand("dieprood"));
+    const knoppen = [...html.matchAll(/<button[^>]*role="radio"[^>]*aria-label="[^"]+palet"[^>]*>([\s\S]*?)<\/button>/g)];
+    expect(knoppen).toHaveLength(6);
+    for (const [knop, binnen] of knoppen) {
+      expect(knop.slice(0, knop.indexOf(">"))).not.toContain("forced-color-adjust");
+      expect(binnen).toMatch(/<span aria-hidden="true"[^>]*style="background-color:#[0-9A-F]{6};forced-color-adjust:none"/i);
+    }
+  });
+
   it("het veld en de tekst volgen de kamer: papier op donker, inkt op licht, wit op olijf", () => {
     expect(render(stand("dieprood"))).toMatch(/background-color:#933126;color:#FAFAF8/);
     expect(render(stand("softblauw", "heren"))).toMatch(/background-color:#85C1E1;color:#1A1A1A/);

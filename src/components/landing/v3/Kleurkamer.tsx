@@ -285,6 +285,7 @@ export default function Kleurkamer({ stand }: { stand: KleurkamerStand }) {
   const [filmVoor, setFilmVoor] = useState<string | null>(null);
   const [speeltVoor, setSpeeltVoor] = useState<string | null>(null);
   const [filmFout, setFilmFout] = useState<string | null>(null);
+  const [uitgespeeld, setUitgespeeld] = useState<string | null>(null);
   const [eersteClipKlaar, setEersteClipKlaar] = useState(false);
   const filmRef = useRef<HTMLVideoElement>(null);
   const filmBron = kamerFilm(huidig.sleutel, huidig.wie, huidig.staand);
@@ -315,7 +316,10 @@ export default function Kleurkamer({ stand }: { stand: KleurkamerStand }) {
   }, [magBewegen, inBeeld, tabZichtbaar, speeltVoor, huidigSleutel]);
 
   const filmTonen = filmVoor === huidigSleutel && !!filmBron && filmFout !== huidigSleutel;
-  const filmZichtbaar = filmTonen && speeltVoor === huidigSleutel && magBewegen && !volgend;
+  // Na afloop weer de still: die heeft precies de kleur van het veld, ook in een browser die het
+  // sRGB-label van de clip negeert en hem lichter toont (gemeten in Chrome en Safari, 22 oktober 2026).
+  const klaar = uitgespeeld === huidigSleutel;
+  const filmZichtbaar = filmTonen && speeltVoor === huidigSleutel && magBewegen && !volgend && !klaar;
 
   // --- handelingen van de bezoeker; de hint wacht daarop
   const [handeling, setHandeling] = useState(false);
@@ -416,7 +420,7 @@ export default function Kleurkamer({ stand }: { stand: KleurkamerStand }) {
   const figuur = (
     <figure
       className={staand ? "relative m-0 mx-auto max-w-full" : "absolute inset-0 m-0"}
-      style={staand ? { height: "clamp(320px, calc(100svh - var(--header-h, 56px) - 330px), 125vw)", aspectRatio: "4 / 5", touchAction: "pan-y" } : undefined}
+      style={staand ? { height: "clamp(320px, calc(100svh - var(--header-h, 56px) - 330px), 125vw)", aspectRatio: "4 / 5", touchAction: "pan-y pinch-zoom" } : undefined}
       onPointerDown={staand ? opVeegStart : undefined}
       onPointerUp={staand ? opVeegEind : undefined}
       onPointerCancel={() => (vegen.current = null)}
@@ -456,7 +460,7 @@ export default function Kleurkamer({ stand }: { stand: KleurkamerStand }) {
             style={{
               objectPosition: huidig.staand ? POSITIE_STAAND : POSITIE_LIGGEND,
               opacity: filmZichtbaar ? 1 : 0,
-              transition: "opacity 120ms linear",
+              transition: klaar ? "opacity 400ms ease-out" : "opacity 120ms linear",
               // een haartje kleiner dan de still, zodat de clip nooit de LCP wordt
               transform: "scale(0.998)",
             }}
@@ -467,6 +471,7 @@ export default function Kleurkamer({ stand }: { stand: KleurkamerStand }) {
             onPlaying={() => setSpeeltVoor(huidigSleutel)}
             onEnded={() => {
               afgespeeld.current.add(huidigSleutel);
+              setUitgespeeld(huidigSleutel);
               setEersteClipKlaar(true);
             }}
             onError={() => setFilmFout(huidigSleutel)}
@@ -494,15 +499,16 @@ export default function Kleurkamer({ stand }: { stand: KleurkamerStand }) {
             onKeyDown={opStaalToets}
             className="relative aspect-square w-full max-w-[52px] sm:h-[52px] sm:w-[52px] sm:flex-none lg:h-12 lg:w-12"
             style={{
-              backgroundColor: x.hex,
-              // een rand in de tekstkleur (minstens 4,5:1 tegen het veld), ook in de contrastmodus van Windows
+              // een rand in de tekstkleur (minstens 4,5:1 tegen het veld). In de contrastmodus van
+              // Windows maakt de browser rand en ring CanvasText; alleen de vulling houdt zijn kleur.
               border: `1px solid ${rand}`,
               outline: actief ? `2px solid ${rand}` : "none",
               outlineOffset: 3,
-              forcedColorAdjust: "none",
               transition: "outline-color 200ms ease-out",
             }}
-          />
+          >
+            <span aria-hidden="true" className="absolute inset-0" style={{ backgroundColor: x.hex, forcedColorAdjust: "none" }} />
+          </button>
         );
       })}
     </div>
@@ -631,7 +637,7 @@ export default function Kleurkamer({ stand }: { stand: KleurkamerStand }) {
           <div className="px-[var(--rand)]">
             <div className="mt-2">{aiLabel}</div>
             <div className="mt-3">{kop}</div>
-            <div className="mt-3 flex items-center justify-between gap-4">
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4">
               {kamerNaam}
               {wieKeuze}
             </div>

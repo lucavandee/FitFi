@@ -20,6 +20,9 @@ const MASKER: CSSProperties = {
  */
 const TEKST_BREED = "calc(min(100vw, 1920px) * 0.54 + max(0px, (100vw - 1920px) / 2) - var(--rand) - 48px)";
 
+/** De plaat is hooguit 1920 px breed. */
+const SIZES_PLAAT = "(min-width: 1920px) 1920px, 100vw";
+
 const MASKER_STAAND: CSSProperties = {
   WebkitMaskImage: "linear-gradient(to bottom, #000 0, #000 92%, transparent 100%)",
   maskImage: "linear-gradient(to bottom, #000 0, #000 92%, transparent 100%)",
@@ -40,11 +43,12 @@ export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerS
       ? "Dezelfde vrouw in een lange antraciet jas en broek, nu in een grijze studio zonder kleur."
       : "Dezelfde man in een antraciet overjas en broek, nu in een grijze studio zonder kleur.";
 
-  const tekstblok = (
+  // Twee keer gerenderd (telefoon en desktop, elkaar uitsluitend), dus een id per variant.
+  const tekstblok = (kopId: string) => (
     <div>
       <div className="flex items-start gap-4">
         {k && <span aria-hidden="true" className="mt-2 h-10 w-10 flex-none border border-[rgba(26,26,26,0.3)]" style={{ backgroundColor: k.hex }} />}
-        <h2 id="slot-kop" className="font-archivo text-[36px] text-[#1A1A1A] [text-wrap:balance] lg:text-[clamp(56px,6vw,104px)]" style={ARCHIVO.display}>
+        <h2 id={kopId} className="font-archivo text-[36px] text-[#1A1A1A] [text-wrap:balance] lg:text-[clamp(56px,6vw,104px)]" style={ARCHIVO.display}>
           {slotVraag(k)}
         </h2>
       </div>
@@ -65,7 +69,8 @@ export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerS
   );
 
   return (
-    <section aria-labelledby="slot-kop" className="font-archivo" style={{ backgroundColor: veld, color: "#1A1A1A" }}>
+    // Zonder eigen keuze is de vraag die van de held; dan geen tweede regio met dezelfde naam (axe landmark-unique).
+    <section aria-labelledby={k ? "slot-kop" : undefined} className="font-archivo" style={{ backgroundColor: veld, color: "#1A1A1A" }}>
       {/* Telefoon en tablet: de staande uitsnede, dan de tekst op het grijs. */}
       <div className="lg:hidden">
         <figure className="relative m-0 w-full" style={{ aspectRatio: "4 / 5", ...MASKER_STAAND }}>
@@ -90,7 +95,7 @@ export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerS
           <p id="slot-ai" className="text-[14px] text-[#1A1A1A]">
             {COPY.aiLabel}
           </p>
-          <div className="mt-6">{tekstblok}</div>
+          <div className="mt-6">{tekstblok("slot-kop")}</div>
           <p className="mt-8 max-w-prose text-[14px] leading-[22px] text-[#1A1A1A]">{COPY.plannen.tekst}</p>
         </div>
       </div>
@@ -101,11 +106,11 @@ export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerS
           <div className="relative mx-auto w-full max-w-[1920px]" style={{ aspectRatio: "16 / 9", maxHeight: "100svh" }}>
             <div className="absolute inset-0" style={MASKER}>
               <picture>
-                <source type="image/avif" srcSet={srcSet(liggend.avif)} sizes="100vw" />
+                <source type="image/avif" srcSet={srcSet(liggend.avif)} sizes={SIZES_PLAAT} />
                 <img
                   src={liggend.webp[1920]}
                   srcSet={srcSet(liggend.webp)}
-                  sizes="100vw"
+                  sizes={SIZES_PLAAT}
                   alt={alt}
                   aria-describedby="slot-ai-desktop"
                   width={liggend.verhouding[0]}
@@ -119,7 +124,7 @@ export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerS
           </div>
           {/* Op de linkerrand van de pagina (--rand), en smal genoeg om voor de persoon te stoppen. */}
           <div className="absolute left-[var(--rand)] top-[24%]" style={{ maxWidth: TEKST_BREED }}>
-            {tekstblok}
+            {tekstblok("slot-kop-breed")}
           </div>
         </div>
         <div className="flex items-baseline justify-between gap-8 px-[var(--rand)] pb-8">

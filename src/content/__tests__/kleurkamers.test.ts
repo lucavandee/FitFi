@@ -2,7 +2,7 @@
  * De kleurkamer op de homepage (22 oktober 2026): kleuren, contrast, bestanden,
  * producten en teksten. Zie src/content/kleurkamers.ts.
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { COLOR_PALETTES } from "@/data/colorPalettes";
@@ -90,6 +90,38 @@ describe("bestanden", () => {
         }
       }
     }
+  });
+
+  /*
+   * Met de BT.709-overdracht van de bron toonden Chrome en Safari de clips
+   * ongeveer 10 niveaus lichter dan de still: een lichte doos rond het model en
+   * wit op olijf onder 4,5:1. Met sRGB (13) in het colr-atoom valt de muur in
+   * beide samen met de still (gemeten 22 oktober 2026). Ook de AIGC-tag van de
+   * bron moet erin blijven (Higgsfield-voorwaarde 5.5).
+   */
+  it("elke clip draagt sRGB als overdracht in het colr-atoom, en de AIGC-tag", () => {
+    const map = join(ROOT, "public/video/kleurkamer");
+    const clips = readdirSync(map).filter((f) => f.endsWith(".mp4"));
+    expect(clips.length).toBe(24);
+    for (const f of clips) {
+      const data = readFileSync(join(map, f));
+      const i = data.indexOf("colrnclx");
+      expect(i, `${f}: colr`).toBeGreaterThan(0);
+      const [primaries, overdracht, matrix] = [0, 2, 4].map((d) => data.readUInt16BE(i + 8 + d));
+      expect({ f, primaries, overdracht, matrix }).toEqual({ f, primaries: 1, overdracht: 13, matrix: 1 });
+      expect(data.indexOf("AIGC"), `${f}: AIGC`).toBeGreaterThan(0);
+    }
+  });
+
+  it("index.html: op / de klasse kk-home en Archivo vooraf, Jakarta alleen elders", () => {
+    const html = readFileSync(join(ROOT, "index.html"), "utf-8");
+    const thuis = html.slice(html.indexOf('if (p === "/") {'), html.indexOf("} else {"));
+    const elders = html.slice(html.indexOf("} else {"), html.indexOf("})();"));
+    expect(thuis).toContain('classList.add("kk-home")');
+    expect(thuis).toContain("archivo-latin");
+    expect(thuis).not.toContain("plus-jakarta");
+    expect(elders).toContain("plus-jakarta-sans-latin");
+    expect(html.replace(/<script>[\s\S]*?<\/script>/g, "")).not.toMatch(/rel="preload"[^>]*plus-jakarta/);
   });
 
   it("index.html laadt precies het startbeeld vooraf, met dezelfde sizes als de held", () => {

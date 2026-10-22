@@ -231,7 +231,19 @@ html {
 /* Op de homepage één letterfamilie, ook in kop, voet en cookiebanner. De klasse
    zet index.html al voor de eerste paint; LandingPage houdt hem bij. */
 html.kk-home body {
-  font-family: "Archivo", "Archivo Terugval", Arial, sans-serif;
+  font-family: "Archivo", Arial, sans-serif;
+}
+/* De platte kop op de homepage is 56 px hoog, vanaf 1024 px 64 px (Navbar.tsx:
+   h-14 lg:h-16). Vooraf goed zetten: met de terugval van 90 px begon de
+   heldfoto op mobiel 34 px te laag en te klein, en sprong hij zodra de kop
+   gemeten was (CLS 0,019 in Lighthouse, 22 oktober 2026). */
+html.kk-home {
+  --header-h: 56px;
+}
+@media (min-width: 1024px) {
+  html.kk-home {
+    --header-h: 64px;
+  }
 }
 /* Op de homepage is er geen onderbalk, dus geen 72 px reserve onderin. */
 html.kk-home {
@@ -244,7 +256,8 @@ html.kk-home {
 html.kk-home [data-cookiebanner] :is(section, button, a, div, input) {
   border-radius: 0;
 }
-html.kk-home [data-cookiebanner] > .border-t {
+html.kk-home [data-cookiebanner] > .border-t,
+html.kk-home [data-cookiebanner] > .border-t .sticky {
   background-color: #FAFAF8;
   border-top-color: rgba(26, 26, 26, 0.14);
 }

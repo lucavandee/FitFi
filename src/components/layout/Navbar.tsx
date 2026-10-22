@@ -56,6 +56,17 @@ export default function Navbar() {
   const kamer = useKamerNav();
   const opHome = pathname === "/";
   const opKamer = opHome && kamer.actief && !open;
+  /*
+   * Vlak na een routewissel (navigatie binnen de app, ook terug in de
+   * geschiedenis) geen overgangen: de band liep in 420 ms van papier naar de
+   * kamerkleur terwijl logo en menuknop al wit waren, 1:1 voor ongeveer 0,15 s
+   * (gemeten 22 oktober 2026). De held zet de kamerstand pas in een effect na
+   * de eerste render, dus het gaat om een korte tijd na de wissel, niet om één
+   * render. Daarna gelden de overgangen weer (scrollen langs de held).
+   */
+  const routeWissel = React.useRef({ pad: pathname, tijd: 0 });
+  if (routeWissel.current.pad !== pathname) routeWissel.current = { pad: pathname, tijd: performance.now() };
+  const netAangekomen = performance.now() - routeWissel.current.tijd < 700;
   /** Op de homepage: een platte balk in de vormtaal van de kleurkamer; tekst in de kamerkleur of in inkt. */
   const homeKleur = opKamer ? kamer.tekst : "#1A1A1A";
   const kamerTekst: React.CSSProperties | undefined = opHome ? { color: homeKleur, outlineColor: homeKleur } : undefined;
@@ -170,7 +181,7 @@ export default function Navbar() {
   return (
     <header
       ref={headerRef}
-      className="fixed top-0 w-full z-50"
+      className={`fixed top-0 w-full z-50 ${netAangekomen ? "[&_*]:!transition-none" : ""}`}
       role="banner"
     >
       {/* Dekkende band achter de pill. De pill dekt maar een deel van de 90 px
@@ -180,7 +191,7 @@ export default function Navbar() {
         className="absolute inset-0 bg-[#FAFAF8] border-b border-[#E5E5E5]"
         style={
           opKamer
-            ? { backgroundColor: kamer.veld, borderBottomColor: "transparent", transition: "background-color 420ms cubic-bezier(0.2, 0, 0, 1)" }
+            ? { backgroundColor: kamer.veld, borderBottomColor: "transparent", transition: netAangekomen ? "none" : "background-color 420ms cubic-bezier(0.2, 0, 0, 1)" }
             : opHome
               ? { borderBottomColor: "rgba(26,26,26,0.14)" }
               : undefined

@@ -221,7 +221,9 @@ function FooterLinks({
               <NavLink
                 to={link.to}
                 className={`block py-3 text-sm [overflow-wrap:anywhere] hyphens-auto hover:underline underline-offset-2 transition-colors duration-200 ${
-                  donker ? "text-[rgba(250,250,248,0.82)] hover:text-[#FAFAF8]" : "text-[#4A4A4A] hover:text-[#1A1A1A]"
+                  donker
+                    ? "text-[rgba(250,250,248,0.82)] hover:text-[#FAFAF8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FAFAF8]"
+                    : "text-[#4A4A4A] hover:text-[#1A1A1A]"
                 }`}
               >
                 {link.label}

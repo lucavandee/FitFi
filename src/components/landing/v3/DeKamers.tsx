@@ -1,3 +1,4 @@
+import { useMediaquery } from "@/components/landing/beeld/useMediaquery";
 import { KAMERS, KLEURKAMER_COPY, kamerBeeld, srcSet, type Wie } from "@/content/kleurkamers";
 import { ARCHIVO, LABEL, RASTER } from "./stijl";
 
@@ -9,7 +10,11 @@ const COPY = KLEURKAMER_COPY.kamers;
  * pagina, tussen de winkelrij en hoe het werkt. Van rand tot rand op desktop,
  * een rij om door te vegen op de telefoon. Eén AI-label onder de rij.
  */
+const SIZES = "(min-width: 1024px) 17vw, (min-width: 640px) 40vw, 62vw";
+
 export default function DeKamers({ wie }: { wie: Wie }) {
+  // Onder 1024 px een rij om door te vegen, zonder links erin: dan krijgt de rij zelf focus (pijltjes scrollen).
+  const rij = useMediaquery("(max-width: 1023px)");
   return (
     <section aria-labelledby="kamers-kop" className="bg-[#FAFAF8] pb-20 pt-20 lg:pb-32 lg:pt-32">
       <div className={`${RASTER} pb-8 lg:pb-10`}>
@@ -20,7 +25,11 @@ export default function DeKamers({ wie }: { wie: Wie }) {
           {COPY.tekst.tekst}
         </p>
       </div>
-      <ul className="flex snap-x snap-mandatory gap-[2px] overflow-x-auto [scroll-padding-inline:var(--rand)] px-[var(--rand)] lg:grid lg:grid-cols-6 lg:overflow-visible lg:px-0">
+      <ul
+        tabIndex={rij ? 0 : undefined}
+        aria-label={rij ? COPY.kop : undefined}
+        className="flex snap-x snap-mandatory gap-[2px] overflow-x-auto [scroll-padding-inline:var(--rand)] px-[var(--rand)] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#1A1A1A] lg:grid lg:grid-cols-6 lg:overflow-visible lg:px-0"
+      >
         {KAMERS.map((k) => {
           const bron = kamerBeeld(k.sleutel, wie, true);
           return (
@@ -28,11 +37,11 @@ export default function DeKamers({ wie }: { wie: Wie }) {
               <figure className="m-0">
                 <div className="relative aspect-[4/5] overflow-hidden" style={{ backgroundColor: k.veld[wie] }}>
                   <picture>
-                    <source type="image/avif" srcSet={srcSet(bron.avif)} sizes="(min-width: 1024px) 17vw, 62vw" />
+                    <source type="image/avif" srcSet={srcSet(bron.avif)} sizes={SIZES} />
                     <img
                       src={bron.webp[640]}
                       srcSet={srcSet(bron.webp)}
-                      sizes="(min-width: 1024px) 17vw, 62vw"
+                      sizes={SIZES}
                       alt={`${wie === "dames" ? "Dezelfde vrouw" : "Dezelfde man"} in de kamer ${k.naam.toLowerCase()}.`}
                       width={bron.verhouding[0]}
                       height={bron.verhouding[1]}

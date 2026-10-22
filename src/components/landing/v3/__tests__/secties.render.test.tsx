@@ -71,6 +71,14 @@ describe("Slot", () => {
     expect(render(<Slot wie="heren" eigenKeuze={null} />)).toContain(">Welke kleur draag jij?</h2>");
   });
 
+  it("een id per variant, en zonder keuze geen tweede regio met de naam van de held", () => {
+    const zonder = render(<Slot wie="dames" eigenKeuze={null} />);
+    expect(zonder).not.toMatch(/<section[^>]*aria-labelledby/);
+    expect(tel(zonder, 'id="slot-kop"')).toBe(1);
+    expect(tel(zonder, 'id="slot-kop-breed"')).toBe(1);
+    expect(render(<Slot wie="dames" eigenKeuze="olijfgroen" />)).toMatch(/<section[^>]*aria-labelledby="slot-kop"/);
+  });
+
   it("de knop naar de quiz, de plannen en het AI-label onder de grijze kamer", () => {
     const html = render(<Slot wie="dames" eigenKeuze={null} />);
     expect(html).toMatch(/<a [^>]*href="\/onboarding"[^>]*>Begin gratis<\/a>/);
