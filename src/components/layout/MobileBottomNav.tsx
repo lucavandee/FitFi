@@ -56,7 +56,10 @@ const MobileBottomNav: React.FC = () => {
 
   // Hide on admin pages, and on specific pages where it would interfere
   const hideOnPaths = ['/inloggen', '/registreren', '/onboarding'];
+  // Op de homepage niet: de kleurkamer heeft zijn eigen stalen en knop onder de
+  // duim, en een tweede balk met een eigen startknop concurreert daarmee.
   const verborgen =
+    location.pathname === '/' ||
     location.pathname.startsWith('/admin') ||
     hideOnPaths.some(path => location.pathname.startsWith(path));
 

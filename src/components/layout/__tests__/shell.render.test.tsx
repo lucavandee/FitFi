@@ -23,6 +23,7 @@ vi.mock("@/context/UserContext", () => ({
 }));
 
 import Navbar from "../Navbar";
+import { zetKamerNav } from "@/components/landing/v3/kamerNav";
 import Footer from "../Footer";
 
 const render = (pad: string, element: JSX.Element) =>
@@ -66,6 +67,36 @@ describe("Navbar", () => {
     const html = render("/", <Navbar />);
     expect(html).not.toMatch(/text-white\/70|variant="light"|opacity-0/);
     expect(html).toContain("bg-white border border-[#E5E5E5]");
+  });
+
+  /*
+   * De kleurkamer (homepage, 22 oktober 2026): zolang de held bovenin staat,
+   * is de kop transparant met tekst in de kleur van de kamer. Die kleur is per
+   * kamer op contrast getoetst (content/__tests__/kleurkamers.test.ts); de
+   * oude transparante kop zette wit op een wisselende foto.
+   */
+  it("op / boven de kleurkamer: geen band en pil, tekst in de kamerkleur, geen tweede knop", () => {
+    zetKamerNav({ actief: true, tekst: "#FAFAF8", licht: true, veld: "#8E2F25" });
+    try {
+      const html = render("/", <Navbar />);
+      expect(html).not.toContain("bg-white border border-[#E5E5E5]");
+      expect(html).toContain("color:#FAFAF8");
+      expect(html).toContain("background-color:#8E2F25");
+      expect(html).not.toContain("Begin gratis");
+    } finally {
+      zetKamerNav(null);
+    }
+  });
+
+  it("de kamerstand geldt alleen op /", () => {
+    zetKamerNav({ actief: true, tekst: "#FAFAF8", licht: true, veld: "#8E2F25" });
+    try {
+      const html = render("/prijzen", <Navbar />);
+      expect(html).toContain("bg-white border border-[#E5E5E5]");
+      expect(html).not.toContain("color:#FAFAF8");
+    } finally {
+      zetKamerNav(null);
+    }
   });
 
   it("logo en elke link in de kop krijgen een zichtbare focusring", () => {

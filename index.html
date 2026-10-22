@@ -8,9 +8,39 @@
          zonder preload kwamen ze op Slow 4G pas na de H1 en sprong de kop 49 px
          (CLS, gemeten op 8 oktober). -->
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/plus-jakarta-sans-latin.cd8db90c.woff2" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/instrument-serif-italic-latin.6ee678c3.woff2" />
-    <!-- De tweede regel van de homepagekop staat recht ("bij je past."). -->
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/instrument-serif-latin.60c06664.woff2" />
+    <meta name="theme-color" content="#A85740" />
+    <!-- Per route vooraf laden. Op de homepage (de kleurkamer, 22 oktober 2026):
+         Archivo en het startbeeld (diep rood, dames), staand onder 1024 px en
+         liggend daarboven, met dezelfde srcset en sizes als de <picture> in
+         Kleurkamer.tsx (SIZES_STAAND en SIZES_LIGGEND), zodat de browser het
+         vooraf geladen bestand hergebruikt. Met ?kleur= of ?wie= in de URL is
+         het startbeeld een ander, en laden we niets vooraf. Op de andere
+         pagina's de serif van de displaykop, zoals voorheen. -->
+    <script>
+      (function () {
+        var h = document.head, p = location.pathname, q = location.search;
+        function pre(attrs) {
+          var l = document.createElement("link");
+          l.rel = "preload";
+          for (var k in attrs) l.setAttribute(k, attrs[k]);
+          h.appendChild(l);
+        }
+        if (p === "/") {
+          pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/archivo-latin.4c98b9d4.woff2" });
+          if (!/[?&](kleur|wie)=/.test(q)) {
+            pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(max-width: 1023px)", imagesizes: "100vw",
+              imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-45-640.3c5162da.avif 640w, /beeld/kleurkamer/kk-h-dieprood-45-960.ec117b82.avif 960w, /beeld/kleurkamer/kk-h-dieprood-45-1229.0a54f936.avif 1229w" });
+            pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(min-width: 1024px)", imagesizes: "90vw",
+              imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-1280.f7f16cf9.avif 1280w, /beeld/kleurkamer/kk-h-dieprood-1920.dc3f0e5e.avif 1920w, /beeld/kleurkamer/kk-h-dieprood-2752.99aa122a.avif 2752w" });
+          }
+          var t = document.querySelector('meta[name="theme-color"]');
+          if (t) t.setAttribute("content", "#8E2F25");
+        } else {
+          pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/instrument-serif-italic-latin.6ee678c3.woff2" });
+          pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/instrument-serif-latin.60c06664.woff2" });
+        }
+      })();
+    </script>
 
     <!-- ✅ Favicon and meta -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -20,7 +50,6 @@
          (designsysteem v2) is de kop het grootste element boven de vouw, geen
          foto. De preload van het oude hero-beeld (207 KB) at op Slow 4G bijna
          een seconde bandbreedte voor een beeld dat niet meer op de pagina stond. -->
-    <meta name="theme-color" content="#A85740" />
 
     <!-- SEO defaults.
          Deze tags gelden voor elke bezoeker die GEEN JavaScript uitvoert:

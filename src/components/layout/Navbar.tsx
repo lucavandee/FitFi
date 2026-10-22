@@ -4,6 +4,7 @@ import { Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
 import { useHoogteInVariabele } from "@/hooks/useHoogteInVariabele";
+import { useKamerNav } from "@/components/landing/v3/kamerNav";
 
 /**
  * Eén premium Navbar:
@@ -19,6 +20,10 @@ import { useHoogteInVariabele } from "@/hooks/useHoogteInVariabele";
  *   Hier stond outline-none ring-0, en dat zette de globale ring uit
  *   (WCAG 2.4.7).
  * - Auth: Supabase via UserContext
+ * - Op de homepage, zolang de kleurkamer bovenin staat: transparant, zonder
+ *   band en pil, met tekst in de kleur van de kamer en zonder eigen knop (de
+ *   held heeft de enige primaire knop). De tekstkleur komt uit de kamer en is
+ *   per kamer op contrast getoetst; dat is wat de oude transparante kop miste.
  */
 
 function useLockBody(lock: boolean) {
@@ -48,6 +53,9 @@ export default function Navbar() {
   const { pathname } = useLocation();
   const { user, logout } = useUser();
   const isAuthed = !!user;
+  const kamer = useKamerNav();
+  const opKamer = pathname === "/" && kamer.actief && !open;
+  const kamerTekst: React.CSSProperties | undefined = opKamer ? { color: kamer.tekst, outlineColor: kamer.tekst } : undefined;
   const isOnboarding = pathname === '/onboarding' || pathname.startsWith('/onboarding');
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
@@ -158,6 +166,11 @@ export default function Navbar() {
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[#FAFAF8] border-b border-[#E5E5E5]"
+        style={
+          opKamer
+            ? { backgroundColor: kamer.veld, borderBottomColor: "transparent", transition: "background-color 420ms cubic-bezier(0.2, 0, 0, 1)" }
+            : undefined
+        }
       />
 
       {/* Skip to content */}
@@ -171,14 +184,18 @@ export default function Navbar() {
       {/* Outer container with padding around the pill */}
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-4">
         {/* The pill */}
-        <div className="flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 bg-white border border-[#E5E5E5] transition-shadow duration-200 hover:shadow-md">
+        <div
+          className={`flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-colors duration-200 ${
+            opKamer ? "bg-transparent border border-transparent" : "bg-white border border-[#E5E5E5] transition-shadow hover:shadow-md"
+          }`}
+        >
           {/* Brand */}
           <a
             href="/"
             className={`flex-shrink-0 inline-flex items-center min-h-[44px] rounded-xl transition-opacity hover:opacity-85 ${FOCUS}`}
             aria-label="FitFi Home"
           >
-            <Logo size="sm" variant="default" />
+            <Logo size="sm" variant={opKamer && kamer.licht ? "light" : "default"} />
           </a>
 
           {/* Desktop nav - Center */}
@@ -187,12 +204,15 @@ export default function Navbar() {
               <NavLink
                 key={l.to}
                 to={l.to}
+                style={kamerTekst}
                 className={({ isActive }) =>
                   [
                     `inline-flex items-center min-h-[44px] text-sm px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none ${FOCUS}`,
-                    isActive
-                      ? "text-[#1A1A1A] font-semibold bg-[#F5F0EB]"
-                      : "font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80",
+                    opKamer
+                      ? "font-medium hover:underline underline-offset-4"
+                      : isActive
+                        ? "text-[#1A1A1A] font-semibold bg-[#F5F0EB]"
+                        : "font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80",
                   ].join(" ")
                 }
               >
@@ -207,11 +227,15 @@ export default function Navbar() {
               <>
                 <a
                   href="/inloggen"
-                  className={`inline-flex items-center min-h-[44px] text-sm font-medium px-[18px] py-2 rounded-full transition-all duration-200 text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB] ${FOCUS}`}
+                  style={kamerTekst}
+                  className={`inline-flex items-center min-h-[44px] text-sm font-medium px-[18px] py-2 rounded-full transition-all duration-200 ${
+                    opKamer ? "hover:underline underline-offset-4" : "text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]"
+                  } ${FOCUS}`}
                   data-event="nav_login"
                 >
                   Inloggen
                 </a>
+                {!opKamer && (
                 <a
                   href="/onboarding"
                   className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ml-2"
@@ -219,6 +243,7 @@ export default function Navbar() {
                 >
                   Begin gratis
                 </a>
+                )}
               </>
             ) : (
               <>
@@ -286,7 +311,7 @@ export default function Navbar() {
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#1A1A1A"
+                stroke={opKamer ? kamer.tekst : "#1A1A1A"}
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
