@@ -256,7 +256,9 @@ html.kk-home {
 html.kk-vooraf-aan .kk-vooraf {
   display: block;
 }
-@media (max-width: 1023px) {
+/* Exact complement (stijl.ts, ONDER_LG en LG): bij browserzoom kan de breedte
+   1023,6 px zijn, en dan klopte (max-width: 1023px) noch (min-width: 1024px). */
+@media not all and (min-width: 1024px) {
   .kk-vooraf-liggend {
     display: none;
   }
@@ -265,6 +267,12 @@ html.kk-vooraf-aan .kk-vooraf {
   .kk-vooraf-staand {
     display: none;
   }
+}
+/* Vooraf is de held precies één scherm hoog, dus zonder scrollbalk; na het
+   mounten is de pagina lang. Waar de balk ruimte inneemt (Windows, een Mac met
+   muis) schoof de foto dan 7,5 px en het label 15 tot 17 px. Balk vanaf het begin. */
+html.kk-home.kk-vooraf-aan {
+  overflow-y: scroll;
 }
 .kk-vooraf section * {
   visibility: hidden;

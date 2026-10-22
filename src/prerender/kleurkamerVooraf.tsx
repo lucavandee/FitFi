@@ -2,6 +2,7 @@ import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
 import Kleurkamer from "@/components/landing/v3/Kleurkamer";
 import type { KleurkamerStand } from "@/components/landing/v3/useKleurkamer";
+import { LG, ONDER_LG } from "@/components/landing/v3/stijl";
 import { START_KAMER } from "@/content/kleurkamers";
 
 /** Een doorzichtige gif van 1 bij 1: de variant die niet past, haalt zo geen foto op. */
@@ -24,7 +25,7 @@ function variant(staand: boolean): string {
     </MemoryRouter>,
   );
   const eigen = staand ? "-vs" : "-vl";
-  const nietHier = staand ? "(min-width: 1024px)" : "(max-width: 1023px)";
+  const nietHier = staand ? LG : ONDER_LG;
   return (
     html
       // twee varianten in één document: elk eigen id's

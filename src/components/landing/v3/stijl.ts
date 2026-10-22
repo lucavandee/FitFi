@@ -37,3 +37,12 @@ export const RASTER = "w-full px-[var(--rand)]";
 export const SECTIE = "py-20 lg:py-32";
 
 export const HAARLIJN = "border-[rgba(26,26,26,0.14)]";
+
+/*
+ * De breekpunten van de homepage, gelijk aan Tailwinds lg (1024 px). Onder lg is
+ * het exacte complement, geen (max-width: 1023px): bij browserzoom kan de breedte
+ * 1023,6 px zijn, en dan klopt geen van die twee (gemeten 22 oktober 2026: beide
+ * heldvarianten in beeld en beide foto's opgehaald).
+ */
+export const LG = "(min-width: 1024px)";
+export const ONDER_LG = "not all and (min-width: 1024px)";

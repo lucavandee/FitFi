@@ -1,6 +1,6 @@
 import { useMediaquery } from "@/components/landing/beeld/useMediaquery";
 import { KAMERS, KLEURKAMER_COPY, kamerBeeld, srcSet, type Wie } from "@/content/kleurkamers";
-import { ARCHIVO, LABEL, RASTER } from "./stijl";
+import { ARCHIVO, LABEL, ONDER_LG, RASTER } from "./stijl";
 
 const COPY = KLEURKAMER_COPY.kamers;
 
@@ -14,7 +14,7 @@ const SIZES = "(min-width: 1024px) 17vw, (min-width: 640px) 40vw, 62vw";
 
 export default function DeKamers({ wie }: { wie: Wie }) {
   // Onder 1024 px een rij om door te vegen, zonder links erin: dan krijgt de rij zelf focus (pijltjes scrollen).
-  const rij = useMediaquery("(max-width: 1023px)");
+  const rij = useMediaquery(ONDER_LG);
   return (
     <section aria-labelledby="kamers-kop" className="bg-[#FAFAF8] pb-20 pt-20 lg:pb-32 lg:pt-32">
       <div className={`${RASTER} pb-8 lg:pb-10`}>

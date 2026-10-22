@@ -20,20 +20,27 @@ import { magHeroClip } from "@/components/landing/heroClipRegels";
 import { track } from "@/utils/analytics";
 import { zetKamerNav } from "./kamerNav";
 import type { KleurkamerStand } from "./useKleurkamer";
-import { ARCHIVO, KNOP_OP, LABEL } from "./stijl";
+import { ARCHIVO, KNOP_OP, LABEL, ONDER_LG } from "./stijl";
 
 const COPY = KLEURKAMER_COPY.held;
 
 /** De maten waarmee index.html het startbeeld vooraf laadt; ze moeten gelijk blijven. */
 export const SIZES_LIGGEND = "90vw";
 /*
- * Staand is de foto zo breed als de figuur: 4:5 bij een hoogte van
- * clamp(320px, 100svh - kop (56) - 330px, 125vw), hooguit het scherm. Met 100vw
- * koos een telefoon van 412 px bij DPR 1,75 960w waar 640w volstaat. vh in plaats
- * van svh: vh is nooit kleiner, dus de schatting valt nooit te krap uit. Kent een
- * browser min() of clamp() hier niet, dan geldt 100vw, zoals voorheen.
+ * De staande figuur: 4:5, zo hoog als past onder de kop (56 px op de homepage,
+ * index.css) met 330 px eronder voor kop, stalen en knop, tussen 320 px en 125vw.
+ * Figuur en sizes komen uit dezelfde getallen, zodat ze niet uit elkaar lopen.
  */
-export const SIZES_STAAND = "min(100vw, calc(0.8 * clamp(320px, calc(100vh - 386px), 125vw)))";
+const KOP_MOBIEL = 56;
+const FIGUUR = { min: 320, onder: 330, max: "125vw" } as const;
+const FIGUUR_HOOGTE = `clamp(${FIGUUR.min}px, calc(100svh - var(--header-h, ${KOP_MOBIEL}px) - ${FIGUUR.onder}px), ${FIGUUR.max})`;
+/*
+ * Staand is de foto zo breed als de figuur, hooguit het scherm. Met 100vw koos een
+ * telefoon van 412 px bij DPR 1,75 960w waar 640w volstaat. vh in plaats van svh:
+ * vh is nooit kleiner, dus de schatting valt nooit te krap uit. Kent een browser
+ * min() of clamp() hier niet, dan geldt 100vw, zoals voorheen.
+ */
+export const SIZES_STAAND = `min(100vw, calc(0.8 * clamp(${FIGUUR.min}px, calc(100vh - ${KOP_MOBIEL + FIGUUR.onder}px), ${FIGUUR.max})))`;
 
 /** De kleur van de browserbalk buiten de homepage (index.html). */
 const STANDAARD_THEMA = "#A85740";
@@ -185,7 +192,7 @@ export default function Kleurkamer({
   beginStaand?: boolean;
 }) {
   const { kamer: sleutel, wie, bewegingUit, eigenKeuze, kies, kiesWie, zetBeweging } = stand;
-  const staand = useMedia("(max-width: 1023px)", beginStaand);
+  const staand = useMedia(ONDER_LG, beginStaand);
   const rustig = useMedia("(prefers-reduced-motion: reduce)");
   const [netwerkOk] = useState(netwerkLaatToe);
   const omgevingMag = !rustig && netwerkOk;
@@ -435,7 +442,7 @@ export default function Kleurkamer({
   const figuur = (
     <figure
       className={staand ? "relative m-0 mx-auto max-w-full" : "absolute inset-0 m-0"}
-      style={staand ? { height: "clamp(320px, calc(100svh - var(--header-h, 56px) - 330px), 125vw)", aspectRatio: "4 / 5", touchAction: "pan-y pinch-zoom" } : undefined}
+      style={staand ? { height: FIGUUR_HOOGTE, aspectRatio: "4 / 5", touchAction: "pan-y pinch-zoom" } : undefined}
       onPointerDown={staand ? opVeegStart : undefined}
       onPointerUp={staand ? opVeegEind : undefined}
       onPointerCancel={() => (vegen.current = null)}

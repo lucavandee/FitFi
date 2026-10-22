@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { renderVoorafHeld } from "../kleurkamerVooraf";
 import { SIZES_LIGGEND, SIZES_STAAND } from "@/components/landing/v3/Kleurkamer";
+import { LG, ONDER_LG } from "@/components/landing/v3/stijl";
 
 const HTML = readFileSync(join(__dirname, "../../../index.html"), "utf-8");
 const vooraf = renderVoorafHeld();
@@ -45,15 +46,15 @@ describe("de vooraf getekende held", () => {
   });
 
   it("de variant die op deze breedte verborgen is, haalt geen foto op", () => {
-    expect(staand).toMatch(/<picture><source media="\(min-width: 1024px\)" srcset="data:image\/gif;base64,/);
-    expect(liggend).toMatch(/<picture><source media="\(max-width: 1023px\)" srcset="data:image\/gif;base64,/);
+    expect(staand).toContain(`<picture><source media="${LG}" srcset="data:image/gif;base64,`);
+    expect(liggend).toContain(`<picture><source media="${ONDER_LG}" srcset="data:image/gif;base64,`);
   });
 
   it("staand en liggend vragen precies wat de preload in index.html al haalt", () => {
-    expect(avifBron(staand)).toEqual({ srcset: preload("(max-width: 1023px)").srcset, sizes: SIZES_STAAND });
-    expect(preload("(max-width: 1023px)").sizes).toBe(SIZES_STAAND);
-    expect(avifBron(liggend)).toEqual({ srcset: preload("(min-width: 1024px)").srcset, sizes: SIZES_LIGGEND });
-    expect(preload("(min-width: 1024px)").sizes).toBe(SIZES_LIGGEND);
+    expect(avifBron(staand)).toEqual({ srcset: preload(ONDER_LG).srcset, sizes: SIZES_STAAND });
+    expect(preload(ONDER_LG).sizes).toBe(SIZES_STAAND);
+    expect(avifBron(liggend)).toEqual({ srcset: preload(LG).srcset, sizes: SIZES_LIGGEND });
+    expect(preload(LG).sizes).toBe(SIZES_LIGGEND);
   });
 });
 
@@ -68,5 +69,7 @@ describe("index.html", () => {
     const zonderKeuze = thuis.slice(thuis.indexOf("if (!/[?&](kleur|wie)=/.test(q)) {"));
     expect(zonderKeuze).toContain('classList.add("kk-vooraf-aan")');
     expect(HTML.slice(0, HTML.indexOf('if (p === "/") {'))).not.toContain("kk-vooraf-aan");
+    expect(HTML.slice(HTML.indexOf("} else {"), HTML.indexOf("})();"))).not.toContain("kk-vooraf-aan");
+    expect(thuis.slice(0, thuis.indexOf("if (!/[?&](kleur|wie)=/.test(q)) {"))).not.toContain("kk-vooraf-aan");
   });
 });

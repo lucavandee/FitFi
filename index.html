@@ -19,7 +19,9 @@
          liggend daarboven, met dezelfde srcset en sizes als de <picture> in
          Kleurkamer.tsx (SIZES_STAAND en SIZES_LIGGEND), zodat de browser het
          vooraf geladen bestand hergebruikt. Met ?kleur= of ?wie= in de URL is
-         het startbeeld een ander, en laden we niets vooraf. De klasse kk-home
+         het startbeeld een ander, en laden we niets vooraf. Staand is "onder
+         1024 px" het exacte complement (not all and (min-width: 1024px)): bij
+         browserzoom kan de breedte 1023,6 px zijn. De klasse kk-home
          zet Archivo als letter voor de hele pagina (index.css) voor de eerste
          render, zodat kop en voet niet van letter wisselen; LandingPage zet
          en verwijdert hem bij navigatie binnen de app. Op de andere pagina's
@@ -39,7 +41,7 @@
           if (!/[?&](kleur|wie)=/.test(q)) {
             // de vooraf getekende held in #root tonen (plugins/kleurkamer-vooraf.ts)
             document.documentElement.classList.add("kk-vooraf-aan");
-            pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(max-width: 1023px)", imagesizes: "min(100vw, calc(0.8 * clamp(320px, calc(100vh - 386px), 125vw)))",
+            pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "not all and (min-width: 1024px)", imagesizes: "min(100vw, calc(0.8 * clamp(320px, calc(100vh - 386px), 125vw)))",
               imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-45-640.e8b97b01.avif 640w, /beeld/kleurkamer/kk-h-dieprood-45-960.f22930cd.avif 960w, /beeld/kleurkamer/kk-h-dieprood-45-1229.0d6fe1bd.avif 1229w" });
             pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(min-width: 1024px)", imagesizes: "90vw",
               imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-1280.55b2ca41.avif 1280w, /beeld/kleurkamer/kk-h-dieprood-1920.b09070e8.avif 1920w, /beeld/kleurkamer/kk-h-dieprood-2752.edd80db6.avif 2752w" });
@@ -57,10 +59,9 @@
     <!-- ✅ Favicon and meta -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
 
-    <!-- Geen beeld-preload meer: sinds de homepage van 21 oktober 2026
-         (designsysteem v2) is de kop het grootste element boven de vouw, geen
-         foto. De preload van het oude hero-beeld (207 KB) at op Slow 4G bijna
-         een seconde bandbreedte voor een beeld dat niet meer op de pagina stond. -->
+    <!-- Beeld-preload: alleen op de homepage, waar de foto van de kleurkamer
+         het grootste element boven de vouw is (het script hierboven). Andere
+         pagina's laden geen beeld vooraf. -->
 
     <!-- SEO defaults.
          Deze tags gelden voor elke bezoeker die GEEN JavaScript uitvoert:

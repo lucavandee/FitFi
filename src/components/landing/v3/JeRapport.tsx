@@ -5,7 +5,7 @@ import { KLEURKAMER_COPY } from "@/content/kleurkamers";
 import { VOORBEELD_OUTFITS, euro, formaat } from "@/content/voorbeeldOutfits";
 import { toonNaam } from "@/utils/productNaam";
 import { track } from "@/utils/analytics";
-import { ARCHIVO, HAARLIJN, LABEL, RASTER, SECTIE, TEKSTLINK } from "./stijl";
+import { ARCHIVO, HAARLIJN, LABEL, ONDER_LG, RASTER, SECTIE, TEKSTLINK } from "./stijl";
 
 const COPY = KLEURKAMER_COPY.rapport;
 const OUTFIT = VOORBEELD_OUTFITS[1];
@@ -43,7 +43,7 @@ function Kleurcode() {
 export default function JeRapport() {
   const totaal = OUTFIT.stukken.reduce((som, s) => som + s.prijs, 0);
   // Onder 1024 px scrolt de outfitrij zijwaarts zonder iets aanklikbaars erin: dan moet hij zelf focus kunnen krijgen.
-  const rij = useMediaquery("(max-width: 1023px)");
+  const rij = useMediaquery(ONDER_LG);
   return (
     <section aria-labelledby="rapport-kop" className={`bg-[#FAFAF8] ${SECTIE}`}>
       {/* grid-cols-1 is minmax(0, 1fr): zonder die ondergrens rekt de outfitrij (168vw breed) de kolom op. */}
