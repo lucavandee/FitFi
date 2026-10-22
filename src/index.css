@@ -84,6 +84,31 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Archivo (homepage, de kleurkamer van 22 oktober 2026): een variabele grotesk met
+   een breedte-as, zodat de displaykop smal en vet kan zonder tweede lettertype.
+   Dezelfde bestanden en unicode-ranges als Google Fonts op 22 oktober 2026 leverde
+   (gewicht 400 tot 800, breedte 62 tot 100 procent). OFL, licentie in
+   public/fonts/OFL-archivo.txt. Alleen latin wordt vooraf geladen (index.html). */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 800;
+  font-stretch: 62% 100%;
+  font-display: swap;
+  src: url("/fonts/archivo-latin-ext.a75c792f.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 800;
+  font-stretch: 62% 100%;
+  font-display: swap;
+  src: url("/fonts/archivo-latin.4c98b9d4.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* Tailwind layers — volgorde behouden */
 @tailwind base;
 @tailwind components;
@@ -177,4 +202,103 @@ html {
   .animate-bounce-horizontal {
     animation: bounce-horizontal 1s ease-in-out infinite;
   }
+}
+/* Kleurkamer (homepage): een rij of beeld komt op in 200 ms, zonder verschuiven.
+   Bij reduced motion meteen. */
+@keyframes kk-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.kk-in {
+  animation: kk-in 200ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kk-in { animation: none; }
+}
+
+/* Kleurkamer (homepage): één linkerrand voor kop, held, secties, slot en voet.
+   Op desktop gelijk aan een tekstbreedte van 1360 px met 40 px marge. */
+:root {
+  --rand: 16px;
+}
+@media (min-width: 768px) {
+  :root { --rand: 32px; }
+}
+@media (min-width: 1024px) {
+  :root { --rand: max(40px, calc((100vw - 1360px) / 2 + 40px)); }
+}
+
+/* Op de homepage één letterfamilie, ook in kop, voet en cookiebanner. De klasse
+   zet index.html al voor de eerste paint; LandingPage houdt hem bij. */
+html.kk-home body {
+  font-family: "Archivo", Arial, sans-serif;
+}
+/* De platte kop op de homepage is 56 px hoog, vanaf 1024 px 64 px (Navbar.tsx:
+   h-14 lg:h-16). Vooraf goed zetten: met de terugval van 90 px begon de
+   heldfoto op mobiel 34 px te laag en te klein, en sprong hij zodra de kop
+   gemeten was (CLS 0,019 in Lighthouse, 22 oktober 2026). */
+html.kk-home {
+  --header-h: 56px;
+}
+@media (min-width: 1024px) {
+  html.kk-home {
+    --header-h: 64px;
+  }
+}
+/* De held vooraf in index.html (plugins/kleurkamer-vooraf.ts), alleen op / zonder
+   ?kleur= of ?wie= (het script in index.html zet kk-vooraf-aan), en per breedte
+   één variant. Zichtbaar zijn foto, veld en AI-label; tekst die van het lettertype
+   afhangt komt pas met React, zodat er niets verspringt als Archivo binnenkomt.
+   createRoot vervangt het blok bij het mounten. */
+.kk-vooraf {
+  display: none;
+}
+html.kk-vooraf-aan .kk-vooraf {
+  display: block;
+}
+/* Exact complement (stijl.ts, ONDER_LG en LG): bij browserzoom kan de breedte
+   1023,6 px zijn, en dan klopte (max-width: 1023px) noch (min-width: 1024px). */
+@media not all and (min-width: 1024px) {
+  .kk-vooraf-liggend {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .kk-vooraf-staand {
+    display: none;
+  }
+}
+/* Vooraf is de held precies één scherm hoog, dus zonder scrollbalk; na het
+   mounten is de pagina lang. Waar de balk ruimte inneemt (Windows, een Mac met
+   muis) schoof de foto dan 7,5 px en het label 15 tot 17 px. Balk vanaf het begin. */
+html.kk-home.kk-vooraf-aan {
+  overflow-y: scroll;
+}
+.kk-vooraf section * {
+  visibility: hidden;
+}
+.kk-vooraf figure,
+.kk-vooraf figure *,
+.kk-vooraf [id^="kk-ai-label"] {
+  visibility: visible;
+}
+/* Op de homepage is er geen onderbalk, dus geen 72 px reserve onderin. */
+html.kk-home {
+  scroll-padding-bottom: var(--banner-h, 0px);
+}
+
+/* De cookiebanner op de homepage in de vormtaal van de kleurkamer: recht, op
+   papier, op dezelfde linkerrand als de rest van de pagina. Alleen vorm; de
+   tekst, de knoppen en hun volgorde blijven die van CookieBanner.tsx. */
+html.kk-home [data-cookiebanner] :is(section, button, a, div, input) {
+  border-radius: 0;
+}
+html.kk-home [data-cookiebanner] > .border-t,
+html.kk-home [data-cookiebanner] > .border-t .sticky {
+  background-color: #FAFAF8;
+  border-top-color: rgba(26, 26, 26, 0.14);
+}
+html.kk-home [data-cookiebanner] .max-w-7xl {
+  max-width: none;
+  padding-inline: var(--rand);
 }

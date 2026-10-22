@@ -2,25 +2,66 @@
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
-    <!-- Lettertypen: Instrument Serif en Plus Jakarta Sans staan zelf gehost in
-         public/fonts/, met @font-face in src/index.css. Geen verzoek naar Google.
-         De twee die de herokop boven de vouw nodig heeft, worden vooraf geladen:
-         zonder preload kwamen ze op Slow 4G pas na de H1 en sprong de kop 49 px
-         (CLS, gemeten op 8 oktober). -->
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/plus-jakarta-sans-latin.cd8db90c.woff2" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/instrument-serif-italic-latin.6ee678c3.woff2" />
-    <!-- De tweede regel van de homepagekop staat recht ("bij je past."). -->
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/instrument-serif-latin.60c06664.woff2" />
+    <!-- De viewport vóór het preload-script hieronder: anders rekent de preload op
+         een telefoon met het standaardvenster van 980 px (imagesizes 100vw) en
+         haalt hij een groter bestand op dan de foto daarna kiest. Gemeten op
+         22 oktober 2026: preload 1229w, foto 640w bij DPR 1 en 960w bij DPR 2. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Lettertypen: Instrument Serif, Plus Jakarta Sans en Archivo staan zelf
+         gehost in public/fonts/, met @font-face in src/index.css. Geen verzoek
+         naar Google. Wat boven de vouw nodig is, laadt het script hieronder per
+         route vooraf: zonder preload kwamen ze op Slow 4G pas na de H1 en sprong
+         de kop 49 px (CLS, gemeten op 8 oktober). Op / is dat alleen Archivo:
+         daar staat alles in Archivo (html.kk-home), Jakarta wordt er niet gebruikt. -->
+    <meta name="theme-color" content="#A85740" />
+    <!-- Per route vooraf laden. Op de homepage (de kleurkamer, 22 oktober 2026):
+         Archivo en het startbeeld (diep rood, dames), staand onder 1024 px en
+         liggend daarboven, met dezelfde srcset en sizes als de <picture> in
+         Kleurkamer.tsx (SIZES_STAAND en SIZES_LIGGEND), zodat de browser het
+         vooraf geladen bestand hergebruikt. Met ?kleur= of ?wie= in de URL is
+         het startbeeld een ander, en laden we niets vooraf. Staand is "onder
+         1024 px" het exacte complement (not all and (min-width: 1024px)): bij
+         browserzoom kan de breedte 1023,6 px zijn. De klasse kk-home
+         zet Archivo als letter voor de hele pagina (index.css) voor de eerste
+         render, zodat kop en voet niet van letter wisselen; LandingPage zet
+         en verwijdert hem bij navigatie binnen de app. Op de andere pagina's
+         de serif van de displaykop, zoals voorheen. -->
+    <script>
+      (function () {
+        var h = document.head, p = location.pathname, q = location.search;
+        function pre(attrs) {
+          var l = document.createElement("link");
+          l.rel = "preload";
+          for (var k in attrs) l.setAttribute(k, attrs[k]);
+          h.appendChild(l);
+        }
+        if (p === "/") {
+          document.documentElement.classList.add("kk-home");
+          pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/archivo-latin.4c98b9d4.woff2" });
+          if (!/[?&](kleur|wie)=/.test(q)) {
+            // de vooraf getekende held in #root tonen (plugins/kleurkamer-vooraf.ts)
+            document.documentElement.classList.add("kk-vooraf-aan");
+            pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "not all and (min-width: 1024px)", imagesizes: "min(100vw, calc(0.8 * clamp(320px, calc(100vh - 386px), 125vw)))",
+              imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-45-640.e8b97b01.avif 640w, /beeld/kleurkamer/kk-h-dieprood-45-960.f22930cd.avif 960w, /beeld/kleurkamer/kk-h-dieprood-45-1229.0d6fe1bd.avif 1229w" });
+            pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(min-width: 1024px)", imagesizes: "90vw",
+              imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-1280.55b2ca41.avif 1280w, /beeld/kleurkamer/kk-h-dieprood-1920.b09070e8.avif 1920w, /beeld/kleurkamer/kk-h-dieprood-2752.edd80db6.avif 2752w" });
+          }
+          var t = document.querySelector('meta[name="theme-color"]');
+          if (t) t.setAttribute("content", "#933126");
+        } else {
+          pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/plus-jakarta-sans-latin.cd8db90c.woff2" });
+          pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/instrument-serif-italic-latin.6ee678c3.woff2" });
+          pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/instrument-serif-latin.60c06664.woff2" });
+        }
+      })();
+    </script>
 
     <!-- ✅ Favicon and meta -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Geen beeld-preload meer: sinds de homepage van 21 oktober 2026
-         (designsysteem v2) is de kop het grootste element boven de vouw, geen
-         foto. De preload van het oude hero-beeld (207 KB) at op Slow 4G bijna
-         een seconde bandbreedte voor een beeld dat niet meer op de pagina stond. -->
-    <meta name="theme-color" content="#A85740" />
+    <!-- Beeld-preload: alleen op de homepage, waar de foto van de kleurkamer
+         het grootste element boven de vouw is (het script hierboven). Andere
+         pagina's laden geen beeld vooraf. -->
 
     <!-- SEO defaults.
          Deze tags gelden voor elke bezoeker die GEEN JavaScript uitvoert:
@@ -38,12 +79,12 @@
     <meta property="og:locale" content="nl_NL" />
     <meta property="og:title" content="FitFi: stijladvies op basis van wat je graag draagt" />
     <meta property="og:description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
-    <meta property="og:image" content="https://www.fitfi.ai/og/og-home_1200x630.7c31a04e.jpg" />
+    <meta property="og:image" content="https://www.fitfi.ai/og/og-home_1200x630.9059a97c.jpg" />
     <meta property="og:url" content="https://www.fitfi.ai/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="FitFi: stijladvies op basis van wat je graag draagt" />
     <meta name="twitter:description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
-    <meta name="twitter:image" content="https://www.fitfi.ai/og/og-home_1200x630.7c31a04e.jpg" />
+    <meta name="twitter:image" content="https://www.fitfi.ai/og/og-home_1200x630.9059a97c.jpg" />
     <meta name="description" content="Beantwoord vragen over kleur, pasvorm en gelegenheden en kies uit beelden van outfits. Met een gratis account krijg je een kleurpalet en outfits met links naar winkels." />
 
     <title>FitFi: stijladvies op basis van wat je graag draagt</title>

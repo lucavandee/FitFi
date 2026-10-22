@@ -4,6 +4,7 @@ import { Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import Logo from "@/components/ui/Logo";
 import { useHoogteInVariabele } from "@/hooks/useHoogteInVariabele";
+import { useKamerNav } from "@/components/landing/v3/kamerNav";
 
 /**
  * Eén premium Navbar:
@@ -19,6 +20,10 @@ import { useHoogteInVariabele } from "@/hooks/useHoogteInVariabele";
  *   Hier stond outline-none ring-0, en dat zette de globale ring uit
  *   (WCAG 2.4.7).
  * - Auth: Supabase via UserContext
+ * - Op de homepage, zolang de kleurkamer bovenin staat: transparant, zonder
+ *   band en pil, met tekst in de kleur van de kamer en zonder eigen knop (de
+ *   held heeft de enige primaire knop). De tekstkleur komt uit de kamer en is
+ *   per kamer op contrast getoetst; dat is wat de oude transparante kop miste.
  */
 
 function useLockBody(lock: boolean) {
@@ -48,6 +53,32 @@ export default function Navbar() {
   const { pathname } = useLocation();
   const { user, logout } = useUser();
   const isAuthed = !!user;
+  const kamer = useKamerNav();
+  const opHome = pathname === "/";
+  const opKamer = opHome && kamer.actief && !open;
+  /*
+   * Vlak na een routewissel (navigatie binnen de app, ook terug in de
+   * geschiedenis) geen overgangen: de band liep in 420 ms van papier naar de
+   * kamerkleur terwijl logo en menuknop al wit waren, 1:1 voor ongeveer 0,15 s
+   * (gemeten 22 oktober 2026). De held zet de kamerstand pas in een effect na
+   * de eerste render, dus het gaat om een korte tijd na de wissel, niet om één
+   * render. Daarna gelden de overgangen weer (scrollen langs de held).
+   */
+  const routeWissel = React.useRef({ pad: pathname, tijd: 0 });
+  if (routeWissel.current.pad !== pathname) routeWissel.current = { pad: pathname, tijd: performance.now() };
+  const netAangekomen = performance.now() - routeWissel.current.tijd < 700;
+  /** Op de homepage: een platte balk in de vormtaal van de kleurkamer; tekst in de kamerkleur of in inkt. */
+  const homeKleur = opKamer ? kamer.tekst : "#1A1A1A";
+  const kamerTekst: React.CSSProperties | undefined = opHome ? { color: homeKleur, outlineColor: homeKleur } : undefined;
+  const HOME_LINK_BASIS = "inline-flex items-center min-h-[44px] text-[15px] px-3 underline-offset-[6px] decoration-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
+  const HOME_LINK = `${HOME_LINK_BASIS} transition-colors duration-200`;
+  /*
+   * De knop rechts houdt altijd zijn plek (9,5 rem breed, 1 rem ervoor), zodat
+   * het menu in het midden nooit verschuift. Boven de kamer is hij weg en staat
+   * Inloggen op die plek, op de rechterrand; na de held schuift Inloggen terug
+   * (transform, geen layoutverschuiving) en komt de knop op.
+   */
+  const inloggenStijl: React.CSSProperties | undefined = opHome ? { ...kamerTekst, transform: opKamer ? "translateX(10.5rem)" : "none" } : undefined;
   const isOnboarding = pathname === '/onboarding' || pathname.startsWith('/onboarding');
   const menuRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
@@ -150,7 +181,7 @@ export default function Navbar() {
   return (
     <header
       ref={headerRef}
-      className="fixed top-0 w-full z-50"
+      className={`fixed top-0 w-full z-50 ${netAangekomen ? "[&_*]:!transition-none" : ""}`}
       role="banner"
     >
       {/* Dekkende band achter de pill. De pill dekt maar een deel van de 90 px
@@ -158,6 +189,13 @@ export default function Navbar() {
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[#FAFAF8] border-b border-[#E5E5E5]"
+        style={
+          opKamer
+            ? { backgroundColor: kamer.veld, borderBottomColor: "transparent", transition: netAangekomen ? "none" : "background-color 420ms cubic-bezier(0.2, 0, 0, 1)" }
+            : opHome
+              ? { borderBottomColor: "rgba(26,26,26,0.14)" }
+              : undefined
+        }
       />
 
       {/* Skip to content */}
@@ -169,16 +207,24 @@ export default function Navbar() {
       </a>
 
       {/* Outer container with padding around the pill */}
-      <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 py-4">
-        {/* The pill */}
-        <div className="flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 bg-white border border-[#E5E5E5] transition-shadow duration-200 hover:shadow-md">
+      <div className={opHome ? "relative flex h-14 items-center px-[var(--rand)] lg:h-16" : "relative max-w-[1400px] mx-auto px-6 md:px-12 py-4"}>
+        {/* The pill (op de homepage: geen pil, een platte balk) */}
+        <div
+          className={
+            opHome
+              ? "flex w-full items-center justify-between"
+              : "flex items-center justify-between rounded-full pl-7 pr-1.5 py-1.5 transition-colors duration-200 bg-white border border-[#E5E5E5] transition-shadow hover:shadow-md"
+          }
+        >
           {/* Brand */}
           <a
             href="/"
-            className={`flex-shrink-0 inline-flex items-center min-h-[44px] rounded-xl transition-opacity hover:opacity-85 ${FOCUS}`}
+            style={kamerTekst}
+            className={`flex-shrink-0 inline-flex items-center min-h-[44px] transition-opacity hover:opacity-85 ${opHome ? "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" : `rounded-xl ${FOCUS}`}`}
             aria-label="FitFi Home"
           >
-            <Logo size="sm" variant="default" />
+            {/* Op de homepage een maat groter: in de platte balk is het woordmerk het enige merkteken. */}
+            <Logo size={opHome ? "md" : "sm"} variant={opKamer && kamer.licht ? "light" : opHome ? "inkt" : "default"} />
           </a>
 
           {/* Desktop nav - Center */}
@@ -187,13 +233,16 @@ export default function Navbar() {
               <NavLink
                 key={l.to}
                 to={l.to}
+                style={kamerTekst}
                 className={({ isActive }) =>
-                  [
-                    `inline-flex items-center min-h-[44px] text-sm px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none ${FOCUS}`,
-                    isActive
-                      ? "text-[#1A1A1A] font-semibold bg-[#F5F0EB]"
-                      : "font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80",
-                  ].join(" ")
+                  opHome
+                    ? `${HOME_LINK} ${isActive ? "underline font-semibold" : "font-medium hover:underline"}`
+                    : [
+                        `inline-flex items-center min-h-[44px] text-sm px-[18px] py-2 rounded-full transition-all duration-250 tracking-[0.1px] border-0 bg-transparent shadow-none ${FOCUS}`,
+                        isActive
+                          ? "text-[#1A1A1A] font-semibold bg-[#F5F0EB]"
+                          : "font-medium text-[#6E6E6E] hover:text-[#1A1A1A] hover:bg-[#F5F0EB]/80",
+                      ].join(" ")
                 }
               >
                 {l.label}
@@ -207,24 +256,48 @@ export default function Navbar() {
               <>
                 <a
                   href="/inloggen"
-                  className={`inline-flex items-center min-h-[44px] text-sm font-medium px-[18px] py-2 rounded-full transition-all duration-200 text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB] ${FOCUS}`}
+                  style={inloggenStijl}
+                  className={
+                    opHome
+                      ? `${HOME_LINK_BASIS} font-medium hover:underline transition-[transform,color] duration-[420ms] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none`
+                      : `inline-flex items-center min-h-[44px] text-sm font-medium px-[18px] py-2 rounded-full transition-all duration-200 text-[#4A4A4A] hover:text-[#1A1A1A] hover:bg-[#F5F0EB] ${FOCUS}`
+                  }
                   data-event="nav_login"
                 >
                   Inloggen
                 </a>
-                <a
-                  href="/onboarding"
-                  className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ml-2"
-                  data-event="nav_start_gratis"
-                >
-                  Begin gratis
-                </a>
+                {opHome ? (
+                  /* Boven de kamer onzichtbaar maar op zijn plek: de held heeft de enige
+                     primaire knop, en het menu verspringt niet als de knop terugkomt. */
+                  <a
+                    href="/onboarding"
+                    aria-hidden={opKamer || undefined}
+                    tabIndex={opKamer ? -1 : undefined}
+                    className={`ml-3 inline-flex min-h-[40px] w-[9.5rem] items-center justify-center bg-[#1A1A1A] text-[15px] font-semibold text-[#FAFAF8] transition-[opacity,visibility,background-color] duration-200 hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1A1A1A] motion-reduce:transition-none ${opKamer ? "invisible opacity-0" : "visible opacity-100"}`}
+                    data-event="nav_start_gratis"
+                  >
+                    Begin gratis
+                  </a>
+                ) : (
+                  <a
+                    href="/onboarding"
+                    className="inline-flex items-center min-h-[44px] bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-7 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ml-2"
+                    data-event="nav_start_gratis"
+                  >
+                    Begin gratis
+                  </a>
+                )}
               </>
             ) : (
               <>
                 <a
                   href="/dashboard"
-                  className="bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2 min-h-[44px]"
+                  style={kamerTekst}
+                  className={
+                    opHome
+                      ? `${HOME_LINK} gap-2 font-semibold underline`
+                      : "bg-[#A85740] hover:bg-[#9A503B] text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-200 inline-flex items-center gap-2 min-h-[44px]"
+                  }
                   data-event="nav_dashboard"
                 >
                   Dashboard
@@ -238,17 +311,24 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="inline-flex items-center min-h-[44px] text-sm font-medium text-[#6E6E6E] px-3.5 py-2 rounded-full hover:text-[#4A4A4A] transition-all duration-200"
+                  style={kamerTekst}
+                  className={
+                    opHome
+                      ? `${HOME_LINK} font-medium hover:underline`
+                      : "inline-flex items-center min-h-[44px] text-sm font-medium text-[#6E6E6E] px-3.5 py-2 rounded-full hover:text-[#4A4A4A] transition-all duration-200"
+                  }
                   data-event="nav_logout"
                 >
                   Uitloggen
                 </button>
+                {!opHome && (
                 <div
                   aria-hidden="true"
                   className="w-[34px] h-[34px] rounded-[10px] bg-[#F4E8E3] flex items-center justify-center text-xs font-bold text-[#A85740] cursor-pointer transition-all duration-200 hover:bg-[#A85740] hover:text-white hover:scale-105 ml-1 select-none"
                 >
                   <span>{userInitial}</span>
                 </div>
+                )}
               </>
             )}
           </div>
@@ -257,7 +337,12 @@ export default function Navbar() {
           <button
             ref={toggleRef}
             type="button"
-            className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-full ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
+            style={opHome ? { outlineColor: homeKleur } : undefined}
+            className={
+              opHome
+                ? "lg:hidden inline-flex h-11 w-11 items-center justify-center ml-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                : "lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-full ml-2 transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#A85740] focus-visible:ring-offset-2 hover:bg-[#F5F0EB]/20"
+            }
             aria-label={open ? "Menu sluiten" : "Menu openen"}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -286,7 +371,7 @@ export default function Navbar() {
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#1A1A1A"
+                stroke={opHome ? homeKleur : "#1A1A1A"}
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"

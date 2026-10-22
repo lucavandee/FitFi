@@ -166,6 +166,8 @@ export default {
         sans: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"], // Default
         serif: ["Instrument Serif", "Georgia", "serif"],
         jakarta: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Homepage (kleurkamer): Archivo met breedte-as; zie src/index.css.
+        archivo: ["Archivo", "Arial", "sans-serif"],
       },
 
       fontSize: {

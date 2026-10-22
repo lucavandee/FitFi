@@ -23,6 +23,7 @@ vi.mock("@/context/UserContext", () => ({
 }));
 
 import Navbar from "../Navbar";
+import { zetKamerNav } from "@/components/landing/v3/kamerNav";
 import Footer from "../Footer";
 
 const render = (pad: string, element: JSX.Element) =>
@@ -65,17 +66,63 @@ describe("Navbar", () => {
   it("op / vanaf het begin de dekkende kop, zonder witte tekst", () => {
     const html = render("/", <Navbar />);
     expect(html).not.toMatch(/text-white\/70|variant="light"|opacity-0/);
-    expect(html).toContain("bg-white border border-[#E5E5E5]");
+    // Op de homepage een platte balk op papier met een haarlijn, tekst in inkt.
+    expect(html).toContain("absolute inset-0 bg-[#FAFAF8] border-b");
+    expect(html).toContain("border-bottom-color:rgba(26,26,26,0.14)");
+    expect(html).toContain("color:#1A1A1A");
+    expect(html).not.toContain("bg-transparent");
+  });
+
+  /*
+   * De kleurkamer (homepage, 22 oktober 2026): zolang de held bovenin staat,
+   * is de kop transparant met tekst in de kleur van de kamer. Die kleur is per
+   * kamer op contrast getoetst (content/__tests__/kleurkamers.test.ts); de
+   * oude transparante kop zette wit op een wisselende foto.
+   */
+  it("op / boven de kleurkamer: geen pil, band en tekst in de kamerkleur, geen tweede knop", () => {
+    zetKamerNav({ actief: true, tekst: "#FAFAF8", licht: true, veld: "#933126" });
+    try {
+      const html = render("/", <Navbar />);
+      expect(html).not.toContain("bg-white border border-[#E5E5E5]");
+      expect(html).toContain("color:#FAFAF8");
+      expect(html).toContain("background-color:#933126");
+      // De knop houdt zijn plek, maar is onzichtbaar, niet focusbaar en niet voorgelezen.
+      const knop = html.match(/<a\b[^>]*href="\/onboarding"[^>]*>/)?.[0] ?? "";
+      expect(knop).toContain('aria-hidden="true"');
+      expect(knop).toContain('tabindex="-1"');
+      expect(knop).toMatch(/\binvisible\b/);
+    } finally {
+      zetKamerNav(null);
+    }
+  });
+
+  it("de kamerstand geldt alleen op /", () => {
+    zetKamerNav({ actief: true, tekst: "#FAFAF8", licht: true, veld: "#8E2F25" });
+    try {
+      const html = render("/prijzen", <Navbar />);
+      expect(html).toContain("bg-white border border-[#E5E5E5]");
+      expect(html).not.toContain("color:#FAFAF8");
+    } finally {
+      zetKamerNav(null);
+    }
   });
 
   it("logo en elke link in de kop krijgen een zichtbare focusring", () => {
-    const html = render("/", <Navbar />);
     const ring = "focus-visible:outline-[#1A1A1A]";
-    for (const m of html.matchAll(/<a\b([^>]*)>/g)) {
-      const attrs = m[1];
-      if (/sr-only/.test(attrs)) continue; // de skiplink heeft zijn eigen stijl
-      if (/bg-\[#A85740\]/.test(attrs)) continue; // 'Begin gratis' houdt de globale ring
-      expect(attrs).toContain(ring);
+    // Op / volgt de kleur van de ring de tekst (de kamer), dus staat die inline.
+    for (const pad of ["/prijzen", "/"]) {
+      const html = render(pad, <Navbar />);
+      for (const m of html.matchAll(/<a\b([^>]*)>/g)) {
+        const attrs = m[1];
+        if (/sr-only/.test(attrs)) continue; // de skiplink heeft zijn eigen stijl
+        if (/bg-\[#A85740\]/.test(attrs)) continue; // 'Begin gratis' houdt de globale ring
+        if (pad === "/") {
+          expect(attrs).toContain("focus-visible:outline-2");
+          expect(attrs).toMatch(/focus-visible:outline-\[#1A1A1A\]|outline-color:#1A1A1A/);
+        } else {
+          expect(attrs).toContain(ring);
+        }
+      }
     }
     // Het mobiele menu rendert pas na een klik: daar de bron, zonder commentaar.
     const bron = readFileSync(join(__dirname, "../Navbar.tsx"), "utf-8")
@@ -147,7 +194,8 @@ describe("Footer (F1 en F2)", () => {
       expect(html).not.toMatch(/font-serif|uppercase|text-\[#A85740\]/);
       expect(html).not.toMatch(/>\s*(GDPR|SSL)\s*</);
       expect(html).not.toContain("max-w-[1400px]");
-      expect(html).toContain("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8");
+      // Op de homepage op de linkerrand van de kleurkamer (--rand), elders de gewone container.
+      expect(html).toContain(pad === "/" ? "px-[var(--rand)]" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8");
     }
   });
 

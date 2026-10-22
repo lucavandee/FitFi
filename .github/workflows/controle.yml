@@ -65,3 +65,9 @@ jobs:
       # de deploy straks ook, en dan weet je het vóór de merge.
       - name: Build
         run: npx vite build
+
+      # De held van de homepage moet vooraf in index.html staan
+      # (plugins/kleurkamer-vooraf.ts). Valt de plugin stil weg, dan slaagt de
+      # build gewoon; deze stap niet.
+      - name: Held vooraf in index.html
+        run: grep -q '<template id="kk-vooraf"><div class="kk-vooraf"' dist/index.html
