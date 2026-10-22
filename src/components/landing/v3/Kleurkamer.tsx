@@ -26,7 +26,14 @@ const COPY = KLEURKAMER_COPY.held;
 
 /** De maten waarmee index.html het startbeeld vooraf laadt; ze moeten gelijk blijven. */
 export const SIZES_LIGGEND = "90vw";
-export const SIZES_STAAND = "100vw";
+/*
+ * Staand is de foto zo breed als de figuur: 4:5 bij een hoogte van
+ * clamp(320px, 100svh - kop (56) - 330px, 125vw), hooguit het scherm. Met 100vw
+ * koos een telefoon van 412 px bij DPR 1,75 960w waar 640w volstaat. vh in plaats
+ * van svh: vh is nooit kleiner, dus de schatting valt nooit te krap uit. Kent een
+ * browser min() of clamp() hier niet, dan geldt 100vw, zoals voorheen.
+ */
+export const SIZES_STAAND = "min(100vw, calc(0.8 * clamp(320px, calc(100vh - 386px), 125vw)))";
 
 /** De kleur van de browserbalk buiten de homepage (index.html). */
 const STANDAARD_THEMA = "#A85740";
@@ -60,8 +67,9 @@ const MASKER_STAAND: CSSProperties = {
 type Toon = { sleutel: KamerSleutel; wie: Wie; staand: boolean };
 const sleutelVan = (t: Toon) => `${t.sleutel}|${t.wie}|${t.staand ? "staand" : "liggend"}`;
 
-function useMedia(query: string): boolean {
-  const [past, setPast] = useState(() => typeof window !== "undefined" && window.matchMedia(query).matches);
+/** Zonder window (vooraf renderen, tests) geldt `zonderVenster`. */
+function useMedia(query: string, zonderVenster = false): boolean {
+  const [past, setPast] = useState(() => (typeof window !== "undefined" ? window.matchMedia(query).matches : zonderVenster));
   useEffect(() => {
     const mq = window.matchMedia(query);
     const zet = () => setPast(mq.matches);
@@ -168,9 +176,16 @@ function Voorladen({ wie, staand, behalve }: { wie: Wie; staand: boolean; behalv
  *   koos, focus in de held hebt of via een link met ?kleur= kwam.
  * - Stalen en Dames · Heren zijn radiogroepen; op de telefoon kun je ook vegen.
  */
-export default function Kleurkamer({ stand }: { stand: KleurkamerStand }) {
+export default function Kleurkamer({
+  stand,
+  beginStaand = false,
+}: {
+  stand: KleurkamerStand;
+  /** alleen voor het vooraf renderen (src/prerender): welke opbouw zonder window */
+  beginStaand?: boolean;
+}) {
   const { kamer: sleutel, wie, bewegingUit, eigenKeuze, kies, kiesWie, zetBeweging } = stand;
-  const staand = useMedia("(max-width: 1023px)");
+  const staand = useMedia("(max-width: 1023px)", beginStaand);
   const rustig = useMedia("(prefers-reduced-motion: reduce)");
   const [netwerkOk] = useState(netwerkLaatToe);
   const omgevingMag = !rustig && netwerkOk;

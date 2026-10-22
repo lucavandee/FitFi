@@ -30,8 +30,10 @@ const MASKER_STAAND: CSSProperties = {
 
 /**
  * Het slot: dezelfde persoon in dezelfde studio, nu zonder kleur. Na de kamers
- * is dit het stille moment. Wie een kamer koos, krijgt de vraag over die kleur;
- * het antwoord staat in het rapport. Zonder eigen keuze een algemene vraag.
+ * is dit het stille moment. Wie een kamer koos, krijgt de vraag of die die
+ * kleur draagt; de quiz vraagt in stap 3 welke kleuren je het liefst draagt.
+ * Het rapport gaat niet over de gekozen kamer. Zonder eigen keuze de vraag van
+ * de held.
  */
 export default function Slot({ wie, eigenKeuze }: { wie: Wie; eigenKeuze: KamerSleutel | null }) {
   const k = eigenKeuze ? kamerVan(eigenKeuze) : null;

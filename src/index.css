@@ -245,6 +245,35 @@ html.kk-home {
     --header-h: 64px;
   }
 }
+/* De held vooraf in index.html (plugins/kleurkamer-vooraf.ts), alleen op / zonder
+   ?kleur= of ?wie= (het script in index.html zet kk-vooraf-aan), en per breedte
+   één variant. Zichtbaar zijn foto, veld en AI-label; tekst die van het lettertype
+   afhangt komt pas met React, zodat er niets verspringt als Archivo binnenkomt.
+   createRoot vervangt het blok bij het mounten. */
+.kk-vooraf {
+  display: none;
+}
+html.kk-vooraf-aan .kk-vooraf {
+  display: block;
+}
+@media (max-width: 1023px) {
+  .kk-vooraf-liggend {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .kk-vooraf-staand {
+    display: none;
+  }
+}
+.kk-vooraf section * {
+  visibility: hidden;
+}
+.kk-vooraf figure,
+.kk-vooraf figure *,
+.kk-vooraf [id^="kk-ai-label"] {
+  visibility: visible;
+}
 /* Op de homepage is er geen onderbalk, dus geen 72 px reserve onderin. */
 html.kk-home {
   scroll-padding-bottom: var(--banner-h, 0px);

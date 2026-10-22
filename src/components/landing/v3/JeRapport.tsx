@@ -33,9 +33,12 @@ function Kleurcode() {
 
 /**
  * Wat je krijgt: links de omslag van het voorbeeldrapport, rechts een outfit
- * uit dat rapport met echte stukken. Omslag, stijlwoord, palet en outfit zijn
- * die van /results/preview (minimalistisch, winter); de omslag volgt
- * RapportOmslag.tsx: inkt, het stijlwoord groot, de kleurcode eronder.
+ * uit dat rapport met echte stukken. Stijlwoord, palet en outfit zijn die van
+ * /results/preview (minimalistisch, winter). De omslag heeft de opbouw en de
+ * labels van RapportOmslag.tsx (inkt, het stijlwoord groot, de kleurcode
+ * eronder) maar de letter van de homepage: RapportOmslag zelf zet het
+ * stijlwoord nog in de cursieve serif, tot het rapport de nieuwe vormtaal
+ * krijgt. De drie stukken hier zijn geen links; in het rapport wel.
  */
 export default function JeRapport() {
   const totaal = OUTFIT.stukken.reduce((som, s) => som + s.prijs, 0);

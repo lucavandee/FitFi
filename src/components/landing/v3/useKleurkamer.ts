@@ -5,7 +5,6 @@ import { track } from "@/utils/analytics";
 export type KeuzeBron = "tik" | "toets" | "veeg" | "hint";
 
 const BEWEGING_SLEUTEL = "fitfi.kleurkamer.beweging";
-const KEUZE_SLEUTEL = "fitfi.kleurkamer.keuze";
 
 function lees(sleutel: string, opslag: "local" | "session"): string | null {
   try {
@@ -41,8 +40,9 @@ function beginStand(): { kamer: KamerSleutel; wie: Wie } {
  *   gedeelde link opent in dezelfde kamer, en de terugknop blijft op de vorige
  *   pagina.
  * - "Beweging uit" wordt per bezoeker onthouden (localStorage).
- * - Een eigen keuze gaat naar localStorage, zodat het rapport later kan zeggen
- *   of die kleur in je palet zit. De hint telt niet als keuze.
+ * - Een eigen keuze geldt alleen op deze pagina (het slot vraagt ernaar) en in
+ *   de URL; er wordt niets van bewaard, want niets in de app leest hem. De hint
+ *   telt niet als keuze.
  */
 export function useKleurkamer() {
   const [stand, setStand] = useState(beginStand);
@@ -63,10 +63,7 @@ export function useKleurkamer() {
 
   const kies = useCallback((kamer: KamerSleutel, bron: KeuzeBron) => {
     setStand((s) => (s.kamer === kamer ? s : { ...s, kamer }));
-    if (bron !== "hint") {
-      setEigenKeuze(kamer);
-      schrijf(KEUZE_SLEUTEL, JSON.stringify({ kamer, datum: new Date().toISOString().slice(0, 10) }), "local");
-    }
+    if (bron !== "hint") setEigenKeuze(kamer);
     track("kamer_kies", { kamer, bron });
   }, []);
 

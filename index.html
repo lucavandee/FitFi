@@ -2,6 +2,11 @@
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
+    <!-- De viewport vóór het preload-script hieronder: anders rekent de preload op
+         een telefoon met het standaardvenster van 980 px (imagesizes 100vw) en
+         haalt hij een groter bestand op dan de foto daarna kiest. Gemeten op
+         22 oktober 2026: preload 1229w, foto 640w bij DPR 1 en 960w bij DPR 2. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Lettertypen: Instrument Serif, Plus Jakarta Sans en Archivo staan zelf
          gehost in public/fonts/, met @font-face in src/index.css. Geen verzoek
          naar Google. Wat boven de vouw nodig is, laadt het script hieronder per
@@ -32,7 +37,9 @@
           document.documentElement.classList.add("kk-home");
           pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/archivo-latin.4c98b9d4.woff2" });
           if (!/[?&](kleur|wie)=/.test(q)) {
-            pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(max-width: 1023px)", imagesizes: "100vw",
+            // de vooraf getekende held in #root tonen (plugins/kleurkamer-vooraf.ts)
+            document.documentElement.classList.add("kk-vooraf-aan");
+            pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(max-width: 1023px)", imagesizes: "min(100vw, calc(0.8 * clamp(320px, calc(100vh - 386px), 125vw)))",
               imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-45-640.e8b97b01.avif 640w, /beeld/kleurkamer/kk-h-dieprood-45-960.f22930cd.avif 960w, /beeld/kleurkamer/kk-h-dieprood-45-1229.0d6fe1bd.avif 1229w" });
             pre({ as: "image", type: "image/avif", fetchpriority: "high", media: "(min-width: 1024px)", imagesizes: "90vw",
               imagesrcset: "/beeld/kleurkamer/kk-h-dieprood-1280.55b2ca41.avif 1280w, /beeld/kleurkamer/kk-h-dieprood-1920.b09070e8.avif 1920w, /beeld/kleurkamer/kk-h-dieprood-2752.edd80db6.avif 2752w" });
@@ -49,7 +56,6 @@
 
     <!-- ✅ Favicon and meta -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Geen beeld-preload meer: sinds de homepage van 21 oktober 2026
          (designsysteem v2) is de kop het grootste element boven de vouw, geen
