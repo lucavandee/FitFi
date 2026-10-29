@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import hostSweep from "./plugins/host-sweep";
 import devCSP from "./plugins/dev-csp";
+import kleurkamerVooraf from "./plugins/kleurkamer-vooraf";
 
 // Let op: geen 'node:path' conform architectuur-freeze.
 const SRC_ALIAS = new URL("./src", import.meta.url).pathname;
@@ -17,6 +18,8 @@ export default defineConfig(({ mode }) => {
       hostSweep({ host }),
       // CSP headers in development (mirrors production _headers)
       devCSP(),
+      // Alleen bij build: de held van de homepage vooraf in index.html (LCP).
+      kleurkamerVooraf({ configFile: new URL("./vite.config.ts", import.meta.url).pathname }),
     ],
     resolve: {
       alias: [{ find: "@", replacement: SRC_ALIAS }],

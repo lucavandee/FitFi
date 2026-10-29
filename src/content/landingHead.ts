@@ -19,14 +19,17 @@ export const LANDING_BESCHRIJVING =
   "Met een gratis account krijg je een kleurpalet en outfits met links naar winkels.";
 
 /**
- * Deelbeeld: een uitsnede van de desktop-hero met het AI-label in het beeld
- * zelf. Een linkvoorbeeld toont alleen het beeld, dus een label ernaast komt
- * nooit mee (AI-verordening art. 50). Het label is dezelfde zin als in de
- * hero, wit op het verloop van de hero, 40 px op 1200 breed: in een voorbeeld
- * van 500 px breed nog bijna 17 px.
+ * Deelbeeld: de kleurkamer in diep rood (22 oktober 2026), opgebouwd als de
+ * held: woordmerk, kop, de zes stalen, rechts het model. Het AI-label staat in
+ * het beeld zelf, onder de persoon: een linkvoorbeeld toont alleen het beeld,
+ * dus een label ernaast komt nooit mee (AI-verordening art. 50). Dezelfde zin
+ * als in de held, 34 px op 1200 breed: in een voorbeeld van 500 px breed ruim
+ * 14 px. Gemaakt met tools/maak_og.mjs in
+ * ~/claude-artifacts/fitfi-beeld/2026-10-22-herontwerp/, met XMP-herkomst
+ * (compositeWithTrainedAlgorithmicMedia) in het bestand.
  *
  * Absoluut, want niet elke scraper lost een relatief pad op. De hash in de
  * naam is het begin van de sha256 van het bestand: een nieuwe versie krijgt
  * een nieuwe naam, zodat geen cache het oude beeld vasthoudt.
  */
-export const OG_BEELD = "https://www.fitfi.ai/og/og-home_1200x630.7c31a04e.jpg";
+export const OG_BEELD = "https://www.fitfi.ai/og/og-home_1200x630.9059a97c.jpg";

@@ -50,8 +50,9 @@ describe("zelf gehoste lettertypen", () => {
     expect(noemtGoogleFonts).toBe(laadtBijGoogle);
   });
 
-  it("index.css wijst naar acht bestanden in /fonts/", () => {
-    expect(verwezen).toHaveLength(8);
+  it("index.css wijst naar tien bestanden in /fonts/", () => {
+    // Instrument Serif (4), Plus Jakarta Sans (4) en sinds 22 oktober 2026 Archivo (2).
+    expect(verwezen).toHaveLength(10);
   });
 
   for (const pad of verwezen) {
