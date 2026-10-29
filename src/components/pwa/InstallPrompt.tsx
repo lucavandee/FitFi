@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X, Smartphone, Zap, Heart } from 'lucide-react';
+import { leesOpslag, schrijfOpslag } from '@/utils/veiligeOpslag';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -22,7 +23,7 @@ export default function InstallPrompt() {
       return;
     }
 
-    const isDismissed = localStorage.getItem('pwa-install-dismissed');
+    const isDismissed = leesOpslag('pwa-install-dismissed');
     if (isDismissed) {
       const dismissedTime = parseInt(isDismissed, 10);
       const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24);
@@ -59,7 +60,7 @@ export default function InstallPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+    schrijfOpslag('pwa-install-dismissed', Date.now().toString());
   };
 
   if (isOnboarding || isInstalled || !showPrompt) return null;
