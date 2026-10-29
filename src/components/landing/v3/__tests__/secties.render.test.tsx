@@ -43,6 +43,11 @@ describe("InDeWinkel", () => {
     expect(html).toContain('href="/affiliate-disclosure"');
   });
 
+  it("winkelfoto's ook in 600w: een kaart van 255 px bij DPR 1,75 nam anders 800w (112 KB)", () => {
+    const html = render(<InDeWinkel kamer="dieprood" wie="dames" />);
+    for (const m of html.matchAll(/srcSet="([^"]+)"/g)) expect(m[1]).toMatch(/ 400w, [^,]+ 600w, [^,]+ 800w$/);
+  });
+
   it("geen rij als er geen drie stukken in die kleur zijn (warm terracotta)", () => {
     expect(render(<InDeWinkel kamer="warmterracotta" wie="dames" />)).toBe("");
   });

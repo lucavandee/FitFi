@@ -64,7 +64,8 @@ export default function Navbar() {
    * de eerste render, dus het gaat om een korte tijd na de wissel, niet om één
    * render. Daarna gelden de overgangen weer (scrollen langs de held).
    */
-  const routeWissel = React.useRef({ pad: pathname, tijd: 0 });
+  // Begint bij de mount: uit de quiz (zonder kop) terug naar / is ook een aankomst.
+  const routeWissel = React.useRef({ pad: pathname, tijd: performance.now() });
   if (routeWissel.current.pad !== pathname) routeWissel.current = { pad: pathname, tijd: performance.now() };
   const netAangekomen = performance.now() - routeWissel.current.tijd < 700;
   /** Op de homepage: een platte balk in de vormtaal van de kleurkamer; tekst in de kamerkleur of in inkt. */
