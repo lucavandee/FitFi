@@ -66,6 +66,25 @@ describe("het invoeg-script", () => {
   });
 });
 
+describe("dark-mode.css", () => {
+  const DARK = readFileSync(join(__dirname, "../../styles/dark-mode.css"), "utf-8");
+  it("de kleurovergang op elk element geldt niet op de homepage, met specificiteit 0", () => {
+    expect(DARK).toMatch(/:where\(html:not\(\.kk-home\)\) \* \{\s*transition: background-color/);
+    expect(DARK).not.toMatch(/^\* \{/m);
+  });
+});
+
+describe("index.html: letters van de rest van de site", () => {
+  const HTML = readFileSync(join(__dirname, "../../../index.html"), "utf-8");
+  const thuis = HTML.slice(HTML.indexOf('if (p === "/") {'), HTML.indexOf("} else {"));
+  it("op / na het laden Jakarta en de serif voorladen, met lage prioriteit en niet bij Save-Data", () => {
+    expect(thuis).toContain('addEventListener("load"');
+    expect(thuis).toContain('l.rel = "prefetch"');
+    expect(thuis).toMatch(/saveData/);
+    for (const f of ["plus-jakarta-sans-latin", "instrument-serif-italic-latin", "instrument-serif-latin"]) expect(thuis).toContain(`/fonts/${f}.`);
+  });
+});
+
 describe("index.css", () => {
   /** De declaraties binnen het blok dat met deze kop begint. */
   function blok(kop: string): string {

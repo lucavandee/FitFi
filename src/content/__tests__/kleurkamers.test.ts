@@ -119,7 +119,8 @@ describe("bestanden", () => {
     const elders = html.slice(html.indexOf("} else {"), html.indexOf("})();"));
     expect(thuis).toContain('classList.add("kk-home")');
     expect(thuis).toContain("archivo-latin");
-    expect(thuis).not.toContain("plus-jakarta");
+    // geen preload op hoge prioriteit; voorladen na het load-event (prefetch) mag wel
+    expect(thuis).not.toMatch(/pre\(\{[^}]*plus-jakarta/);
     expect(elders).toContain("plus-jakarta-sans-latin");
     expect(html.replace(/<script>[\s\S]*?<\/script>/g, "")).not.toMatch(/rel="preload"[^>]*plus-jakarta/);
   });

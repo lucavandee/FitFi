@@ -27,7 +27,7 @@ function Stuk({ stuk, kamer, plek }: { stuk: WinkelStuk; kamer: KamerSleutel; pl
         <div className="aspect-[2/3] overflow-hidden bg-[#FAFAF8]">
           <img
             src={formaat(stuk.beeld, 600)}
-            srcSet={`${formaat(stuk.beeld, 400)} 400w, ${formaat(stuk.beeld, 800)} 800w`}
+            srcSet={`${formaat(stuk.beeld, 400)} 400w, ${formaat(stuk.beeld, 600)} 600w, ${formaat(stuk.beeld, 800)} 800w`}
             sizes="(min-width: 1440px) 302px, (min-width: 1024px) 22vw, (min-width: 640px) 44vw, 62vw"
             alt=""
             loading="lazy"

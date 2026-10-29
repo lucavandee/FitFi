@@ -319,6 +319,7 @@ Luc koos op 21 oktober 2026 variant A uit het prototype (plan:
 `~/claude-artifacts/fitfi-beeld/2026-10-21-website/plan.md`). Deze regels gaan
 voor deel 1 tot en met 17 waar ze botsen. Palet, knoppen, kaarten, inputs,
 badges, radii, schaduwen, iconen en vaste CTA-teksten blijven zoals hierboven.
+Voor de homepage (`/`) geldt sinds 29 oktober 2026 deel 19.
 
 - **Avondsecties.** `bg-[#1A1A1A]` mag als sectie-achtergrond: de hero van de
   homepage, de omslag van een rapport en de afsluiter. Koppen daarop
@@ -367,3 +368,75 @@ badges, radii, schaduwen, iconen en vaste CTA-teksten blijven zoals hierboven.
   Stand 21 oktober 2026 op de preview: 2,7 tot 2,8 s (was 4,8 s). De rest zit
   in de JavaScript die de hele pagina in de browser tekent (eerste verf 2,3 s);
   dat lost alleen vooraf renderen naar HTML op.
+
+## 19. De kleurkamer: de homepage (29 oktober 2026)
+
+Luc gaf op 29 oktober 2026 akkoord op de kleurkamer (PR 161). Deze regels gaan
+voor deel 2, 17 en 18 op de homepage (`/`). Op andere pagina's gelden die nog,
+en de rapportomslag in de app (`RapportOmslag.tsx`) staat nog in de vormtaal van
+deel 18. Code in `src/components/landing/v3/`, de vormtaal in `stijl.ts`, kamers
+en teksten in `src/content/kleurkamers.ts`. Ontwerp, beeldwerk en gereedschap:
+`~/claude-artifacts/fitfi-beeld/2026-10-22-herontwerp/` (`synthese.md`,
+`tools/`, `kleurkamer/herkomst.json`).
+
+- **Eén letter.** Archivo (variabel, zelf gehost, OFL) voor de hele homepage,
+  ook kop, voet en cookiebanner, via `html.kk-home` in `index.css`. `index.html`
+  zet die klasse voor de eerste verf, `LandingPage` houdt hem bij. Breedte,
+  gewicht en spatiëring uit `ARCHIVO` in `stijl.ts`: display 82 procent breed en
+  680 vet, kop 92 en 650, label 100 en 600 in kapitalen (`LABEL`, 14 px). Geen
+  Instrument Serif en geen Plus Jakarta Sans op `/`.
+- **Vorm.** Radius 0, geen schaduw, haarlijnen (`HAARLIJN`) in plaats van
+  kaarten. Knoppen zijn rechthoeken (`KNOP_OP`): papier op een donkere grond,
+  inkt op een lichte. Geen terracotta op `/`. De vaste CTA-teksten uit deel 10
+  blijven: "Begin gratis", "Bekijk voorbeeld", "Bekijk bij partner".
+- **Kleur.** Zes kamers uit vier paletten (`KAMERS`; naam en hex staan letterlijk
+  in `COLOR_PALETTES`) en de grijze kamer van het slot. De veldkleur is gemeten
+  op de still, per kamer en per persoon. Tekst op een veld is papier `#FAFAF8`,
+  inkt `#1A1A1A` of wit (olijf); `kleurkamers.test.ts` eist 4,5:1 per kamer en
+  per persoon. Buiten de kamers: papier `#FAFAF8`, inkt `#1A1A1A`, lopende tekst
+  `#4A4A4A`.
+- **Rand en ritme.** Alle tekst begint op `--rand` (`index.css`: 16 px, 32 px,
+  vanaf 1024 px `max(40px, (100vw - 1360px) / 2 + 40px)`); gebruik `RASTER`.
+  Secties `SECTIE` (80 px, vanaf lg 128 px).
+- **Breekpunt.** Onder lg is `ONDER_LG` (`not all and (min-width: 1024px)`), het
+  exacte complement van `LG`. Nooit `(max-width: 1023px)`: bij browserzoom kan de
+  breedte 1023,6 px zijn en dan klopt geen van beide.
+- **Beeld.** Eén persoon per geslacht (cast c05 en c08) in dezelfde houding;
+  alleen de muur en het stuk bij het gezicht krijgen de kamerkleur, lokaal en in
+  lineair licht. Clips: Kling 4.0 met de still als begin- en eindbeeld,
+  gecodeerd met sRGB als overdracht (`tools/maak_kamerfilm.sh` in de map
+  hierboven, niet in de repo); met BT.709 tonen
+  Chrome en Safari een clip lichter dan de still. Na afloop valt de held terug op
+  de still. Herkomst in XMP of de AIGC-tag en in `herkomst.json`; bestanden met
+  een hash in de naam via `tools/installeer_web.py` in dezelfde map.
+- **AI-label.** Onder elk gegenereerd beeld, nooit eroverheen: "Beeld gemaakt
+  met AI. De persoon is een model." Ook in de vooraf getekende held en in het
+  deelbeeld (`landingHead.ts`).
+- **Winkelrij.** Een gekeurde lijst (`kleurkamerProducten.ts`) met de datum van
+  de prijzen erbij. Minder dan drie stukken in een kamer: geen rij. Feedfoto's
+  ongewijzigd (Daisycon art. 2.6), met de melding over de vergoeding onder de
+  rij.
+- **Laden.** De held staat vooraf in `index.html` (`plugins/kleurkamer-vooraf.ts`):
+  de echte component, staand en liggend, in een `<template>` die alleen op `/`
+  zonder `?kleur=` of `?wie=` in `#root` komt. Zichtbaar zijn dan foto, veld en
+  AI-label; tekst komt met React. Het preload-script staat na de viewport-meta,
+  en preload en `<picture>` hebben dezelfde srcset en sizes (`SIZES_STAAND` volgt
+  de figuur). De CI faalt als de gebouwde `index.html` de held mist. Stand 29
+  oktober 2026 op productie, met 1,6 Mbps, 150 ms en CPU 4x: de foto verft
+  vooraf, LCP 1,8 tot 2,1 s op 412 px breed en 2,0 s op 1440 px, CLS 0.
+  Lighthouse mobiel schommelt tussen 78 en 96: vervangt React de vooraf
+  getekende foto voordat die gemeten is, dan rekent de simulatie de JavaScript
+  mee. Dat is een effect van de meting, niet van wat een bezoeker ziet.
+- **Wissel.** Veld, tekstkleur en kop volgen de kamer die in beeld staat en
+  wisselen samen met de foto; de staal toont de keuze meteen. Mislukt een foto,
+  dan blijft de vorige kamer staan en probeert opnieuw kiezen het nog eens.
+- **Toegankelijkheid.** Stalen en Dames · Heren zijn radiogroepen met pijltjes,
+  Home en End. De vulling van een staal staat in een eigen laag met
+  `forced-color-adjust: none`, zodat rand en ring in de contrastmodus van
+  Windows zichtbaar blijven. "Beweging uit" heeft een vast label met
+  `aria-pressed`. Geen clip bij reduced motion, Save-Data of 2G.
+
+Buiten de homepage, gevonden bij de livegang: lees en schrijf `localStorage`
+alleen via `src/utils/veiligeOpslag.ts` of in een `try`. Met "alle cookies
+blokkeren" gooit al het opvragen ervan een SecurityError, en in de schil van
+de app gaf dat op elke pagina het foutscherm.

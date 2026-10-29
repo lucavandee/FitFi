@@ -75,8 +75,11 @@
   );
 }
 
-/* Smooth transition for theme changes */
-* {
+/* Smooth transition for theme changes. Niet op de homepage (html.kk-home): daar
+   kleurt de held zelf over, en een eigen overgang op elk kind liet in Safari kop
+   en labels tot 1,8 s achter het veld aan lopen (gemeten 29 oktober 2026).
+   :where() houdt de specificiteit op 0, zoals de kale * hiervoor. */
+:where(html:not(.kk-home)) * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 

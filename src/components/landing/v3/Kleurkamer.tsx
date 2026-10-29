@@ -46,8 +46,6 @@ export const SIZES_STAAND = `min(100vw, calc(0.8 * clamp(${FIGUUR.min}px, calc(1
 const STANDAARD_THEMA = "#A85740";
 const OVERGANG = "420ms cubic-bezier(0.2, 0, 0, 1)";
 const HINT_SLEUTEL = "fitfi.kleurkamer.hint";
-/** Na zoveel milliseconden zonder beeld breekt een wissel af en blijft de vorige foto staan. */
-const WISSEL_GEDULD = 8000;
 
 /** Waar het figuur moet blijven als object-cover bijsnijdt: rechts van het midden. */
 const POSITIE_LIGGEND = "62% 50%";
@@ -199,9 +197,6 @@ export default function Kleurkamer({
   const magBewegen = omgevingMag && !bewegingUit;
 
   const k = kamerVan(sleutel);
-  const veld = k.veld[wie];
-  const tekst = tekstKleur(k);
-  const donker = isDonkereKamer(k);
 
   // --- de still: wat staat er, wat komt eraan, en welke beelden zijn klaar
   const doel = useMemo<Toon>(() => ({ sleutel, wie, staand }), [sleutel, wie, staand]);
@@ -218,13 +213,14 @@ export default function Kleurkamer({
   const markeer = useCallback((sleutelNaam: string, waarde: "ok" | "fout") => {
     setStatus((s) => (s[sleutelNaam] === waarde ? s : { ...s, [sleutelNaam]: waarde }));
   }, []);
-
-  // Een wissel die te lang duurt, breekt af: de vorige foto blijft staan.
-  useEffect(() => {
-    if (!volgendSleutel || status[volgendSleutel]) return;
-    const t = window.setTimeout(() => markeer(volgendSleutel, "fout"), WISSEL_GEDULD);
-    return () => window.clearTimeout(t);
-  }, [volgendSleutel, status, markeer]);
+  /** Een mislukte foto opnieuw proberen: de bezoeker koos die kamer nog eens. */
+  const vergeetFout = useCallback((sleutelNaam: string) => {
+    setStatus((s) => {
+      if (s[sleutelNaam] !== "fout") return s;
+      const { [sleutelNaam]: _, ...rest } = s;
+      return rest;
+    });
+  }, []);
 
   const volgendKlaar = volgendSleutel ? status[volgendSleutel] === "ok" : false;
   useEffect(() => {
@@ -244,6 +240,19 @@ export default function Kleurkamer({
 
   const overgangNu = overgang && overgang.naar === volgendSleutel ? overgang : null;
 
+  /*
+   * Veld, tekstkleur en kop volgen de kamer die in beeld staat, niet de keuze:
+   * ze wisselen pas als de nieuwe foto er is, samen met de overvloei. Liep het
+   * veld voor op de foto, dan stond er bij een trage verbinding of een mislukte
+   * foto een rode foto op een olijfgroen veld (live gemeten op 29 oktober 2026,
+   * 0,75 Mbit/s). De staal laat de keuze meteen zien.
+   */
+  const getoond = overgangNu && volgend ? volgend : huidig;
+  const kg = kamerVan(getoond.sleutel);
+  const veld = kg.veld[getoond.wie];
+  const tekst = tekstKleur(kg);
+  const donker = isDonkereKamer(kg);
+
   // --- in beeld en zichtbaar: voor de clip, de hint en de kop
   const sectieRef = useRef<HTMLElement>(null);
   const [inBeeld, setInBeeld] = useState(false);
@@ -255,7 +264,11 @@ export default function Kleurkamer({
     if (!el || typeof IntersectionObserver === "undefined") return;
     const zicht = new IntersectionObserver(([e]) => setInBeeld(e.intersectionRatio >= 0.6), { threshold: [0, 0.6, 1] });
     // een lijn van 1 px bovenin het scherm: ligt de held daaronder, dan staat de kop op de kamer
-    const kop = new IntersectionObserver(([e]) => setBovenaan(e.isIntersecting), { rootMargin: "0px 0px -99% 0px" });
+    // Zonder hoogte is de held verborgen (Suspense laadt een andere route): dan niets omzetten,
+    // anders flitst de kop bij snel terug naar / even als papierband (gemeten 29 oktober 2026).
+    const kop = new IntersectionObserver(([e]) => setBovenaan(e.isIntersecting || e.boundingClientRect.height === 0), {
+      rootMargin: "0px 0px -99% 0px",
+    });
     zicht.observe(el);
     kop.observe(el);
     const zichtbaarheid = () => setTabZichtbaar(document.visibilityState === "visible");
@@ -371,18 +384,20 @@ export default function Kleurkamer({
   const kiesDoorBezoeker = useCallback(
     (nieuw: KamerSleutel, bron: "tik" | "toets" | "veeg") => {
       setHandeling(true);
+      vergeetFout(sleutelVan({ sleutel: nieuw, wie, staand }));
       kies(nieuw, bron);
       setMelding(`${staalNaam(kamerVan(nieuw))}.`);
     },
-    [kies],
+    [kies, vergeetFout, wie, staand],
   );
   const kiesWieDoorBezoeker = useCallback(
     (nieuw: Wie) => {
       setHandeling(true);
+      vergeetFout(sleutelVan({ sleutel, wie: nieuw, staand }));
       kiesWie(nieuw);
       setMelding(nieuw === "dames" ? "Dames." : "Heren.");
     },
-    [kiesWie],
+    [kiesWie, vergeetFout, sleutel, staand],
   );
 
   const staalRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -538,7 +553,10 @@ export default function Kleurkamer({
 
   const kamerNaam = (
     <p className={`${LABEL} whitespace-nowrap font-archivo`} style={ARCHIVO.label}>
-      {k.naam} · {k.seizoen}
+      {k.naam}
+      {/* Onder 400 px alleen de naam: met het seizoen erbij paste Warm terracotta (en op 360 px
+          Donkerblauw) niet naast Dames · Heren, en sprongen stalen en knop 14 px omlaag. */}
+      <span className="max-[399px]:hidden"> · {k.seizoen}</span>
     </p>
   );
 

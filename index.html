@@ -48,6 +48,24 @@
           }
           var t = document.querySelector('meta[name="theme-color"]');
           if (t) t.setAttribute("content", "#933126");
+          // Na het laden, met lage prioriteit, de letters van de rest van de site: de eerste klik
+          // naar bijvoorbeeld /prijzen haalde Jakarta en de serif anders pas dan op, en die tekst
+          // stond eerst in een systeemletter (gemeten 29 oktober 2026). Niet bij Save-Data of 2G.
+          addEventListener("load", function () {
+            var c = navigator.connection;
+            if (c && (c.saveData || /2g/.test(c.effectiveType || ""))) return;
+            setTimeout(function () {
+              ["/fonts/plus-jakarta-sans-latin.cd8db90c.woff2", "/fonts/instrument-serif-italic-latin.6ee678c3.woff2", "/fonts/instrument-serif-latin.60c06664.woff2"].forEach(function (href) {
+                var l = document.createElement("link");
+                l.rel = "prefetch";
+                l.as = "font";
+                l.type = "font/woff2";
+                l.crossOrigin = "";
+                l.href = href;
+                h.appendChild(l);
+              });
+            }, 2000);
+          });
         } else {
           pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/plus-jakarta-sans-latin.cd8db90c.woff2" });
           pre({ as: "font", type: "font/woff2", crossorigin: "", href: "/fonts/instrument-serif-italic-latin.6ee678c3.woff2" });

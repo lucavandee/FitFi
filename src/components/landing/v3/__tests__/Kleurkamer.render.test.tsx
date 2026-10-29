@@ -64,6 +64,11 @@ describe("Kleurkamer", () => {
     expect(html).toContain("Beeld gemaakt met AI. De persoon is een model.");
   });
 
+  it("onder 400 px alleen de kamernaam: met seizoen paste Warm terracotta niet naast Dames · Heren", () => {
+    const html = render(stand("warmterracotta"));
+    expect(html).toMatch(/>Warm terracotta<span class="max-\[399px\]:hidden"> · <!-- -->lente<\/span><\/p>/);
+  });
+
   it("de knop is 'Begin gratis' naar de quiz", () => {
     expect(render(stand("chocolade"))).toMatch(/<a [^>]*href="\/onboarding"[^>]*>Begin gratis<\/a>/);
   });
