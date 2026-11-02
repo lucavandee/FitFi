@@ -48,6 +48,14 @@
   create or replace met dezelfde signatuur houdt de rechten. Het recht voor public kan alleen
   globaal weg, dus ook nieuwe functies van postgres in andere schema's krijgen het niet meer.
 
+  Tot slot drie tabellen die elk account mocht wijzigen, en een account is zo gemaakt:
+
+  - outfit_calibration_feedback (86 rijen): de regels eindigden op OR session_id IS NOT NULL, en 83 rijen
+    hebben een sessie. Elk account las, wijzigde en wiste die, en kon feedback schrijven op andermans
+    user_id, wat daarna het stijlprofiel van die gebruiker verschoof. Nu alleen de eigen rijen. De site
+    leest ingelogd altijd op user_id, en anon had op deze tabel nooit een regel.
+  - product_cache en similar_users_cache: USING true, dus elk account mocht wissen. Beide leeg, geen code.
+
   Toets: scripts/proef-anon-rpc.sql.
 */
 
@@ -799,5 +807,22 @@ revoke execute on function public.update_user_preferences_from_interactions(uuid
 -- ingebakken in Postgres en gaat alleen weg zonder "in schema": een revoke per schema doet daar niets.
 alter default privileges for role postgres in schema public revoke execute on functions from anon;
 alter default privileges for role postgres revoke execute on functions from public;
+
+-- 5. Tabellen die elk account mocht wijzigen.
+drop policy if exists "Anyone can delete own feedback via user_id or session_id" on public.outfit_calibration_feedback;
+drop policy if exists "Anyone can update own feedback via user_id or session_id" on public.outfit_calibration_feedback;
+drop policy if exists "Anyone can view own feedback via user_id or session_id" on public.outfit_calibration_feedback;
+drop policy if exists "Anyone can insert feedback with user_id or session_id" on public.outfit_calibration_feedback;
+drop policy if exists "Users can view own feedback" on public.outfit_calibration_feedback;
+create policy "Users can update own calibration feedback" on public.outfit_calibration_feedback
+  for update to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+create policy "Users can delete own calibration feedback" on public.outfit_calibration_feedback
+  for delete to authenticated
+  using ((select auth.uid()) = user_id);
+
+drop policy if exists "System manages product cache" on public.product_cache;
+drop policy if exists "System manages similar users cache" on public.similar_users_cache;
 
 commit;

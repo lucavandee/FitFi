@@ -211,7 +211,8 @@ begin
   update public.style_profiles set session_id = v_qa_sessie where id = v_qa_profiel;
   insert into public.outfit_calibration_feedback (user_id, session_id, outfit_data, feedback, outfit_archetypes, response_time_ms) values
     (null, v_sessie, '{}', 'spot_on', '{"proef_stijl": 1}', 2000),
-    (v_qa, v_qa_sessie, '{}', 'spot_on', '{"proef_stijl": 1}', 2000);
+    (v_qa, v_qa_sessie, '{}', 'spot_on', '{"proef_stijl": 1}', 2000),
+    (v_beheerder, 'proef-rpc-ander', '{}', 'spot_on', '{"proef_stijl": 1}', 2000);
   insert into public.calibration_sessions (user_id) values (v_qa) returning id into v_swipe_eigen;
   insert into public.calibration_sessions (user_id) values (v_beheerder) returning id into v_swipe_ander;
 
@@ -250,6 +251,18 @@ begin
     ('  profiel qa bijgewerkt',         'postgres', $q$select visual_preference_embedding->>'proef_stijl' from public.style_profiles where id = '{qa_profiel}'$q$, '65.00'),
     ('qa apply nog een keer',           'qa',   $q$select 'gelukt' from public.apply_calibration_to_profile(null, null)$q$, 'gelukt'),
     ('  profiel qa schuift niet door',  'postgres', $q$select visual_preference_embedding->>'proef_stijl' from public.style_profiles where id = '{qa_profiel}'$q$, '65.00'),
+    -- Feedback: alleen de eigen rijen
+    ('qa leest andermans feedback',      'qa',   $q$select count(*)::text from public.outfit_calibration_feedback where session_id = 'proef-rpc-ander'$q$, '0'),
+    ('qa wijzigt andermans feedback',    'qa',   $q$update public.outfit_calibration_feedback set response_time_ms = 1 where session_id = 'proef-rpc-ander'$q$, 'NULL'),
+    ('  andermans feedback ongewijzigd', 'postgres', $q$select response_time_ms::text from public.outfit_calibration_feedback where session_id = 'proef-rpc-ander'$q$, '2000'),
+    ('qa wist andermans feedback',       'qa',   $q$delete from public.outfit_calibration_feedback where session_id = 'proef-rpc-ander'$q$, 'NULL'),
+    ('  andermans feedback bestaat nog', 'postgres', $q$select count(*)::text from public.outfit_calibration_feedback where session_id = 'proef-rpc-ander'$q$, '1'),
+    ('qa feedback op andermans id',      'qa',   $q$insert into public.outfit_calibration_feedback (user_id, session_id, outfit_data, feedback, outfit_archetypes, response_time_ms) values ('{vreemd}', 'proef-rpc-spoof', '{}', 'spot_on', '{}', 2000)$q$, 'FOUT(42501)'),
+    ('qa leest eigen feedback',          'qa',   $q$select (count(*) > 0)::text from public.outfit_calibration_feedback where user_id = '{qa}'$q$, 'true'),
+    ('qa schrijft eigen feedback',       'qa',   $q$insert into public.outfit_calibration_feedback (user_id, session_id, outfit_data, feedback, outfit_archetypes, response_time_ms) values ('{qa}', 'proef-rpc-eigen', '{}', 'spot_on', '{}', 2000)$q$, 'NULL'),
+    ('qa wist eigen feedback',           'qa',   $q$delete from public.outfit_calibration_feedback where session_id = 'proef-rpc-eigen'$q$, 'NULL'),
+    ('  eigen feedback weg',             'postgres', $q$select count(*)::text from public.outfit_calibration_feedback where session_id = 'proef-rpc-eigen'$q$, '0'),
+    ('cache-regels weg',                 'postgres', $q$select count(*)::text from pg_policies where policyname in ('System manages product cache', 'System manages similar users cache')$q$, '0'),
     -- log_security_event: anon met vreemde waarden, en precies zoals de site het stuurt
     ('anon login_failure, alles te groot', 'anon', $q$select 'gelukt' from public.log_security_event('login_failure', 'critical', '{qa}', '{groot}', '{groot}', 'proef-rpc-a', to_jsonb('{groot}'::text)) x$q$, 'gelukt'),
     ('  geen user_id, medium, afgekapt','postgres', $q$select (user_id is null and severity = 'medium' and length(ip_address) <= 64 and length(user_agent) <= 512 and details->>'afgekapt' = 'true')::text from public.security_events where endpoint = 'proef-rpc-a'$q$, 'true'),
