@@ -3,6 +3,7 @@
 --   supabase db query --linked -f scripts/proef-anon-sessies.sql
 -- De uitslag staat in de foutmelding (UITSLAG). Verwacht:
 --   sp_nieuw=1 sp_lees=0 sp_update_alles=0 sp_update_filter=0 sp_wis=0 bp_lees=0 bp_nieuw=FOUT(42501) bp_wis=0
+--   view_lees=FOUT(42501) view_update=FOUT(42501) view_wis=FOUT(42501) rang_lees=FOUT(42501) link=FOUT(42501)
 -- sp_nieuw moet 1 blijven: dat is de quiz zonder account.
 do $$
 declare n int; uit text := ''; p record;
@@ -18,7 +19,12 @@ begin
     ('sp_wis',           'delete from public.style_profiles'),
     ('bp_lees',          'select count(*) from public.brand_preferences'),
     ('bp_nieuw',         $q$insert into public.brand_preferences (session_id, brand) values ('proef-anon-sessies', 'proef')$q$),
-    ('bp_wis',           'delete from public.brand_preferences')
+    ('bp_wis',           'delete from public.brand_preferences'),
+    ('view_lees',        'select count(*) from public.onboarding_user_progress'),
+    ('view_update',      'update public.onboarding_user_progress set onboarding_state = onboarding_state'),
+    ('view_wis',         'delete from public.onboarding_user_progress'),
+    ('rang_lees',        'select count(*) from public.v_referral_leaderboard'),
+    ('link',             'select count(*) from public.update_product_link_status(gen_random_uuid(), ''ok'', 200)')
   ) t(naam, opdracht) loop
     begin
       set local role anon;
